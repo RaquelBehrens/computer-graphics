@@ -28,25 +28,43 @@ class Window:
         # caixa de texto, vai preenchendo conforme cria objetos
 
         Label(self.frame1, text='Window', font=('Times', '13')).grid(row=3, column=0, sticky=NW)
-        self.up = Button(self.frame1, text='Up', font=('Times', '12'))
+        self.up = Button(self.frame1, text='Up', font=('Times', '12'), command=self.move_up)
         self.up.grid(row=4, column=0, sticky=NW, padx=45)
-        self.left = Button(self.frame1, text='Left', font=('Times', '12'))
+        self.left = Button(self.frame1, text='Left', font=('Times', '12'), command=self.move_left)
         self.left.grid(row=5, column=0, sticky=NW, padx=20)
-        self.right = Button(self.frame1, text='Right', font=('Times', '12'))
+        self.right = Button(self.frame1, text='Right', font=('Times', '12'), command=self.move_right)
         self.right.grid(row=5, column=0, columnspan=2)
-        self.down = Button(self.frame1, text='Down', font=('Times', '12'))
+        self.down = Button(self.frame1, text='Down', font=('Times', '12'), command=self.move_down)
         self.down.grid(row=6, column=0, sticky=NW, padx=35)
 
         Label(self.frame1, text='Zoom: ', font=('Times', '13')).grid(row=7, column=0, sticky=NW)
-        self.more_zoom = Button(self.frame1, text='+', font=('Times', '12'))
+        self.more_zoom = Button(self.frame1, text='+', font=('Times', '12'), command=self.zoom_in)
         self.more_zoom.grid(row=8, column=0, sticky=NW, padx=40)
-        self.less_zoom = Button(self.frame1, text='-', font=('Times', '12'))
+        self.less_zoom = Button(self.frame1, text='-', font=('Times', '12'), command=self.zoom_out)
         self.less_zoom.grid(row=8, column=0, columnspan=2)
         self.set_window = Button(self.frame1, text='Include object', font=('Times', '12'), command=self.include_object)
         self.set_window.grid(row=9, column=0, sticky=NW, pady=15, padx=20)
 
     def include_object(self):
         IncludeWindow(self.viewport, self.erros)
+
+    def zoom_in(self):
+        self.viewport.scale("all", WINDOW_HEIGHT/2, WINDOW_WIDTH/2, 1.1, 1.1)
+    
+    def zoom_out(self):
+        self.viewport.scale("all", WINDOW_HEIGHT/2, WINDOW_WIDTH/2, 0.9, 0.9)
+
+    def move_up(self):
+        self.viewport.move("all", 0, 10)
+
+    def move_left(self):
+        self.viewport.move("all", 10, 0)
+    
+    def move_right(self):
+        self.viewport.move("all", -10, 0)
+
+    def move_down(self):
+        self.viewport.move("all", 0, -10)
 
 window = Window()
 window.root.mainloop()
