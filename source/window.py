@@ -16,6 +16,9 @@ class Window(Frame):
 
         self.display_file = []
         self.lines_list = []
+        
+        self.aplied_zoom = 1
+        self.aplied_move = [0,0]
 
         self.create_widgets()
         self.create_table()
@@ -96,21 +99,27 @@ class Window(Frame):
         self.table.delete(id)     
 
     def zoom_in(self):
-        self.viewport.scale("all", WINDOW_HEIGHT/2, WINDOW_WIDTH/2, 1.1, 1.1)
+        self.aplied_zoom *= 1.1
+        self.viewport.scale("all", VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, 1.1, 1.1)
     
     def zoom_out(self):
-        self.viewport.scale("all", WINDOW_HEIGHT/2, WINDOW_WIDTH/2, 0.9, 0.9)
+        self.aplied_zoom *= 0.9
+        self.viewport.scale("all", VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, 0.9, 0.9)
 
     def move_up(self):
+        self.aplied_move[1] += 10
         self.viewport.move("all", 0, 10)
 
     def move_left(self):
+        self.aplied_move[0] += 10
         self.viewport.move("all", 10, 0)
     
     def move_right(self):
+        self.aplied_move[0] -= 10
         self.viewport.move("all", -10, 0)
 
     def move_down(self):
+        self.aplied_move[1] -= 10
         self.viewport.move("all", 0, -10)
 
 window = Window()
