@@ -119,6 +119,8 @@ class IncludeWindow:
         list_ids = []
         for line in polygons_lines_list:
             list_ids.append(line.getId())
+            self.display_file.remove(line)
+            self.lines_list.remove(line)
 
         for item in self.table.get_children():
             item_id = self.table.item(item).get('values')[2]
@@ -127,8 +129,9 @@ class IncludeWindow:
 
         name = simpledialog.askstring(title="Polygon Name",
                                   prompt="Please, type the Polygon name:")
-        objeto = Wireframe(polygons_lines_list[0].getId(), name, polygons_points_list)
+        objeto = Wireframe(polygons_lines_list[0].getId(), name, list_ids, polygons_points_list)
         self.include_object_in_table(objeto)
+        self.display_file.append(objeto)
     
     def verify_polygon(self, last_line, lines_list):
         last_line_points = last_line.getPoints()

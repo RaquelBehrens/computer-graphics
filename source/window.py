@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from constants import WINDOW_HEIGHT, WINDOW_WIDTH, APPLICATION_NAME, VIEWPORT_WIDTH, VIEWPORT_HEIGHT
 from include_object import IncludeWindow
+from objects import Line, Wireframe
 
 
 class Window(Frame):
@@ -93,7 +94,15 @@ class Window(Frame):
         for object in self.display_file:
             if object.getId() == selected_item_id:
                 self.delete_object_from_table(selected_item)
-                self.viewport.delete(selected_item_id)
+                self.display_file.remove(object)
+                if isinstance(object, Line):
+                    self.lines_list.remove(object)
+                    self.viewport.delete(selected_item_id)
+                elif isinstance(object, Wireframe):
+                    for id in object.list_ids:
+                        self.viewport.delete(id)
+                else:
+                    self.viewport.delete(selected_item_id)
 
     def delete_object_from_table(self, id):
         self.table.delete(id)     
