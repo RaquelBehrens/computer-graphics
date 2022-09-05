@@ -1,13 +1,17 @@
 from tkinter import *
 from constants import INCLUDE_WINDOW_WIDTH, INCLUDE_WINDOW_HEIGHT, VIEWPORT_HEIGHT 
+from copy import copy
+from objects import *
 
 class IncludeWindow:
-    def __init__(self, viewport, erros):
+    def __init__(self, viewport, erros, objects_list, table):
         self.main_window = Tk()
         self.main_window.title("Incluir objeto")
         self.main_window.geometry(f"{INCLUDE_WINDOW_HEIGHT}x{INCLUDE_WINDOW_WIDTH}")
         self.viewport = viewport
         self.erros = erros
+        self.objects_list = objects_list
+        self.table = table
 
         self.frame1 = Frame(self.main_window)
         self.frame1.grid()
@@ -56,13 +60,27 @@ class IncludeWindow:
             y1 = float(self.y1.get())
             x2 = float(self.x2.get())
             y2 = float(self.y2.get())
-            if self.nome.get() != '':
-                self.drawn_line(x1, y1, x2, y2)
+
+            nome = self.nome.get()
+            if nome != '':
+                id = self.drawn_line(x1, y1, x2, y2)
+                objeto = Line(id, nome, (x1, y1), (x2, y2))
+                self.objects_list.append(objeto)
+                self.include_object_in_table(objeto)
+                
+                #object = self.verifyPolygon(x1, y1, x2, y2, self.lines_list)
+
                 self.erros['text'] = 'objeto criado com sucesso'
+                return objeto
             else:
                 self.erros['text'] = 'falta nome'
+                return None
         except ValueError:
             self.erros['text'] = 'mensagem de erro'
+            return None
+
+    def include_object_in_table(self, object):
+        self.table.insert('', 0, values=(object.getName(), object.getPoints(), object.getId()))
 
     def close_window(self):
         self.main_window.destroy()
@@ -70,5 +88,14 @@ class IncludeWindow:
     def drawn_line(self, x1, y1, x2, y2):
         y1 = VIEWPORT_HEIGHT - y1
         y2 = VIEWPORT_HEIGHT - y2
-        self.viewport.create_line((x1, y1), (x2, y2), width=3, fill='white')
+        id = self.viewport.create_line((x1, y1), (x2, y2), width=3, fill='white')
         self.close_window()
+        return id
+
+
+    #def verifyPolygon(self, x1, y1, x2, y2, lines_list):
+    #    copy_lines_list = copy(lines_list)
+    #    for line in copy_lines_list:
+    #        for point in line.getPoints():
+    #            if (point.get(0) == x1 and point.get(1) == y1) or (point.get(0) == x2 and point.get(1) == y2):           
+    #    pass
