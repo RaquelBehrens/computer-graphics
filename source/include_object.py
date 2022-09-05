@@ -1,5 +1,5 @@
 from tkinter import *
-from constants import INCLUDE_WINDOW_WIDTH, INCLUDE_WINDOW_HEIGHT, VIEWPORT_HEIGHT, POINT_SIZE
+from constants import INCLUDE_WINDOW_WIDTH, INCLUDE_WINDOW_HEIGHT, VIEWPORT_HEIGHT, VIEWPORT_WIDTH, POINT_SIZE
 from copy import copy
 from objects import *
 from tkinter import simpledialog
