@@ -1,5 +1,5 @@
 from tkinter import *
-from constants import INCLUDE_WINDOW_WIDTH, INCLUDE_WINDOW_HEIGHT, VIEWPORT_HEIGHT 
+from constants import INCLUDE_WINDOW_WIDTH, INCLUDE_WINDOW_HEIGHT, VIEWPORT_HEIGHT, POINT_SIZE
 from copy import copy
 from objects import *
 from tkinter import simpledialog
@@ -77,7 +77,7 @@ class IncludeWindow:
                     if formed_polygon:
                         self.draw_polygon(polygons_points_list, polygons_lines_list)
                         self.lines_list = copy_lines_list
-                        
+
                 self.erros['text'] = 'objeto criado com sucesso'
             else:
                 self.erros['text'] = 'falta nome'
@@ -103,7 +103,7 @@ class IncludeWindow:
 
     def draw_point(self, name, x1, y1):
         y1 = VIEWPORT_HEIGHT - y1
-        id = self.viewport.create_oval(x1, y1, x1, y1, width=10, fill="white")
+        id = self.viewport.create_oval(x1, y1, x1, y1, width=POINT_SIZE, fill="white")
         self.close_window()
         #create point object
         objeto = Point(id, name, (x1, y1))
