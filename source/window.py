@@ -84,7 +84,7 @@ class Window(Frame):
         #self.display_file = self.viewport.find_all()
 
     def include_object(self):
-        IncludeWindow(self.viewport, self.erros, self.display_file, self.lines_list, self.table)
+        IncludeWindow(self.viewport, self.erros, self.display_file, self.lines_list, self.table, self.aplied_move, self.aplied_zoom)
 
     def delete_object(self):
         selected_item = self.table.selection()[0]
