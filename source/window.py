@@ -14,11 +14,8 @@ class Window(Frame):
 
         self.pack(fill='both', expand=True)
 
-        self.objects_list = []
-
-        self.polygons_list = []
+        self.display_file = []
         self.lines_list = []
-        self.points_list = []
 
         self.create_widgets()
         self.create_table()
@@ -81,16 +78,16 @@ class Window(Frame):
         self.columnconfigure(2, weight=1) # column with treeview
         self.rowconfigure(2, weight=1) # row with treeview    
         
-        #self.objects_list = self.viewport.find_all()
+        #self.display_file = self.viewport.find_all()
 
     def include_object(self):
-        IncludeWindow(self.viewport, self.erros, self.objects_list, self.table)
+        IncludeWindow(self.viewport, self.erros, self.display_file, self.lines_list, self.table)
 
     def delete_object(self):
         selected_item = self.table.selection()[0]
         selected_item_id = self.table.item(selected_item).get('values')[2]
 
-        for object in self.objects_list:
+        for object in self.display_file:
             if object.getId() == selected_item_id:
                 self.delete_object_from_table(selected_item)
                 self.viewport.delete(selected_item_id)

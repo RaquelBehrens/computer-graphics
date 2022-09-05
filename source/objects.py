@@ -28,7 +28,6 @@ class Line(Object):
         self.points.append(point1)
         self.points.append(point2)
         
-
 class Wireframe(Object):  #This is a Polygon
     def __init__(self, id, name, *args):
         super().__init__()
