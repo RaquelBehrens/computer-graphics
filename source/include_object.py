@@ -5,7 +5,7 @@ from objects import *
 from tkinter import simpledialog
 
 class IncludeWindow:
-    def __init__(self, viewport, erros, display_file, lines_list, table):
+    def __init__(self, viewport, erros, display_file, lines_list, table, move, zoom):
         self.main_window = Tk()
         self.main_window.title("Incluir objeto")
         self.main_window.geometry(f"{INCLUDE_WINDOW_HEIGHT}x{INCLUDE_WINDOW_WIDTH}")
@@ -14,6 +14,8 @@ class IncludeWindow:
         self.display_file = display_file
         self.lines_list = lines_list
         self.table = table
+        self.aplied_move = move
+        self.aplied_zoom = zoom
 
         self.frame1 = Frame(self.main_window)
         self.frame1.grid()
@@ -95,6 +97,8 @@ class IncludeWindow:
         viewport_y1 = VIEWPORT_HEIGHT - y1
         viewport_y2 = VIEWPORT_HEIGHT - y2
         id = self.viewport.create_line((x1, viewport_y1), (x2, viewport_y2), width=3, fill='white')
+        self.viewport.scale(id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, self.aplied_zoom, self.aplied_zoom)
+        self.viewport.move(id, self.aplied_move[0], self.aplied_move[1])
         self.close_window()        
         #create line object
         objeto = Line(id, name, (x1, y1), (x2, y2))
@@ -104,6 +108,8 @@ class IncludeWindow:
     def draw_point(self, name, x1, y1):
         viewport_y1 = VIEWPORT_HEIGHT - y1
         id = self.viewport.create_oval(x1, viewport_y1, x1, viewport_y1, width=POINT_SIZE, fill="white")
+        self.viewport.scale(id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, self.aplied_zoom, self.aplied_zoom)
+        self.viewport.move(id, self.aplied_move[0], self.aplied_move[1])
         self.close_window()
         #create point object
         objeto = Point(id, name, (x1, y1))
