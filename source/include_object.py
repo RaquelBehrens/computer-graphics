@@ -92,18 +92,18 @@ class IncludeWindow:
         self.main_window.destroy()
 
     def draw_line(self, name, x1, y1, x2, y2):
-        y1 = VIEWPORT_HEIGHT - y1
-        y2 = VIEWPORT_HEIGHT - y2
-        id = self.viewport.create_line((x1, y1), (x2, y2), width=3, fill='white')
-        self.close_window()
+        viewport_y1 = VIEWPORT_HEIGHT - y1
+        viewport_y2 = VIEWPORT_HEIGHT - y2
+        id = self.viewport.create_line((x1, viewport_y1), (x2, viewport_y2), width=3, fill='white')
+        self.close_window()        
         #create line object
         objeto = Line(id, name, (x1, y1), (x2, y2))
         self.lines_list.append(objeto)
         return objeto
 
     def draw_point(self, name, x1, y1):
-        y1 = VIEWPORT_HEIGHT - y1
-        id = self.viewport.create_oval(x1, y1, x1, y1, width=POINT_SIZE, fill="white")
+        viewport_y1 = VIEWPORT_HEIGHT - y1
+        id = self.viewport.create_oval(x1, viewport_y1, x1, viewport_y1, width=POINT_SIZE, fill="white")
         self.close_window()
         #create point object
         objeto = Point(id, name, (x1, y1))
