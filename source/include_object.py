@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import ttk
 from constants import INCLUDE_WINDOW_WIDTH, INCLUDE_WINDOW_HEIGHT, VIEWPORT_HEIGHT, VIEWPORT_WIDTH, POINT_SIZE
 from copy import copy
 from objects import *
@@ -52,11 +53,6 @@ class IncludeWindow:
 
     def create_object(self):
         try:
-            x1 = float(self.x1.get())
-            y1 = float(self.y1.get())
-            x2 = float(self.x2.get())
-            y2 = float(self.y2.get())
-
             name = self.nome.get()
             if name != '':
                 tab_index = self.tab_control.index(self.tab_control.select())
