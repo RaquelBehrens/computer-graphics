@@ -229,14 +229,20 @@ class IncludeWindow:
 
     def ConvertToList(self):
         lista = list(self.entry_polygon.get())
+        aux = []
         coords = []
         for i in range(len(lista)):
             try:
-                coords.append(float(lista[i]))
+                if lista[i] == ',' or i == len(lista)-1:
+                    number = "".join(aux)
+                    coords.append(float(number))
+                    aux.clear()
+                float(lista[i])
+                aux.append(lista[i])
             except ValueError:
-                pass 
-        if len(coords) % 2 == 0 and len(coords) > 6:     
+                pass
+
+        if len(coords) % 2 == 0 and len(coords) >= 6:     
             return coords
         else:
             self.erros['text'] = 'mensagem de erro'
-
