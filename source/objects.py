@@ -51,4 +51,14 @@ class Wireframe(Object):  #This is a Polygon
             self.points.append(arg)
             
     def drawn(self, viewport):
-        pass
+        for i in range(0, len(self.points), 2):
+            viewport_y1 = VIEWPORT_HEIGHT - self.points[i+1]
+            if i == len(self.points)-2:
+                viewport_y2 = VIEWPORT_HEIGHT - self.points[1]
+                viewport.create_line((self.points[i], viewport_y1), (self.points[0], viewport_y2), width=3, fill='white')
+            else:
+                viewport_y2 = VIEWPORT_HEIGHT - self.points[i+3]
+                if i == 0:
+                    self.id = viewport.create_line((self.points[i], viewport_y1), (self.points[i+2], viewport_y2), width=3, fill='white')
+                else:
+                    viewport.create_line((self.points[i], viewport_y1), (self.points[i+2], viewport_y2), width=3, fill='white')
