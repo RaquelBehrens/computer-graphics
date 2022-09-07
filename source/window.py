@@ -18,8 +18,7 @@ class Window(Frame):
         self.display_file = []
         self.lines_list = []
         
-        self.aplied_zoom = 1
-        self.aplied_move = [0,0]
+        self.modification = []
 
         self.create_widgets()
         self.create_table()
@@ -85,7 +84,7 @@ class Window(Frame):
         #self.display_file = self.viewport.find_all()
 
     def include_object(self):
-        IncludeWindow(self.viewport, self.erros, self.display_file, self.lines_list, self.table, self.aplied_move, self.aplied_zoom)
+        IncludeWindow(self.viewport, self.erros, self.display_file, self.lines_list, self.table, self.modification)
 
     def delete_object(self):
         selected_item = self.table.selection()[0]
@@ -108,27 +107,27 @@ class Window(Frame):
         self.table.delete(id)     
 
     def zoom_in(self):
-        self.aplied_zoom *= 1.1
+        self.modification.append(('zoom', 1.1))
         self.viewport.scale("all", VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, 1.1, 1.1)
     
     def zoom_out(self):
-        self.aplied_zoom *= 0.9
+        self.modification.append(('zoom', 0.9))
         self.viewport.scale("all", VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, 0.9, 0.9)
 
     def move_up(self):
-        self.aplied_move[1] += 10
+        self.modification.append(('move_hor', 10))
         self.viewport.move("all", 0, 10)
 
     def move_left(self):
-        self.aplied_move[0] += 10
+        self.modification.append(('move_ver', 10))
         self.viewport.move("all", 10, 0)
     
     def move_right(self):
-        self.aplied_move[0] -= 10
+        self.modification.append(('move_ver', -10))
         self.viewport.move("all", -10, 0)
 
     def move_down(self):
-        self.aplied_move[1] -= 10
+        self.modification.append(('move_hor', -10))
         self.viewport.move("all", 0, -10)
 
 window = Window()
