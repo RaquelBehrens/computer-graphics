@@ -69,6 +69,8 @@ class Window(Frame):
         Label(self, text='Objetos: ',  font=('Time', '13')).grid(row=1, column=0, sticky=NW)
         self.delete = Button(self, text='Deletar Objeto', font=('Time', '11'), command=self.delete_object)
         self.delete.grid(row=3, column=0, sticky=NW, padx=0, pady=5)
+        self.delete = Button(self, text='Deletar Tudo', font=('Time', '11'), command=self.delete_all_objects)
+        self.delete.grid(row=3, column=1, sticky=NW, padx=0, pady=5)
 
         # scroll bar for the terminal outputs
         self.terminal_scrollbar = Scrollbar(self, orient=VERTICAL)
@@ -110,6 +112,15 @@ class Window(Frame):
 
     def delete_object(self):
         selected_item = self.table.selection()[0]
+        self.delete_object_from_system(selected_item)
+
+    def delete_all_objects(self):
+        all_items = self.table.get_children()
+
+        for item in all_items:
+            self.delete_object_from_system(item)
+
+    def delete_object_from_system(self, selected_item):
         selected_item_id = self.table.item(selected_item).get('values')[2]
 
         for object in self.display_file:
