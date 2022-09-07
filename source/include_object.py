@@ -6,7 +6,7 @@ from objects import *
 from tkinter import simpledialog
 
 class IncludeWindow:
-    def __init__(self, viewport, erros, display_file, lines_list, table, move, zoom):
+    def __init__(self, viewport, erros, display_file, lines_list, table, modification):
         self.main_window = Tk()
         self.main_window.title("Incluir objeto")
         self.main_window.geometry(f"{INCLUDE_WINDOW_HEIGHT}x{INCLUDE_WINDOW_WIDTH}")
@@ -15,8 +15,7 @@ class IncludeWindow:
         self.display_file = display_file
         self.lines_list = lines_list
         self.table = table
-        self.aplied_move = move
-        self.aplied_zoom = zoom
+        self.modification = modification
         
         self.entry_point = []
         self.entry_line = []
@@ -76,6 +75,13 @@ class IncludeWindow:
                     #     self.lines_list = copy_lines_list
                     
                 objeto.drawn(self.viewport)
+                for element in self.modification:
+                    if element[0] == 'zoom':
+                        self.viewport.scale(objeto.id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, element[1], element[1])
+                    elif element[0] == 'move_hor':
+                        self.viewport.move(objeto.id, 0, element[1])
+                    else:
+                        self.viewport.move(objeto.id, element[1], 0)
                 self.close_window()
                 self.display_file.append(objeto)
                 self.include_object_in_table(objeto)
