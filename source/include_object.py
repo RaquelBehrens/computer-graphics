@@ -307,34 +307,6 @@ class IncludeTriangle(IncludeWindow):
 
     def create_object(self):
         try:
-            coordinates = self.convert_to_list(self.entry_polygon.get())
-            name = self.nome.get()
-
-            if name != '':
-                objeto = Wireframe(name, coordinates)
-                objeto.drawn(self.viewport)
-
-                for element in self.modification:
-                    if element[0] == 'zoom':
-                        self.viewport.scale(objeto.id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, element[1], element[1])
-                    elif element[0] == 'move_hor':
-                        self.viewport.move(objeto.id, 0, element[1])
-                    else:
-                        self.viewport.move(objeto.id, element[1], 0)
-                
-                self.close_window()                
-                self.display_file.append(objeto)
-                self.include_object_in_table(objeto)
-                self.erros['text'] = 'objeto criado com sucesso'
-            else:
-                self.erros['text'] = 'falta nome'
-
-        except ValueError:
-            self.erros['text'] = 'mensagem de erro'
-
-
-    def create_object(self):
-        try:
             x1 = float(self.x1.get())
             y1 = float(self.y1.get())
             x2 = float(self.x2.get())
