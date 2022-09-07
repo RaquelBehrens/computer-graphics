@@ -16,47 +16,39 @@ class IncludeWindow:
         self.table = table
         self.aplied_move = move
         self.aplied_zoom = zoom
+        
+        self.entry_point = []
+        self.entry_line = []
+        self.entry_polygon = []
 
         self.frame1 = Frame(self.main_window)
         self.frame1.grid()
-        self.frame2 = Frame(self.main_window)
-        self.frame2.grid()
-        self.frame3 = Frame(self.main_window)
-        self.frame3.grid()
-        self.frame4 = Frame(self.main_window)
-        self.frame4.grid()
-        self.frame5 = Frame(self.main_window)
-        self.frame5.grid()
-        self.frame6 = Frame(self.main_window)
-        self.frame6.grid()
 
         Label(self.frame1, text='Nome: ', font=("Times", "11"), height=2).grid(row=0, column=0, sticky=NW)
         self.nome = Entry(self.frame1, width=30, font=("Times", "11"))
         self.nome.grid(row=0, column=1)
 
-        Label(self.frame2, text='Coordenadas Iniciais', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
+        self.tab_control = ttk.Notebook(self.main_window)
+        self.tab1 = Frame(self.tab_control)
+        self.tab2 = Frame(self.tab_control)
+        self.tab3 = Frame(self.tab_control)
 
-        Label(self.frame3, text='x1: ', font=("Times", "11")).grid(row=0, column=0, sticky=NW)
-        self.x1 = Entry(self.frame3, width=3, font=("Times", "11"))
-        self.x1.grid(row=0, column=1, sticky=NW)
-        Label(self.frame3, text=' y1: ', font=("Times", "11")).grid(row=0, column=2, sticky=NW)
-        self.y1 = Entry(self.frame3, width=3, font=("Times", "11"))
-        self.y1.grid(row=0, column=3, sticky=NW)
+        self.tab_control.add(self.tab1, text='Ponto')
+        self.tab_control.add(self.tab2, text='Linha')
+        self.tab_control.add(self.tab3, text='Polígono')
+        self.tab_control.grid()
 
-        Label(self.frame4, text='Coordenadas Finais', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
+        self.tab_point()
+        self.tab_line()
+        self.tab_polygon()
 
-        Label(self.frame5, text='x2: ', font=("Times", "11")).grid(row=0, column=0, sticky=NW)
-        self.x2 = Entry(self.frame5, width=3, font=("Times", "11"))
-        self.x2.grid(row=0, column=1, sticky=NW)
-        Label(self.frame5, text=' y2: ', font=("Times", "11")).grid(row=0, column=2, sticky=NW)
-        self.y2 = Entry(self.frame5, width=3, font=("Times", "11"))
-        self.y2.grid(row=0, column=3, sticky=NW)
+        self.frame2 = Frame(self.main_window)
+        self.frame2.grid()
 
-        self.cancelar = Button(self.frame6, font=("Times", "11"), text='Cancelar', command=self.close_window)
+        self.cancelar = Button(self.frame2, font=("Times", "11"), text='Cancelar', command=self.close_window)
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
-        self.confirmar = Button(self.frame6, font=("Times", "11"), text='Confirmar', command=self.create_object)
+        self.confirmar = Button(self.frame2, font=("Times", "11"), text='Confirmar', command=self.create_object)
         self.confirmar.grid(row=0, column=1, pady=15, padx=18)
-
 
     def create_object(self):
         try:
@@ -67,18 +59,30 @@ class IncludeWindow:
 
             name = self.nome.get()
             if name != '':
-                if x1 == x2 and y1 == y2:
-                    objeto = self.draw_point(name, x1, y1)
-                    self.display_file.append(objeto)
-                    self.include_object_in_table(objeto)
+                tab_index = self.tab_control.index(self.tab_control.select())
+                if tab_index == 0:
+                    for i in range(len(self.entry_point)):
+                        self.entry_point[i] = float(self.entry_point[i].get())
+                    objeto = Point(name, self.entry_point)
                 else:
-                    objeto = self.draw_line(name, x1, y1, x2, y2)
-                    self.display_file.append(objeto)
-                    self.include_object_in_table(objeto)
-                    formed_polygon, polygons_points_list, polygons_lines_list, copy_lines_list = self.verify_polygon(objeto, self.lines_list)
-                    if formed_polygon:
-                        self.draw_polygon(polygons_points_list, polygons_lines_list)
-                        self.lines_list = copy_lines_list
+                    if tab_index == 1:
+                        for i in range(len(self.entry_line)):
+                            self.entry_line[i] = float(self.entry_line[i].get())
+                        objeto = Line(name, self.entry_line)
+                        self.lines_list.append(objeto)
+                    else:
+                        self.entry_polygon = self.ConvertToList()
+                        objeto = Wireframe(name, self.entry_line)
+                    # Aqui estava dando um erro depois que eu mudei. Vou ver isso e arrumar.
+                    # formed_polygon, polygons_points_list, polygons_lines_list, copy_lines_list = self.verify_polygon(objeto, self.lines_list)
+                    # if formed_polygon:
+                    #     self.draw_polygon(polygons_points_list, polygons_lines_list)
+                    #     self.lines_list = copy_lines_list
+                    
+                objeto.drawn(self.viewport)
+                self.close_window()
+                self.display_file.append(objeto)
+                self.include_object_in_table(objeto)
 
                 self.erros['text'] = 'objeto criado com sucesso'
             else:
@@ -93,27 +97,60 @@ class IncludeWindow:
     def close_window(self):
         self.main_window.destroy()
 
-    def draw_line(self, name, x1, y1, x2, y2):
-        viewport_y1 = VIEWPORT_HEIGHT - y1
-        viewport_y2 = VIEWPORT_HEIGHT - y2
-        id = self.viewport.create_line((x1, viewport_y1), (x2, viewport_y2), width=3, fill='white')
-        self.viewport.scale(id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, self.aplied_zoom, self.aplied_zoom)
-        self.viewport.move(id, self.aplied_move[0], self.aplied_move[1])
-        self.close_window()        
-        #create line object
-        objeto = Line(id, name, (x1, y1), (x2, y2))
-        self.lines_list.append(objeto)
-        return objeto
+    def tab_point(self):
+        self.frame_ponto = Frame(self.tab1)
+        self.frame_ponto.grid()
+        self.frame_ponto2 = Frame(self.tab1)
+        self.frame_ponto2.grid()
 
-    def draw_point(self, name, x1, y1):
-        viewport_y1 = VIEWPORT_HEIGHT - y1
-        id = self.viewport.create_oval(x1, viewport_y1, x1, viewport_y1, width=POINT_SIZE, fill="white")
-        self.viewport.scale(id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, self.aplied_zoom, self.aplied_zoom)
-        self.viewport.move(id, self.aplied_move[0], self.aplied_move[1])
-        self.close_window()
-        #create point object
-        objeto = Point(id, name, (x1, y1))
-        return objeto
+        Label(self.frame_ponto, text='Coordenadas', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
+
+        Label(self.frame_ponto2, text='x1: ', font=("Times", "11")).grid(row=0, column=0, sticky=NW)
+        self.entry_point.append(Entry(self.frame_ponto2, width=3, font=("Times", "11")))
+        self.entry_point[0].grid(row=0, column=1, sticky=NW)
+        Label(self.frame_ponto2, text=' y1: ', font=("Times", "11")).grid(row=0, column=2, sticky=NW)
+        self.entry_point.append(Entry(self.frame_ponto2, width=3, font=("Times", "11")))
+        self.entry_point[1].grid(row=0, column=3, sticky=NW)
+
+    def tab_line(self):
+        self.linha = Frame(self.tab2)
+        self.linha.grid()
+        self.linha2 = Frame(self.tab2)
+        self.linha2.grid()
+        self.linha3 = Frame(self.tab2)
+        self.linha3.grid()
+        self.linha4 = Frame(self.tab2)
+        self.linha4.grid()
+
+        Label(self.linha, text='Coordenadas Iniciais', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
+
+        Label(self.linha2, text='x1: ', font=("Times", "11")).grid(row=0, column=0, sticky=NW)
+        self.entry_line.append(Entry(self.linha2, width=3, font=("Times", "11")))
+        self.entry_line[0].grid(row=0, column=1, sticky=NW)
+        Label(self.linha2, text=' y1: ', font=("Times", "11")).grid(row=0, column=2, sticky=NW)
+        self.entry_line.append(Entry(self.linha2, width=3, font=("Times", "11")))
+        self.entry_line[1].grid(row=0, column=3, sticky=NW)
+
+        Label(self.linha3, text='Coordenadas Finais', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
+
+        Label(self.linha4, text='x2: ', font=("Times", "11")).grid(row=0, column=0, sticky=NW)
+        self.entry_line.append(Entry(self.linha4, width=3, font=("Times", "11")))
+        self.entry_line[2].grid(row=0, column=1, sticky=NW)
+        Label(self.linha4, text=' y2: ', font=("Times", "11")).grid(row=0, column=2, sticky=NW)
+        self.entry_line.append(Entry(self.linha4, width=3, font=("Times", "11")))
+        self.entry_line[3].grid(row=0, column=3, sticky=NW)
+
+    def tab_polygon(self):
+        self.frame_poly = Frame(self.tab3)
+        self.frame_poly.grid()
+        self.frame_poly2 = Frame(self.tab3)
+        self.frame_poly2.grid()
+
+        Label(self.frame_poly, text='Coordenadas', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
+        Label(self.frame_poly, text='(x1,y1), (x2,y2), ..., (xn,yn): ', font=("Times", "11"), height=2).grid(row=1, column=0)
+
+        self.entry_polygon = Entry(self.frame_poly2, width=20, font=("Times", "11"))
+        self.entry_polygon.grid(row=0, column=0, sticky=NW)
 
     def draw_polygon(self, polygons_points_list, polygons_lines_list):
         list_ids = []
@@ -194,5 +231,16 @@ class IncludeWindow:
 
         return False, None, None, None
 
-
+    def ConvertToList(self):
+        lista = list(self.entry_polygon.get())
+        coords = []
+        for i in range(len(lista)):
+            try:
+                coords.append(float(lista[i]))
+            except ValueError:
+                pass 
+        if len(coords) % 2 == 0 and len(coords) > 6:     
+            return coords
+        else:
+            self.erros['text'] = 'mensagem de erro'
 
