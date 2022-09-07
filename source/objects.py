@@ -21,6 +21,7 @@ class Object(ABC):
     def drawn(self, viewport):
         pass
 
+
 class Point(Object):
     def __init__(self, name, points): #points = (x1, y1)
         super().__init__()
@@ -31,34 +32,46 @@ class Point(Object):
         viewport_y1 = VIEWPORT_HEIGHT - self.points[1]
         self.id = viewport.create_oval(self.points[0], viewport_y1, self.points[0], viewport_y1, width=POINT_SIZE, fill="white")
 
+
 class Line(Object):
-    def __init__(self, name, points): #points=(x1, y1),(x2, y2)
+    def __init__(self, name, points): #points=[(x1, y1),(x2, y2)]
         super().__init__()
         self.name = name
         self.points = points
        
     def drawn(self, viewport):
-        viewport_y1 = VIEWPORT_HEIGHT - self.points[1]
-        viewport_y2 = VIEWPORT_HEIGHT - self.points[3]
-        self.id = viewport.create_line((self.points[0], viewport_y1), (self.points[2], viewport_y2), width=3, fill='white')
-        
+        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
+        viewport_y2 = VIEWPORT_HEIGHT - self.points[1][1]
+        self.id = viewport.create_line((self.points[0][0], viewport_y1), (self.points[1][0], viewport_y2), width=3, fill='white')
+
+
 class Wireframe(Object):  #This is a Polygon
-    def __init__(self, name, list_ids, *args):
+    def __init__(self, name, list_points, id=None, list_ids=[]):
         super().__init__()
         self.name = name
+        self.points = list_points
+        self.id = id
         self.list_ids = list_ids
-        for arg in args:
-            self.points.append(arg)
             
     def drawn(self, viewport):
-        for i in range(0, len(self.points), 2):
-            viewport_y1 = VIEWPORT_HEIGHT - self.points[i+1]
-            if i == len(self.points)-2:
-                viewport_y2 = VIEWPORT_HEIGHT - self.points[1]
-                viewport.create_line((self.points[i], viewport_y1), (self.points[0], viewport_y2), width=3, fill='white')
+        x_aux = None
+        viewport_aux_y = None
+
+        first_x = None
+        first_viewport_y = None
+
+        for i, point in enumerate(self.points):
+            x = point[0]
+            viewport_y = VIEWPORT_HEIGHT - point[1]
+
+            if i == 0 :
+                x_aux = first_x = point[0]
+                viewport_aux_y = first_viewport_y = VIEWPORT_HEIGHT - point[1]
             else:
-                viewport_y2 = VIEWPORT_HEIGHT - self.points[i+3]
-                if i == 0:
-                    self.id = viewport.create_line((self.points[i], viewport_y1), (self.points[i+2], viewport_y2), width=3, fill='white')
-                else:
-                    viewport.create_line((self.points[i], viewport_y1), (self.points[i+2], viewport_y2), width=3, fill='white')
+                id = viewport.create_line((x_aux, viewport_aux_y), (x, viewport_y), width=3, fill='white')
+                x_aux = x
+                viewport_aux_y = viewport_y
+                self.list_ids.append(id)
+
+        self.id = viewport.create_line((x_aux, viewport_aux_y), (first_x, first_viewport_y), width=3, fill='white')
+        self.list_ids.append(self.id)
