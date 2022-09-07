@@ -1,4 +1,8 @@
-class Object:
+from abc import ABC, abstractmethod
+from constants import VIEWPORT_HEIGHT, POINT_SIZE
+
+class Object(ABC):
+    @abstractmethod
     def __init__(self):
         self.id = None
         self.name = None
@@ -12,27 +16,39 @@ class Object:
 
     def getId(self):
         return self.id
+    
+    @abstractmethod
+    def drawn(self, viewport):
+        pass
 
 class Point(Object):
-    def __init__(self, name, id, point): #point = (x1, y1)
+    def __init__(self, name, points): #points = (x1, y1)
         super().__init__()
-        self.points.append(point)
+        self.points = points
         self.name = name
-        self.id = id
+        
+    def drawn(self, viewport):
+        viewport_y1 = VIEWPORT_HEIGHT - self.points[1]
+        self.id = viewport.create_oval(self.points[0], viewport_y1, self.points[0], viewport_y1, width=POINT_SIZE, fill="white")
 
 class Line(Object):
-    def __init__(self, id, name, point1, point2): #point1=(x1, y1), point2=(x2, y2)
+    def __init__(self, name, points): #points=(x1, y1),(x2, y2)
         super().__init__()
-        self.id = id
         self.name = name
-        self.points.append(point1)
-        self.points.append(point2)
+        self.points = points
+       
+    def drawn(self, viewport):
+        viewport_y1 = VIEWPORT_HEIGHT - self.points[1]
+        viewport_y2 = VIEWPORT_HEIGHT - self.points[3]
+        self.id = viewport.create_line((self.points[0], viewport_y1), (self.points[2], viewport_y2), width=3, fill='white')
         
 class Wireframe(Object):  #This is a Polygon
-    def __init__(self, id, name, list_ids, *args):
+    def __init__(self, name, list_ids, *args):
         super().__init__()
-        self.id = id
         self.name = name
         self.list_ids = list_ids
         for arg in args:
             self.points.append(arg)
+            
+    def drawn(self, viewport):
+        pass
