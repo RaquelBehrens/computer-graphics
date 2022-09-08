@@ -1,12 +1,14 @@
 from tkinter import *
 from tkinter import ttk
+from abc import ABC, abstractmethod
 from constants import INCLUDE_WINDOW_WIDTH, INCLUDE_WINDOW_HEIGHT, VIEWPORT_HEIGHT, VIEWPORT_WIDTH, POINT_SIZE
 from copy import copy
 from objects import *
 from tkinter import simpledialog
 
 
-class IncludeWindow:
+class IncludeWindow(ABC):
+    @abstractmethod
     def __init__(self, viewport, erros, display_file, table, modification):
         self.main_window = Tk()
         self.main_window.title("Incluir objeto")
@@ -17,6 +19,7 @@ class IncludeWindow:
         self.table = table
         self.modification = modification
 
+    @abstractmethod
     def create_object(self):
         pass
 
@@ -65,8 +68,12 @@ class IncludePoint(IncludeWindow):
             x1 = float(self.x1.get())
             y1 = float(self.y1.get())
             name = self.nome.get()
+            already_used = False
+            for objects in self.display_file:
+                if objects.name == name:
+                    already_used = True
 
-            if name != '':
+            if name != '' and not already_used:
                 objeto = Point(name, (x1, y1))
                 objeto.drawn(self.viewport)
 
@@ -81,12 +88,15 @@ class IncludePoint(IncludeWindow):
                 self.close_window()                
                 self.display_file.append(objeto)
                 self.include_object_in_table(objeto)
-                self.erros['text'] = 'objeto criado com sucesso'
+                self.erros['text'] = 'Objeto criado com sucesso'
             else:
-                self.erros['text'] = 'falta nome'
+                if name == '':
+                    self.erros['text'] = 'Digite um nome'
+                else:
+                    self.erros['text'] = 'Nome já utilizado'
 
         except ValueError:
-            self.erros['text'] = 'mensagem de erro'
+            self.erros['text'] = 'Entradas inválidas'
 
 
 class IncludeLine(IncludeWindow):
@@ -143,7 +153,11 @@ class IncludeLine(IncludeWindow):
             y2 = float(self.y2.get())
 
             name = self.nome.get()
-            if name != '':
+            already_used = False
+            for objects in self.display_file:
+                if objects.name == name:
+                    already_used = True
+            if name != '' and not already_used:
                 if x1 == x2 and y1 == y2:
                     objeto = Point(name, (x1, y1))
                 else:
@@ -163,17 +177,20 @@ class IncludeLine(IncludeWindow):
                 self.close_window()                
                 self.display_file.append(objeto)
                 self.include_object_in_table(objeto)
-                self.erros['text'] = 'objeto criado com sucesso'
+                self.erros['text'] = 'Objeto criado com sucesso'
 
                 formed_polygon, polygons_points_list, polygons_lines_list, copy_lines_list = self.verify_polygon(objeto, self.lines_list) 
                 if formed_polygon:
                     self.substitute_lines_for_polygon(polygons_points_list, polygons_lines_list)
                     self.lines_list = copy_lines_list
             else:
-                self.erros['text'] = 'falta nome'
+                if name == '':
+                    self.erros['text'] = 'Digite um nome'
+                else:
+                    self.erros['text'] = 'Nome já utilizado'
 
         except ValueError:
-            self.erros['text'] = 'mensagem de erro'
+            self.erros['text'] = 'Entradas inválidas'
 
     def substitute_lines_for_polygon(self, polygons_points_list, polygons_lines_list):
         list_ids = []
@@ -189,7 +206,8 @@ class IncludeLine(IncludeWindow):
 
         name = simpledialog.askstring(title="Polygon Name",
                                   prompt="Please, type the Polygon name:")
-        objeto = Wireframe(name, polygons_points_list, polygons_lines_list[0].getId(), list_ids)
+        objeto = Wireframe(name, polygons_points_list, polygons_lines_list[0].getId())
+        objeto.list_ids = list_ids
         self.include_object_in_table(objeto)
         self.display_file.append(objeto)
     
@@ -304,6 +322,15 @@ class IncludeTriangle(IncludeWindow):
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
         self.confirmar = Button(self.frame6, font=("Times", "11"), text='Confirmar', command=self.create_object)
         self.confirmar.grid(row=0, column=1, pady=15, padx=18)
+        
+    def verify_triangle(self, coordenate_1, coordenate_2, coordenate_3):
+        det_right = coordenate_1[0] * coordenate_2[1] + coordenate_3[0] * coordenate_1[1] + coordenate_2[0] * coordenate_3[1]
+        det_left = coordenate_3[0] * coordenate_2[1] + coordenate_2[0] * coordenate_1[1] + coordenate_1[0] * coordenate_3[1]
+        det_total = det_right - det_left
+        
+        if det_total != 0:
+            return True
+        return False
 
     def create_object(self):
         try:
@@ -315,31 +342,40 @@ class IncludeTriangle(IncludeWindow):
             y3 = float(self.y3.get())
 
             name = self.nome.get()
-            if name != '':
+            already_used = False
+            for objects in self.display_file:
+                if objects.name == name:
+                    already_used = True
+            if name != '' and not already_used:
                 if (x1 == x2 and y1 == y2) or (x1 == x3 and y1 == y3):
                     self.erros['text'] = 'Os pontos coincidem'
+                elif not self.verify_triangle((x1,y1),(x2,y2),(x3,y3)):
+                    self.erros['text'] = 'Não formam um triângulo'
                 else:
-                    
                     objeto = Wireframe(name, [(x1,y1), (x2,y2), (x3,y3)])
                     objeto.drawn(self.viewport)
 
-                    for element in self.modification:
-                        if element[0] == 'zoom':
-                            self.viewport.scale(objeto.id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, element[1], element[1])
-                        elif element[0] == 'move_hor':
-                            self.viewport.move(objeto.id, 0, element[1])
-                        else:
-                            self.viewport.move(objeto.id, element[1], 0)
+                    for id in objeto.list_ids:
+                        for element in self.modification:
+                            if element[0] == 'zoom':
+                                self.viewport.scale(id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, element[1], element[1])
+                            elif element[0] == 'move_hor':
+                                self.viewport.move(id, 0, element[1])
+                            else:
+                                self.viewport.move(id, element[1], 0)
                     
                     self.close_window()                
                     self.display_file.append(objeto)
                     self.include_object_in_table(objeto)
-                    self.erros['text'] = 'objeto criado com sucesso'
+                    self.erros['text'] = 'Objeto criado com sucesso'
             else:
-                self.erros['text'] = 'falta nome'
+                if name == '':
+                    self.erros['text'] = 'Digite um nome'
+                else:
+                    self.erros['text'] = 'Nome já utilizado'
 
         except ValueError:
-            self.erros['text'] = 'mensagem de erro'
+            self.erros['text'] = 'Entradas inválidas'
 
 
 class IncludeQuadrilateral(IncludeWindow):
@@ -409,6 +445,19 @@ class IncludeQuadrilateral(IncludeWindow):
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
         self.confirmar = Button(self.frame7, font=("Times", "11"), text='Confirmar', command=self.create_object)
         self.confirmar.grid(row=0, column=1, pady=15, padx=18)
+        
+    def verify_quadrilateral(self, coordenate_1, coordenate_2, coordenate_3, coordenate_4):
+        det_right_1 = coordenate_1[0] * coordenate_2[1] + coordenate_3[0] * coordenate_1[1] + coordenate_2[0] * coordenate_3[1]
+        det_left_1 = coordenate_3[0] * coordenate_2[1] + coordenate_2[0] * coordenate_1[1] + coordenate_1[0] * coordenate_3[1]
+        det_total_1 = det_right_1 - det_left_1
+
+        det_right_2 = coordenate_1[0] * coordenate_3[1] + coordenate_4[0] * coordenate_1[1] + coordenate_3[0] * coordenate_4[1]
+        det_left_2 = coordenate_4[0] * coordenate_3[1] + coordenate_3[0] * coordenate_1[1] + coordenate_1[0] * coordenate_4[1]
+        det_total_2 = det_right_2 - det_left_2
+
+        if det_total_1 != 0 and det_total_2 != 0:
+            return True
+        return False
 
     def create_object(self):
         try:
@@ -422,30 +471,40 @@ class IncludeQuadrilateral(IncludeWindow):
             y4 = float(self.y4.get())
 
             name = self.nome.get()
-            if name != '':
+            already_used = False
+            for objects in self.display_file:
+                if objects.name == name:
+                    already_used = True
+            if name != '' and not already_used:
                 if (x1 == x2 and y1 == y2) or (x1 == x3 and y1 == y3) or (x1 == x4 and y1 == y4) or (x2 == x4 and y2 == y4) or (x3 == x4 and y3 == y4) or (x2 == x3 and y2 == y3):
                     self.erros['text'] = 'Os pontos coincidem'
+                elif not self.verify_quadrilateral((x1,y1),(x2,y2),(x3,y3),(x4,y4)):
+                    self.erros['text'] = 'Não formam um quadrilátero'
                 else:
                     objeto = Wireframe(name, [(x1,y1), (x2,y2), (x3,y3), (x4,y4)])
                     objeto.drawn(self.viewport)
 
-                    for element in self.modification:
-                        if element[0] == 'zoom':
-                            self.viewport.scale(objeto.id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, element[1], element[1])
-                        elif element[0] == 'move_hor':
-                            self.viewport.move(objeto.id, 0, element[1])
-                        else:
-                            self.viewport.move(objeto.id, element[1], 0)
+                    for id in objeto.list_ids:
+                        for element in self.modification:
+                            if element[0] == 'zoom':
+                                self.viewport.scale(id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, element[1], element[1])
+                            elif element[0] == 'move_hor':
+                                self.viewport.move(id, 0, element[1])
+                            else:
+                                self.viewport.move(id, element[1], 0)
                     
                     self.close_window()                
                     self.display_file.append(objeto)
                     self.include_object_in_table(objeto)
-                    self.erros['text'] = 'objeto criado com sucesso'
+                    self.erros['text'] = 'Objeto criado com sucesso'
             else:
-                self.erros['text'] = 'falta nome'
+                if name == '':
+                    self.erros['text'] = 'Digite um nome'
+                else:
+                    self.erros['text'] = 'Nome já utilizado'
 
         except ValueError:
-            self.erros['text'] = 'mensagem de erro'
+            self.erros['text'] = 'Entradas inválidas'
 
 
 class IncludePolygon(IncludeWindow):
@@ -481,33 +540,56 @@ class IncludePolygon(IncludeWindow):
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
         self.confirmar = Button(self.frame4, font=("Times", "11"), text='Confirmar', command=self.create_object)
         self.confirmar.grid(row=0, column=1, pady=15, padx=18)
+        
+    def verify_polygon(self, coordinates):
+        det_right = 0
+        det_left = 0
+        for i in range(len(coordinates)):
+            det_right += coordinates[i][0] * coordinates[(i+1) % (len(coordinates))][1]
+            det_left += coordinates[i][1] * coordinates[(i+1) % (len(coordinates))][0]
+        det_total = det_right - det_left
+
+        if det_total != 0:
+            return True
+        return False
 
     def create_object(self):
         try:
             coordinates = self.convert_to_list(self.entry_polygon.get())
             name = self.nome.get()
+            already_used = False
+            for objects in self.display_file:
+                if objects.name == name:
+                    already_used = True
 
-            if name != '':
-                objeto = Wireframe(name, coordinates)
-                objeto.drawn(self.viewport)
+            if name != '' and not already_used:
+                if not self.verify_polygon(coordinates):
+                    self.erros['text'] = 'Não formam um polígono'
+                else:
+                    objeto = Wireframe(name, coordinates)
+                    objeto.drawn(self.viewport)
 
-                for element in self.modification:
-                    if element[0] == 'zoom':
-                        self.viewport.scale(objeto.id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, element[1], element[1])
-                    elif element[0] == 'move_hor':
-                        self.viewport.move(objeto.id, 0, element[1])
-                    else:
-                        self.viewport.move(objeto.id, element[1], 0)
-                
-                self.close_window()                
-                self.display_file.append(objeto)
-                self.include_object_in_table(objeto)
-                self.erros['text'] = 'objeto criado com sucesso'
+                    for id in objeto.list_ids:
+                        for element in self.modification:
+                            if element[0] == 'zoom':
+                                self.viewport.scale(id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, element[1], element[1])
+                            elif element[0] == 'move_hor':
+                                self.viewport.move(id, 0, element[1])
+                            else:
+                                self.viewport.move(id, element[1], 0)
+
+                    self.close_window()                
+                    self.display_file.append(objeto)
+                    self.include_object_in_table(objeto)
+                    self.erros['text'] = 'Objeto criado com sucesso'
             else:
-                self.erros['text'] = 'falta nome'
+                if name == '':
+                    self.erros['text'] = 'Digite um nome'
+                else:
+                    self.erros['text'] = 'Nome já utilizado'
 
         except ValueError:
-            self.erros['text'] = 'mensagem de erro'
+            self.erros['text'] = 'Entradas inválidas'
 
     def convert_to_list(self, coordinates):
         lista = coordinates
@@ -531,4 +613,4 @@ class IncludePolygon(IncludeWindow):
                 coords.append((aux_coords[i], aux_coords[i+1]))
             return coords
         else:
-            self.erros['text'] = 'mensagem de erro'
+            self.erros['text'] = 'Entradas inválidas'
