@@ -121,20 +121,24 @@ class Window(Frame):
             self.delete_object_from_system(item)
 
     def delete_object_from_system(self, selected_item):
-        selected_item_id = self.table.item(selected_item).get('values')[2]
+        try:
+            selected_item_id = self.table.item(selected_item).get('values')[2]
 
-        for object in self.display_file:
-            if object.getId() == selected_item_id:
-                self.delete_object_from_table(selected_item)
-                self.display_file.remove(object)
-                if isinstance(object, Line):
-                    self.lines_list.remove(object)
-                    self.viewport.delete(selected_item_id)
-                elif isinstance(object, Wireframe):
-                    for id in object.list_ids:
-                        self.viewport.delete(id)
-                else:
-                    self.viewport.delete(selected_item_id)
+            for object in self.display_file:
+                if object.getId() == selected_item_id:
+                    self.delete_object_from_table(selected_item)
+                    self.display_file.remove(object)
+                    if isinstance(object, Line):
+                        self.lines_list.remove(object)
+                        self.viewport.delete(selected_item_id)
+                    elif isinstance(object, Wireframe):
+                        for id in object.list_ids:
+                            self.viewport.delete(id)
+                    else:
+                        self.viewport.delete(selected_item_id)
+            self.erros['text'] = 'Objeto removido com sucesso'
+        except IndexError:
+            self.erros['text'] = 'Selecione um item para remover'
 
     def delete_object_from_table(self, id):
         self.table.delete(id)     
