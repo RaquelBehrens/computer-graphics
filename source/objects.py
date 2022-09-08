@@ -46,12 +46,12 @@ class Line(Object):
 
 
 class Wireframe(Object):  #This is a Polygon
-    def __init__(self, name, list_points, id=None, list_ids=[]):
+    def __init__(self, name, list_points, id=None):
         super().__init__()
         self.name = name
         self.points = list_points
         self.id = id
-        self.list_ids = list_ids
+        self.list_ids = []
             
     def drawn(self, viewport):
         x_aux = None
