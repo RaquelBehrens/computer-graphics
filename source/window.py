@@ -42,7 +42,7 @@ class Window(Frame):
         self.up = Button(self.frame1, text='Cima', font=('Time', '11'), command=self.move_up)
         self.up.grid(row=4, column=0, sticky=NW, padx=70)
         self.left = Button(self.frame1, text='Esquerda', font=('Time', '11'), command=self.move_left)
-        self.left.grid(row=5, column=0, sticky=NW, padx=20, pady=3)
+        self.left.grid(row=5, column=0, sticky=NW, padx=5, pady=3)
         self.right = Button(self.frame1, text='Direita', font=('Time', '11'), command=self.move_right)
         self.right.grid(row=5, column=0, columnspan=5, padx=100, pady=3)
         self.down = Button(self.frame1, text='Baixo', font=('Time', '11'), command=self.move_down)
@@ -50,7 +50,7 @@ class Window(Frame):
 
         Label(self.frame1, text='Zoom: ', font=('Time', '13')).grid(row=7, column=0, sticky=NW, pady=10)
         self.more_zoom = Button(self.frame1, text='  +  ', font=('Time', '11'), command=self.zoom_in)
-        self.more_zoom.grid(row=8, column=0, sticky=NW, padx=40, pady=0)
+        self.more_zoom.grid(row=8, column=0, sticky=NW, padx=30, pady=0)
         self.less_zoom = Button(self.frame1, text='  -  ', font=('Time', '11'), command=self.zoom_out)
         self.less_zoom.grid(row=8, column=0, columnspan=2, pady=0)
 
