@@ -7,7 +7,6 @@ class Object(ABC):
         self.id = None
         self.name = None
         self.points = []
-        self.border_color = None
 
     def getPoints(self):
         return self.points
@@ -24,38 +23,38 @@ class Object(ABC):
 
 
 class Point(Object):
-    def __init__(self, name, points, border_color): #points = (x1, y1)
+    def __init__(self, name, points, color): #points = (x1, y1)
         super().__init__()
         self.points = points
         self.name = name
-        self.border_color = border_color
+        self.color = color
         
     def drawn(self, viewport):
         viewport_y1 = VIEWPORT_HEIGHT - self.points[1]
-        self.id = viewport.create_oval(self.points[0], viewport_y1, self.points[0], viewport_y1, width=POINT_SIZE, fill=self.border_color)
+        self.id = viewport.create_oval(self.points[0], viewport_y1, self.points[0], viewport_y1, width=POINT_SIZE, fill=self.color)
 
 
 class Line(Object):
-    def __init__(self, name, points, border_color): #points=[(x1, y1),(x2, y2)]
+    def __init__(self, name, points, color): #points=[(x1, y1),(x2, y2)]
         super().__init__()
         self.name = name
         self.points = points
-        self.border_color = border_color
+        self.color = color
        
     def drawn(self, viewport):
         viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
         viewport_y2 = VIEWPORT_HEIGHT - self.points[1][1]
-        self.id = viewport.create_line((self.points[0][0], viewport_y1), (self.points[1][0], viewport_y2), width=3, fill=self.border_color)
+        self.id = viewport.create_line((self.points[0][0], viewport_y1), (self.points[1][0], viewport_y2), width=3, fill=self.color)
 
 
 class Wireframe(Object):  #This is a Polygon
-    def __init__(self, name, list_points, border_color, id=None):
+    def __init__(self, name, list_points, color, id=None):
         super().__init__()
         self.name = name
         self.points = list_points
         self.id = id
         self.list_ids = []
-        self.border_color = border_color
+        self.color = color
             
     def drawn(self, viewport):
         x_aux = None
@@ -72,10 +71,10 @@ class Wireframe(Object):  #This is a Polygon
                 x_aux = first_x = point[0]
                 viewport_aux_y = first_viewport_y = VIEWPORT_HEIGHT - point[1]
             else:
-                id = viewport.create_line((x_aux, viewport_aux_y), (x, viewport_y), width=3, fill=self.border_color)
+                id = viewport.create_line((x_aux, viewport_aux_y), (x, viewport_y), width=3, fill=self.color)
                 x_aux = x
                 viewport_aux_y = viewport_y
                 self.list_ids.append(id)
 
-        self.id = viewport.create_line((x_aux, viewport_aux_y), (first_x, first_viewport_y), width=3, fill=self.border_color)
+        self.id = viewport.create_line((x_aux, viewport_aux_y), (first_x, first_viewport_y), width=3, fill=self.color)
         self.list_ids.append(self.id)

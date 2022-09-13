@@ -212,19 +212,21 @@ class IncludeLine(IncludeWindow):
             self.erros['text'] = 'Entradas inválidas'
 
     def substitute_lines_for_polygon(self, polygons_points_list, polygons_lines_list):
+        name = simpledialog.askstring(title="Polygon Name", prompt="Por favor, digite o nome do novo polígono:")
+        self.choose_color()
+
         list_ids = []
         for line in polygons_lines_list:
             list_ids.append(line.getId())
             self.display_file.remove(line)
             self.lines_list.remove(line)
+            self.viewport.itemconfig(line.getId(), fill=self.color)
 
         for item in self.table.get_children():
             item_id = self.table.item(item).get('values')[2]
             if item_id in list_ids:
                 self.table.delete(item)
 
-        name = simpledialog.askstring(title="Polygon Name",
-                                  prompt="Please, type the Polygon name:")
         objeto = Wireframe(name, polygons_points_list, self.color, polygons_lines_list[0].getId())
         objeto.list_ids = list_ids
         self.include_object_in_table(objeto)
