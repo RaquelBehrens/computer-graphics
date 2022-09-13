@@ -3,6 +3,7 @@ from tkinter import ttk
 from constants import WINDOW_HEIGHT, WINDOW_WIDTH, APPLICATION_NAME, VIEWPORT_WIDTH, VIEWPORT_HEIGHT
 from include_object import IncludePoint, IncludeLine, IncludeTriangle, IncludeQuadrilateral, IncludePolygon
 from objects import Line, Wireframe
+from transformation import Transformation
 
 
 class Window(Frame):
@@ -71,15 +72,18 @@ class Window(Frame):
         self.delete.grid(row=3, column=0, sticky=NW, padx=0, pady=5)
         self.delete = Button(self, text='Deletar Tudo', font=('Time', '11'), command=self.delete_all_objects)
         self.delete.grid(row=3, column=1, sticky=NW, padx=0, pady=5)
+        
+        self.transformation = Button(self, text='Transformações', font=('Time', '11'), command=self.transform_object)
+        self.transformation.grid(row=4, column=0, sticky=NW, padx=0, pady=5)
 
         # scroll bar for the terminal outputs
         self.terminal_scrollbar = Scrollbar(self, orient=VERTICAL)
-        self.terminal_scrollbar.grid(row=4, column=3, sticky=NS)
+        self.terminal_scrollbar.grid(row=5, column=3, sticky=NS)
 
     def create_table(self):
         # terminal outputs
         self.table = ttk.Treeview(self)
-        self.table.grid(row=4, column=0, columnspan=2, sticky=EW)
+        self.table.grid(row=5, column=0, columnspan=2, sticky=EW, padx=5)
         self.table.configure(yscrollcommand=self.terminal_scrollbar.set)
         self.table["columns"] = ("1", "2", "3")
         self.table['show'] = 'headings'
@@ -111,8 +115,11 @@ class Window(Frame):
         IncludePolygon(self.viewport, self.erros, self.display_file, self.table, self.modification)
 
     def delete_object(self):
-        selected_item = self.table.selection()[0]
-        self.delete_object_from_system(selected_item)
+        try:
+            selected_item = self.table.selection()[0]
+            self.delete_object_from_system(selected_item)
+        except IndexError:
+            self.erros['text'] = 'Selecione um item para remover'
 
     def delete_all_objects(self):
         all_items = self.table.get_children()
@@ -141,7 +148,15 @@ class Window(Frame):
             self.erros['text'] = 'Selecione um item para remover'
 
     def delete_object_from_table(self, id):
-        self.table.delete(id)     
+        self.table.delete(id)
+        
+    def transform_object(self):
+        try:
+            selected_item = self.table.selection()[0]
+            # selected_item_id = self.table.item(selected_item).get('values')[2]
+            Transformation()
+        except IndexError:
+            self.erros['text'] = 'Selecione um item para transformar'
 
     def zoom_in(self):
         self.modification.append(('zoom', 1.1))
