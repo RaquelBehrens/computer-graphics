@@ -86,8 +86,8 @@ class IncludePoint(IncludeWindow):
                     already_used = True
 
             if name != '' and not already_used:
-                objeto = Point(name, (x1, y1))
-                objeto.drawn(self.viewport, self.color)
+                objeto = Point(name, (x1, y1), self.color)
+                objeto.drawn(self.viewport)
 
                 for element in self.modification:
                     if element[0] == 'zoom':
@@ -178,12 +178,12 @@ class IncludeLine(IncludeWindow):
                     already_used = True
             if name != '' and not already_used:
                 if x1 == x2 and y1 == y2:
-                    objeto = Point(name, (x1, y1))
+                    objeto = Point(name, (x1, y1), self.color)
                 else:
-                    objeto = Line(name, [(x1, y1), (x2, y2)])
+                    objeto = Line(name, [(x1, y1), (x2, y2)], self.color)
                     self.lines_list.append(objeto)
 
-                objeto.drawn(self.viewport, self.color)
+                objeto.drawn(self.viewport)
 
                 for element in self.modification:
                     if element[0] == 'zoom':
@@ -225,7 +225,7 @@ class IncludeLine(IncludeWindow):
 
         name = simpledialog.askstring(title="Polygon Name",
                                   prompt="Please, type the Polygon name:")
-        objeto = Wireframe(name, polygons_points_list, polygons_lines_list[0].getId())
+        objeto = Wireframe(name, polygons_points_list, self.color, polygons_lines_list[0].getId())
         objeto.list_ids = list_ids
         self.include_object_in_table(objeto)
         self.display_file.append(objeto)
@@ -378,8 +378,8 @@ class IncludeTriangle(IncludeWindow):
                 elif not self.verify_triangle((x1,y1),(x2,y2),(x3,y3)):
                     self.erros['text'] = 'Não formam um triângulo'
                 else:
-                    objeto = Wireframe(name, [(x1,y1), (x2,y2), (x3,y3)])
-                    objeto.drawn(self.viewport, self.color)
+                    objeto = Wireframe(name, [(x1,y1), (x2,y2), (x3,y3)], self.color)
+                    objeto.drawn(self.viewport)
 
                     for id in objeto.list_ids:
                         for element in self.modification:
@@ -434,8 +434,8 @@ class IncludeQuadrilateral(IncludeWindow):
         Label(self.frame0, text='Instruções:', font=("Times", "11"), height=0).grid(row=0, column=0, sticky=NW)
         Label(self.frame0, text='(x1, y1) = canto superior esquerdo;', font=("Times", "11"), height=0).grid(row=1, column=0, sticky=NW)
         Label(self.frame0, text='(x2, y2) = canto superior direito;', font=("Times", "11"), height=0).grid(row=2, column=0, sticky=NW)
-        Label(self.frame0, text='(x3, y3) = canto inferior esquerdo;', font=("Times", "11"), height=0).grid(row=3, column=0, sticky=NW)
-        Label(self.frame0, text='(x4, y4) = canto inferior direito.', font=("Times", "11"), height=0).grid(row=4, column=0, sticky=NW)
+        Label(self.frame0, text='(x3, y3) = canto inferior direito;', font=("Times", "11"), height=0).grid(row=3, column=0, sticky=NW)
+        Label(self.frame0, text='(x4, y4) = canto inferior esquerdo.', font=("Times", "11"), height=0).grid(row=4, column=0, sticky=NW)
 
         Label(self.frame1, text='Nome: ', font=("Times", "11"), height=2).grid(row=0, column=0, sticky=NW)
         self.nome = Entry(self.frame1, width=30, font=("Times", "11"))
@@ -514,8 +514,8 @@ class IncludeQuadrilateral(IncludeWindow):
                 elif not self.verify_quadrilateral((x1,y1),(x2,y2),(x3,y3),(x4,y4)):
                     self.erros['text'] = 'Não formam um quadrilátero'
                 else:
-                    objeto = Wireframe(name, [(x1,y1), (x2,y2), (x3,y3), (x4,y4)])
-                    objeto.drawn(self.viewport, self.color)
+                    objeto = Wireframe(name, [(x1,y1), (x2,y2), (x3,y3), (x4,y4)], self.color)
+                    objeto.drawn(self.viewport)
 
                     for id in objeto.list_ids:
                         for element in self.modification:
@@ -604,8 +604,8 @@ class IncludePolygon(IncludeWindow):
                 if not self.verify_polygon(coordinates):
                     self.erros['text'] = 'Não formam um polígono'
                 else:
-                    objeto = Wireframe(name, coordinates)
-                    objeto.drawn(self.viewport, self.color)
+                    objeto = Wireframe(name, coordinates, self.color)
+                    objeto.drawn(self.viewport)
 
                     for id in objeto.list_ids:
                         for element in self.modification:
