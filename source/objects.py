@@ -18,7 +18,7 @@ class Object(ABC):
         return self.id
     
     @abstractmethod
-    def drawn(self, viewport):
+    def drawn(self, viewport, color):
         pass
 
 
@@ -28,9 +28,9 @@ class Point(Object):
         self.points = points
         self.name = name
         
-    def drawn(self, viewport):
+    def drawn(self, viewport, color):
         viewport_y1 = VIEWPORT_HEIGHT - self.points[1]
-        self.id = viewport.create_oval(self.points[0], viewport_y1, self.points[0], viewport_y1, width=POINT_SIZE, fill="white")
+        self.id = viewport.create_oval(self.points[0], viewport_y1, self.points[0], viewport_y1, width=POINT_SIZE, fill=color)
 
 
 class Line(Object):
@@ -39,10 +39,10 @@ class Line(Object):
         self.name = name
         self.points = points
        
-    def drawn(self, viewport):
+    def drawn(self, viewport, color):
         viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
         viewport_y2 = VIEWPORT_HEIGHT - self.points[1][1]
-        self.id = viewport.create_line((self.points[0][0], viewport_y1), (self.points[1][0], viewport_y2), width=3, fill='white')
+        self.id = viewport.create_line((self.points[0][0], viewport_y1), (self.points[1][0], viewport_y2), width=3, fill=color)
 
 
 class Wireframe(Object):  #This is a Polygon
@@ -53,7 +53,7 @@ class Wireframe(Object):  #This is a Polygon
         self.id = id
         self.list_ids = []
             
-    def drawn(self, viewport):
+    def drawn(self, viewport, color):
         x_aux = None
         viewport_aux_y = None
 
@@ -68,10 +68,10 @@ class Wireframe(Object):  #This is a Polygon
                 x_aux = first_x = point[0]
                 viewport_aux_y = first_viewport_y = VIEWPORT_HEIGHT - point[1]
             else:
-                id = viewport.create_line((x_aux, viewport_aux_y), (x, viewport_y), width=3, fill='white')
+                id = viewport.create_line((x_aux, viewport_aux_y), (x, viewport_y), width=3, fill=color)
                 x_aux = x
                 viewport_aux_y = viewport_y
                 self.list_ids.append(id)
 
-        self.id = viewport.create_line((x_aux, viewport_aux_y), (first_x, first_viewport_y), width=3, fill='white')
+        self.id = viewport.create_line((x_aux, viewport_aux_y), (first_x, first_viewport_y), width=3, fill=color)
         self.list_ids.append(self.id)

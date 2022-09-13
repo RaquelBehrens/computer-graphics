@@ -4,6 +4,7 @@ from constants import INCLUDE_WINDOW_WIDTH, INCLUDE_WINDOW_HEIGHT, VIEWPORT_HEIG
 from copy import copy
 from objects import *
 from tkinter import simpledialog
+from tkinter import colorchooser
 
 
 class IncludeWindow(ABC):
@@ -17,6 +18,7 @@ class IncludeWindow(ABC):
         self.display_file = display_file
         self.table = table
         self.modification = modification
+        self.color = "#FFFFFF"
 
     @abstractmethod
     def create_object(self):
@@ -27,6 +29,10 @@ class IncludeWindow(ABC):
 
     def close_window(self):
         self.main_window.destroy()
+
+    def choose_color(self):
+        color_code = colorchooser.askcolor(title ="Escolha a cor")
+        self.color = color_code[1]
 
 
 class IncludePoint(IncludeWindow):
@@ -62,16 +68,7 @@ class IncludePoint(IncludeWindow):
         self.y1.grid(row=0, column=3, sticky=NW)
 
         Label(self.frame4, text='Defina uma cor', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
-
-        Label(self.frame5, text='Red: ', font=("Times", "11")).grid(row=0, column=0, sticky=NW)
-        self.red = Entry(self.frame5, width=3, font=("Times", "11"))
-        self.red.grid(row=0, column=1)
-        Label(self.frame5, text=' Green: ', font=("Times", "11")).grid(row=0, column=2, sticky=NW)
-        self.green = Entry(self.frame5, width=3, font=("Times", "11"))
-        self.green.grid(row=0, column=3)
-        Label(self.frame5, text=' Blue: ', font=("Times", "11")).grid(row=0, column=4, sticky=NW)
-        self.blue = Entry(self.frame5, width=3, font=("Times", "11"))
-        self.blue.grid(row=0, column=5)
+        Button(self.frame5, text='Escolher cor', font=('Times', '11'), command=self.choose_color).grid(row=0, column=3, padx=10)
 
         self.cancelar = Button(self.frame6, font=("Times", "11"), text='Cancelar', command=self.close_window)
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
@@ -90,7 +87,7 @@ class IncludePoint(IncludeWindow):
 
             if name != '' and not already_used:
                 objeto = Point(name, (x1, y1))
-                objeto.drawn(self.viewport)
+                objeto.drawn(self.viewport, self.color)
 
                 for element in self.modification:
                     if element[0] == 'zoom':
@@ -160,16 +157,7 @@ class IncludeLine(IncludeWindow):
         self.y2.grid(row=0, column=3, sticky=NW)
 
         Label(self.frame6, text='Defina uma cor', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
-
-        Label(self.frame7, text='Red: ', font=("Times", "11")).grid(row=0, column=0, sticky=NW)
-        self.red = Entry(self.frame7, width=3, font=("Times", "11"))
-        self.red.grid(row=0, column=1)
-        Label(self.frame7, text=' Green: ', font=("Times", "11")).grid(row=0, column=2, sticky=NW)
-        self.green = Entry(self.frame7, width=3, font=("Times", "11"))
-        self.green.grid(row=0, column=3)
-        Label(self.frame7, text=' Blue: ', font=("Times", "11")).grid(row=0, column=4, sticky=NW)
-        self.blue = Entry(self.frame7, width=3, font=("Times", "11"))
-        self.blue.grid(row=0, column=5)
+        Button(self.frame7, text='Escolher cor', font=('Times', '11'), command=self.choose_color).grid(row=0, column=3, padx=10)
 
         self.cancelar = Button(self.frame8, font=("Times", "11"), text='Cancelar', command=self.close_window)
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
@@ -195,7 +183,7 @@ class IncludeLine(IncludeWindow):
                     objeto = Line(name, [(x1, y1), (x2, y2)])
                     self.lines_list.append(objeto)
 
-                objeto.drawn(self.viewport)
+                objeto.drawn(self.viewport, self.color)
 
                 for element in self.modification:
                     if element[0] == 'zoom':
@@ -353,17 +341,8 @@ class IncludeTriangle(IncludeWindow):
         self.y3 = Entry(self.frame5, width=3, font=("Times", "11"))
         self.y3.grid(row=0, column=3, sticky=NW)
 
-        Label(self.frame6, text='Defina uma cor', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
-
-        Label(self.frame7, text='Red: ', font=("Times", "11")).grid(row=0, column=0, sticky=NW)
-        self.red = Entry(self.frame7, width=3, font=("Times", "11"))
-        self.red.grid(row=0, column=1)
-        Label(self.frame7, text=' Green: ', font=("Times", "11")).grid(row=0, column=2, sticky=NW)
-        self.green = Entry(self.frame7, width=3, font=("Times", "11"))
-        self.green.grid(row=0, column=3)
-        Label(self.frame7, text=' Blue: ', font=("Times", "11")).grid(row=0, column=4, sticky=NW)
-        self.blue = Entry(self.frame7, width=3, font=("Times", "11"))
-        self.blue.grid(row=0, column=5)
+        Label(self.frame6, text='Defina a cor da borda', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
+        Button(self.frame7, text='Escolher cor', font=('Times', '11'), command=self.choose_color).grid(row=0, column=3, padx=10)
 
         self.cancelar = Button(self.frame8, font=("Times", "11"), text='Cancelar', command=self.close_window)
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
@@ -400,7 +379,7 @@ class IncludeTriangle(IncludeWindow):
                     self.erros['text'] = 'Não formam um triângulo'
                 else:
                     objeto = Wireframe(name, [(x1,y1), (x2,y2), (x3,y3)])
-                    objeto.drawn(self.viewport)
+                    objeto.drawn(self.viewport, self.color)
 
                     for id in objeto.list_ids:
                         for element in self.modification:
@@ -492,17 +471,8 @@ class IncludeQuadrilateral(IncludeWindow):
         self.y4 = Entry(self.frame6, width=3, font=("Times", "11"))
         self.y4.grid(row=0, column=3, sticky=NW)
 
-        Label(self.frame7, text='Defina uma cor', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
-
-        Label(self.frame8, text='Red: ', font=("Times", "11")).grid(row=0, column=0, sticky=NW)
-        self.red = Entry(self.frame8, width=3, font=("Times", "11"))
-        self.red.grid(row=0, column=1)
-        Label(self.frame8, text=' Green: ', font=("Times", "11")).grid(row=0, column=2, sticky=NW)
-        self.green = Entry(self.frame8, width=3, font=("Times", "11"))
-        self.green.grid(row=0, column=3)
-        Label(self.frame8, text=' Blue: ', font=("Times", "11")).grid(row=0, column=4, sticky=NW)
-        self.blue = Entry(self.frame8, width=3, font=("Times", "11"))
-        self.blue.grid(row=0, column=5)
+        Label(self.frame7, text='Defina a cor da borda', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
+        Button(self.frame8, text='Escolher cor', font=('Times', '11'), command=self.choose_color).grid(row=0, column=3, padx=10)
 
         self.cancelar = Button(self.frame9, font=("Times", "11"), text='Cancelar', command=self.close_window)
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
@@ -545,7 +515,7 @@ class IncludeQuadrilateral(IncludeWindow):
                     self.erros['text'] = 'Não formam um quadrilátero'
                 else:
                     objeto = Wireframe(name, [(x1,y1), (x2,y2), (x3,y3), (x4,y4)])
-                    objeto.drawn(self.viewport)
+                    objeto.drawn(self.viewport, self.color)
 
                     for id in objeto.list_ids:
                         for element in self.modification:
@@ -601,17 +571,8 @@ class IncludePolygon(IncludeWindow):
         self.entry_polygon.grid(row=0, column=1, sticky=NW)
         Label(self.frame2, text='(x1,y1), (x2,y2), ..., (xn,yn)', font=("Times", "11")).grid(row=1, column=1)
 
-        Label(self.frame3, text='Defina uma cor', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
-
-        Label(self.frame4, text='Red: ', font=("Times", "11")).grid(row=0, column=0, sticky=NW)
-        self.red = Entry(self.frame4, width=3, font=("Times", "11"))
-        self.red.grid(row=0, column=1)
-        Label(self.frame4, text=' Green: ', font=("Times", "11")).grid(row=0, column=2, sticky=NW)
-        self.green = Entry(self.frame4, width=3, font=("Times", "11"))
-        self.green.grid(row=0, column=3)
-        Label(self.frame4, text=' Blue: ', font=("Times", "11")).grid(row=0, column=4, sticky=NW)
-        self.blue = Entry(self.frame4, width=3, font=("Times", "11"))
-        self.blue.grid(row=0, column=5)
+        Label(self.frame3, text='Defina a cor da borda', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
+        Button(self.frame4, text='Escolher cor', font=('Times', '11'), command=self.choose_color).grid(row=0, column=3, padx=10)
 
         self.cancelar = Button(self.frame5, font=("Times", "11"), text='Cancelar', command=self.close_window)
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
@@ -644,7 +605,7 @@ class IncludePolygon(IncludeWindow):
                     self.erros['text'] = 'Não formam um polígono'
                 else:
                     objeto = Wireframe(name, coordinates)
-                    objeto.drawn(self.viewport)
+                    objeto.drawn(self.viewport, self.color)
 
                     for id in objeto.list_ids:
                         for element in self.modification:
