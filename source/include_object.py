@@ -1,5 +1,4 @@
 from tkinter import *
-from tkinter import ttk
 from abc import ABC, abstractmethod
 from constants import INCLUDE_WINDOW_WIDTH, INCLUDE_WINDOW_HEIGHT, VIEWPORT_HEIGHT, VIEWPORT_WIDTH, POINT_SIZE
 from copy import copy
@@ -10,7 +9,7 @@ from tkinter import simpledialog
 class IncludeWindow(ABC):
     @abstractmethod
     def __init__(self, viewport, erros, display_file, table, modification):
-        self.main_window = Tk()
+        self.main_window = Toplevel()
         self.main_window.title("Incluir objeto")
         self.main_window.geometry(f"{INCLUDE_WINDOW_WIDTH}x{INCLUDE_WINDOW_HEIGHT}")
         self.viewport = viewport
@@ -44,6 +43,10 @@ class IncludePoint(IncludeWindow):
         self.frame3.grid()
         self.frame4 = Frame(self.main_window)
         self.frame4.grid()
+        self.frame5 = Frame(self.main_window)
+        self.frame5.grid()
+        self.frame6 = Frame(self.main_window)
+        self.frame6.grid()
 
         Label(self.frame1, text='Nome: ', font=("Times", "11"), height=2).grid(row=0, column=0, sticky=NW)
         self.nome = Entry(self.frame1, width=30, font=("Times", "11"))
@@ -58,9 +61,21 @@ class IncludePoint(IncludeWindow):
         self.y1 = Entry(self.frame3, width=3, font=("Times", "11"))
         self.y1.grid(row=0, column=3, sticky=NW)
 
-        self.cancelar = Button(self.frame4, font=("Times", "11"), text='Cancelar', command=self.close_window)
+        Label(self.frame4, text='Defina uma cor', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
+
+        Label(self.frame5, text='Red: ', font=("Times", "11")).grid(row=0, column=0, sticky=NW)
+        self.red = Entry(self.frame5, width=3, font=("Times", "11"))
+        self.red.grid(row=0, column=1)
+        Label(self.frame5, text=' Green: ', font=("Times", "11")).grid(row=0, column=2, sticky=NW)
+        self.green = Entry(self.frame5, width=3, font=("Times", "11"))
+        self.green.grid(row=0, column=3)
+        Label(self.frame5, text=' Blue: ', font=("Times", "11")).grid(row=0, column=4, sticky=NW)
+        self.blue = Entry(self.frame5, width=3, font=("Times", "11"))
+        self.blue.grid(row=0, column=5)
+
+        self.cancelar = Button(self.frame6, font=("Times", "11"), text='Cancelar', command=self.close_window)
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
-        self.confirmar = Button(self.frame4, font=("Times", "11"), text='Confirmar', command=self.create_object)
+        self.confirmar = Button(self.frame6, font=("Times", "11"), text='Confirmar', command=self.create_object)
         self.confirmar.grid(row=0, column=1, pady=15, padx=18)
 
     def create_object(self):
@@ -117,6 +132,10 @@ class IncludeLine(IncludeWindow):
         self.frame5.grid()
         self.frame6 = Frame(self.main_window)
         self.frame6.grid()
+        self.frame7 = Frame(self.main_window)
+        self.frame7.grid()
+        self.frame8 = Frame(self.main_window)
+        self.frame8.grid()
 
         Label(self.frame1, text='Nome: ', font=("Times", "11"), height=2).grid(row=0, column=0, sticky=NW)
         self.nome = Entry(self.frame1, width=30, font=("Times", "11"))
@@ -140,9 +159,21 @@ class IncludeLine(IncludeWindow):
         self.y2 = Entry(self.frame5, width=3, font=("Times", "11"))
         self.y2.grid(row=0, column=3, sticky=NW)
 
-        self.cancelar = Button(self.frame6, font=("Times", "11"), text='Cancelar', command=self.close_window)
+        Label(self.frame6, text='Defina uma cor', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
+
+        Label(self.frame7, text='Red: ', font=("Times", "11")).grid(row=0, column=0, sticky=NW)
+        self.red = Entry(self.frame7, width=3, font=("Times", "11"))
+        self.red.grid(row=0, column=1)
+        Label(self.frame7, text=' Green: ', font=("Times", "11")).grid(row=0, column=2, sticky=NW)
+        self.green = Entry(self.frame7, width=3, font=("Times", "11"))
+        self.green.grid(row=0, column=3)
+        Label(self.frame7, text=' Blue: ', font=("Times", "11")).grid(row=0, column=4, sticky=NW)
+        self.blue = Entry(self.frame7, width=3, font=("Times", "11"))
+        self.blue.grid(row=0, column=5)
+
+        self.cancelar = Button(self.frame8, font=("Times", "11"), text='Cancelar', command=self.close_window)
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
-        self.confirmar = Button(self.frame6, font=("Times", "11"), text='Confirmar', command=self.create_object)
+        self.confirmar = Button(self.frame8, font=("Times", "11"), text='Confirmar', command=self.create_object)
         self.confirmar.grid(row=0, column=1, pady=15, padx=18)
 
     def create_object(self):
@@ -290,6 +321,10 @@ class IncludeTriangle(IncludeWindow):
         self.frame5.grid()
         self.frame6 = Frame(self.main_window)
         self.frame6.grid()
+        self.frame7 = Frame(self.main_window)
+        self.frame7.grid()
+        self.frame8 = Frame(self.main_window)
+        self.frame8.grid()
 
         Label(self.frame1, text='Nome: ', font=("Times", "11"), height=2).grid(row=0, column=0, sticky=NW)
         self.nome = Entry(self.frame1, width=30, font=("Times", "11"))
@@ -318,9 +353,21 @@ class IncludeTriangle(IncludeWindow):
         self.y3 = Entry(self.frame5, width=3, font=("Times", "11"))
         self.y3.grid(row=0, column=3, sticky=NW)
 
-        self.cancelar = Button(self.frame6, font=("Times", "11"), text='Cancelar', command=self.close_window)
+        Label(self.frame6, text='Defina uma cor', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
+
+        Label(self.frame7, text='Red: ', font=("Times", "11")).grid(row=0, column=0, sticky=NW)
+        self.red = Entry(self.frame7, width=3, font=("Times", "11"))
+        self.red.grid(row=0, column=1)
+        Label(self.frame7, text=' Green: ', font=("Times", "11")).grid(row=0, column=2, sticky=NW)
+        self.green = Entry(self.frame7, width=3, font=("Times", "11"))
+        self.green.grid(row=0, column=3)
+        Label(self.frame7, text=' Blue: ', font=("Times", "11")).grid(row=0, column=4, sticky=NW)
+        self.blue = Entry(self.frame7, width=3, font=("Times", "11"))
+        self.blue.grid(row=0, column=5)
+
+        self.cancelar = Button(self.frame8, font=("Times", "11"), text='Cancelar', command=self.close_window)
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
-        self.confirmar = Button(self.frame6, font=("Times", "11"), text='Confirmar', command=self.create_object)
+        self.confirmar = Button(self.frame8, font=("Times", "11"), text='Confirmar', command=self.create_object)
         self.confirmar.grid(row=0, column=1, pady=15, padx=18)
         
     def verify_triangle(self, coordenate_1, coordenate_2, coordenate_3):
@@ -400,6 +447,10 @@ class IncludeQuadrilateral(IncludeWindow):
         self.frame6.grid()
         self.frame7 = Frame(self.main_window)
         self.frame7.grid()
+        self.frame8 = Frame(self.main_window)
+        self.frame8.grid()
+        self.frame9 = Frame(self.main_window)
+        self.frame9.grid()
         
         Label(self.frame0, text='Instruções:', font=("Times", "11"), height=0).grid(row=0, column=0, sticky=NW)
         Label(self.frame0, text='(x1, y1) = canto superior esquerdo;', font=("Times", "11"), height=0).grid(row=1, column=0, sticky=NW)
@@ -441,9 +492,21 @@ class IncludeQuadrilateral(IncludeWindow):
         self.y4 = Entry(self.frame6, width=3, font=("Times", "11"))
         self.y4.grid(row=0, column=3, sticky=NW)
 
-        self.cancelar = Button(self.frame7, font=("Times", "11"), text='Cancelar', command=self.close_window)
+        Label(self.frame7, text='Defina uma cor', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
+
+        Label(self.frame8, text='Red: ', font=("Times", "11")).grid(row=0, column=0, sticky=NW)
+        self.red = Entry(self.frame8, width=3, font=("Times", "11"))
+        self.red.grid(row=0, column=1)
+        Label(self.frame8, text=' Green: ', font=("Times", "11")).grid(row=0, column=2, sticky=NW)
+        self.green = Entry(self.frame8, width=3, font=("Times", "11"))
+        self.green.grid(row=0, column=3)
+        Label(self.frame8, text=' Blue: ', font=("Times", "11")).grid(row=0, column=4, sticky=NW)
+        self.blue = Entry(self.frame8, width=3, font=("Times", "11"))
+        self.blue.grid(row=0, column=5)
+
+        self.cancelar = Button(self.frame9, font=("Times", "11"), text='Cancelar', command=self.close_window)
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
-        self.confirmar = Button(self.frame7, font=("Times", "11"), text='Confirmar', command=self.create_object)
+        self.confirmar = Button(self.frame9, font=("Times", "11"), text='Confirmar', command=self.create_object)
         self.confirmar.grid(row=0, column=1, pady=15, padx=18)
         
     def verify_quadrilateral(self, coordenate_1, coordenate_2, coordenate_3, coordenate_4):
@@ -523,6 +586,8 @@ class IncludePolygon(IncludeWindow):
         self.frame3.grid()
         self.frame4 = Frame(self.main_window)
         self.frame4.grid()
+        self.frame5 = Frame(self.main_window)
+        self.frame5.grid()
         
         Label(self.frame0, text='Instruções:', font=("Times", "11"), height=0).grid(row=0, column=0, sticky=NW)
         Label(self.frame0, text='Cada ponto digitado adjacentemente, será adjacente no Canvas.', font=("Times", "11"), height=0).grid(row=1, column=0, sticky=NW)
@@ -536,9 +601,21 @@ class IncludePolygon(IncludeWindow):
         self.entry_polygon.grid(row=0, column=1, sticky=NW)
         Label(self.frame2, text='(x1,y1), (x2,y2), ..., (xn,yn)', font=("Times", "11")).grid(row=1, column=1)
 
-        self.cancelar = Button(self.frame4, font=("Times", "11"), text='Cancelar', command=self.close_window)
+        Label(self.frame3, text='Defina uma cor', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
+
+        Label(self.frame4, text='Red: ', font=("Times", "11")).grid(row=0, column=0, sticky=NW)
+        self.red = Entry(self.frame4, width=3, font=("Times", "11"))
+        self.red.grid(row=0, column=1)
+        Label(self.frame4, text=' Green: ', font=("Times", "11")).grid(row=0, column=2, sticky=NW)
+        self.green = Entry(self.frame4, width=3, font=("Times", "11"))
+        self.green.grid(row=0, column=3)
+        Label(self.frame4, text=' Blue: ', font=("Times", "11")).grid(row=0, column=4, sticky=NW)
+        self.blue = Entry(self.frame4, width=3, font=("Times", "11"))
+        self.blue.grid(row=0, column=5)
+
+        self.cancelar = Button(self.frame5, font=("Times", "11"), text='Cancelar', command=self.close_window)
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
-        self.confirmar = Button(self.frame4, font=("Times", "11"), text='Confirmar', command=self.create_object)
+        self.confirmar = Button(self.frame5, font=("Times", "11"), text='Confirmar', command=self.create_object)
         self.confirmar.grid(row=0, column=1, pady=15, padx=18)
         
     def verify_polygon(self, coordinates):
