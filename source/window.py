@@ -96,8 +96,6 @@ class Window(Frame):
 
         self.columnconfigure(2, weight=1) # column with treeview
         self.rowconfigure(2, weight=1) # row with treeview    
-        
-        #self.display_file = self.viewport.find_all()
 
     def include_point(self):
         IncludePoint(self.viewport, self.erros, self.display_file, self.table, self.modification)
@@ -149,12 +147,21 @@ class Window(Frame):
 
     def delete_object_from_table(self, id):
         self.table.delete(id)
+
+    def update_object_from_table(self, id, item):
+        self.table.item(id, 0, values=(item.getName(), item.getPoints(), item.getId()))
         
     def transform_object(self):
         try:
             selected_item = self.table.selection()[0]
-            # selected_item_id = self.table.item(selected_item).get('values')[2]
-            Transformation()
+            selected_item_id = self.table.item(selected_item).get('values')[2]
+            item = None
+            for object in self.display_file:
+                if object.getId() == selected_item_id:
+                    item = object
+                    break
+            Transformation(self.viewport, item)
+            self.update_object_from_table(selected_item, item)
         except IndexError:
             self.erros['text'] = 'Selecione um item para transformar'
 

@@ -4,10 +4,13 @@ from tkinter import messagebox
 from math import degrees
 
 class Transformation():
-    def __init__(self):
+    def __init__(self, viewport, object):
         self.main_window = Toplevel()
         self.main_window.title("Transformações")
-
+        self.transformations = [] #(tranformacao, valor)
+                                  #valor quando em torno de algum ponto = [x, y, angulo], senao = angulo
+        self.viewport = viewport
+        self.object = object
         self.create_widgets()
 
     def create_widgets(self):
@@ -35,7 +38,7 @@ class Transformation():
         self.frame3 = Frame(self.main_window)
         self.frame3.grid()
 
-        self.cancelar = Button(self.frame3, font=("Times", "11"), text='Cancelar', command=self.close_window)
+        self.cancelar = Button(self.frame3, font=("Times", "11"), text='Fechar', command=self.close_window)
         self.cancelar.grid(row=0, column=0, pady=10, padx=18)
         self.remover = Button(self.frame3, font=("Times", "11"), text='Remover', command=self.remove_transformation)
         self.remover.grid(row=0, column=1, pady=10, padx=18)
@@ -43,9 +46,6 @@ class Transformation():
         self.adicionar.grid(row=0, column=2, pady=10, padx=18)
         self.confirmar = Button(self.frame3, font=("Times", "11"), text='Aplicar', command=self.apply_changes)
         self.confirmar.grid(row=0, column=3, pady=10, padx=18)
-
-        self.transformations = [] #(tranformacao, valor)
-                                  #valor quando em torno de algum ponto = [x, y, angulo], senao = angulo
 
     def tab_translation(self):
         self.frame_trans = Frame(self.tab1)
@@ -112,39 +112,56 @@ class Transformation():
         self.table = ttk.Treeview(self.frame2)
         self.table.grid(row=0, column=0, sticky=EW)
         self.table.configure(yscrollcommand=self.terminal_scrollbar.set)
-        self.table["columns"] = ("1", "2")
+        self.table["columns"] = ("1", "2", "3")
         self.table['show'] = 'headings'
         self.table.column("# 1", anchor=CENTER)
-        self.table.heading("# 1", text="Transformação")
+        self.table.heading("# 1", text="Id da Transformação")
         self.table.column("# 2", anchor=CENTER)
-        self.table.heading("# 2", text="Valores")  
+        self.table.heading("# 2", text="Transformação")
+        self.table.column("# 3", anchor=CENTER)
+        self.table.heading("# 3", text="Valores")  
 
     def close_window(self):
         self.main_window.destroy()
 
     def apply_changes(self):
-        self.main_window.destroy()
+        all_items = self.table.get_children()
+        for item in all_items:
+            id, _, values = self.table.item(item).get('values')
+            
+            if id == 1:
+                self.object.translate(self.viewport, values)
+            elif id == 2:
+                self.object.escalonate(self.viewport, values)
+            elif id == 3:
+                self.object.rotate_around_world(self.viewport, values)
+            elif id == 4:
+                self.object.rotate_around_object(self.viewport, values)
+            elif id == 5:
+                self.object.rotate_around_point(self.viewport, values)
+
+            self.delete_object_from_table(item)
 
     def add_transformation(self):
         try:
             if self.tab_control.tab(self.tab_control.select(), "text") == 'Translação':
                 vetor_x = float(self.vetor_x_translation.get())
                 vetor_y = float(self.vetor_y_translation.get())
-                self.table.insert('', 0, values=('Translação', (vetor_x, vetor_y)))
+                self.table.insert('', 0, values=(1, 'Translação', (vetor_x, vetor_y)))
             elif self.tab_control.tab(self.tab_control.select(), "text") == 'Escalonamento':
                 vetor_x = float(self.vetor_x_escalation.get())
                 vetor_y = float(self.vetor_y_escalation.get())
-                self.table.insert('', 0, values=('Escalonamento', (vetor_x, vetor_y)))
+                self.table.insert('', 0, values=(2, 'Escalonamento', (vetor_x, vetor_y)))
             elif self.tab_control.tab(self.tab_control.select(), "text") == 'Rotação':
                 angle = float(self.angle.get())
                 if self.radio_variable.get() == 1:
-                    self.table.insert('', 0, values=('Rotação em torno do mundo', angle))
+                    self.table.insert('', 0, values=(3, 'Rotação em torno do mundo', angle))
                 elif self.radio_variable.get() == 2:
-                    self.table.insert('', 0, values=('Rotação em torno do objeto', angle))
+                    self.table.insert('', 0, values=(4, 'Rotação em torno do objeto', angle))
                 elif self.radio_variable.get() == 3:
                     rotation_x = float(self.rotation_x.get())
                     rotation_y = float(self.rotation_y.get())
-                    self.table.insert('', 0, values=('Rotação em torno do ponto', ('x:', rotation_x, ',', 'y:', rotation_y, ',', angle, '°')))
+                    self.table.insert('', 0, values=(5, 'Rotação em torno do ponto', ('x:', rotation_x, ',', 'y:', rotation_y, ',', angle, '°')))
         except ValueError:
             messagebox.showerror('Erro', 'Entradas inválidas')
             
@@ -154,3 +171,6 @@ class Transformation():
             self.table.delete(selected_item)
         except IndexError:
             messagebox.showerror('Erro', 'Selecione um item para remover')
+
+    def delete_object_from_table(self, id):
+        self.table.delete(id)

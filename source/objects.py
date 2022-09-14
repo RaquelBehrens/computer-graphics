@@ -27,6 +27,22 @@ class Object(ABC):
     def translate(self, viewport, translation_points):
         pass
 
+    #@abstractmethod
+    def escalonate(self, viewport, translation_points):
+        pass
+
+    #@abstractmethod
+    def rotate_around_world(self, viewport, translation_points):
+        pass
+
+    #@abstractmethod
+    def rotate_around_object(self, viewport, translation_points):
+        pass
+
+    #@abstractmethod
+    def rotate_around_point(self, viewport, translation_points):
+        pass
+
     def calculate_center(self):
         center_x = None
         center_y = None
