@@ -35,11 +35,11 @@ class Transformation():
 
         self.cancelar = Button(self.frame3, font=("Times", "11"), text='Cancelar', command=self.close_window)
         self.cancelar.grid(row=0, column=0, pady=10, padx=18)
-        self.remover = Button(self.frame3, font=("Times", "11"), text='Remover')
+        self.remover = Button(self.frame3, font=("Times", "11"), text='Remover', command=self.remove_transformation)
         self.remover.grid(row=0, column=1, pady=10, padx=18)
-        self.adicionar = Button(self.frame3, font=("Times", "11"), text='Adicionar')
+        self.adicionar = Button(self.frame3, font=("Times", "11"), text='Adicionar', command=self.add_transformation)
         self.adicionar.grid(row=0, column=2, pady=10, padx=18)
-        self.confirmar = Button(self.frame3, font=("Times", "11"), text='Aplicar')
+        self.confirmar = Button(self.frame3, font=("Times", "11"), text='Aplicar', command=self.apply_changes)
         self.confirmar.grid(row=0, column=3, pady=10, padx=18)
 
     def tab_translation(self):
@@ -51,11 +51,11 @@ class Transformation():
         Label(self.frame_trans, text='Vetor de translação', font=("Times", "11")).grid(row=0, column=0, padx=58)
 
         Label(self.frame_trans2, text='x: ', font=("Times", "11"), height=2).grid(row=1, column=0, sticky=NW)
-        self.vetor_x = Entry(self.frame_trans2, width=3, font=("Times", "11"))
-        self.vetor_x.grid(row=1, column=1)
+        self.vetor_x_translation = Entry(self.frame_trans2, width=3, font=("Times", "11"))
+        self.vetor_x_translation.grid(row=1, column=1)
         Label(self.frame_trans2, text=' y: ', font=("Times", "11"), height=2).grid(row=1, column=2, sticky=NW)
-        self.vetor_y = Entry(self.frame_trans2, width=3, font=("Times", "11"))
-        self.vetor_y.grid(row=1, column=3)
+        self.vetor_y_translation = Entry(self.frame_trans2, width=3, font=("Times", "11"))
+        self.vetor_y_translation.grid(row=1, column=3)
 
     def tab_escalation(self):
         self.frame_esc = Frame(self.tab2)
@@ -66,11 +66,11 @@ class Transformation():
         Label(self.frame_esc, text='Vetor de escalonamento', font=("Times", "11")).grid(row=0, column=0, padx=40)
 
         Label(self.frame_esc2, text='x: ', font=("Times", "11"), height=2).grid(row=1, column=0, sticky=NW)
-        self.vetor_x = Entry(self.frame_esc2, width=3, font=("Times", "11"))
-        self.vetor_x.grid(row=1, column=1)
+        self.vetor_x_escalation = Entry(self.frame_esc2, width=3, font=("Times", "11"))
+        self.vetor_x_escalation.grid(row=1, column=1)
         Label(self.frame_esc2, text=' y: ', font=("Times", "11"), height=2).grid(row=1, column=2, sticky=NW)
-        self.vetor_y = Entry(self.frame_esc2, width=3, font=("Times", "11"))
-        self.vetor_y.grid(row=1, column=3)
+        self.vetor_y_escalation = Entry(self.frame_esc2, width=3, font=("Times", "11"))
+        self.vetor_y_escalation.grid(row=1, column=3)
 
     def tab_rotation(self):
         self.frame_rot = Frame(self.tab3)
@@ -81,10 +81,15 @@ class Transformation():
         self.radio_variable = IntVar()
         self.radio_variable.set(0)
 
-        self.seila1 = Radiobutton(self.frame_rot, text='Centro do mundo', variable=self.radio_variable, value=1).grid(stick=W)
-        self.seila2 = Radiobutton(self.frame_rot, text='Centro do objeto', variable=self.radio_variable, value=2).grid(stick=W)
-        self.seila3 = Radiobutton(self.frame_rot, text='Ponto qualquer', variable=self.radio_variable, value=3).grid(stick=W)
+        self.seila1 = Radiobutton(self.frame_rot, text='Centro do mundo', variable=self.radio_variable, value=1).grid(row=0, column=0, stick=W)
+        self.seila2 = Radiobutton(self.frame_rot, text='Centro do objeto', variable=self.radio_variable, value=2).grid(row=1, column=0, stick=W)
+        self.seila3 = Radiobutton(self.frame_rot, text='Ponto qualquer', variable=self.radio_variable, value=3).grid(row=2, column=0, stick=W)
 
+        Label(self.frame_rot, text='x: ', font=("Times", "10")).grid(row=2, column=1, stick=SE)
+        self.rotation_x = Entry(self.frame_rot, width=3, font=("Times", "10")).grid(row=2, column=2, stick=SE)
+        Label(self.frame_rot, text='y: ', font=("Times", "10")).grid(row=2, column=3, stick=SE)
+        self.rotation_y = Entry(self.frame_rot, width=3, font=("Times", "10")).grid(row=2, column=4, stick=SE)
+ 
         Label(self.frame_rot2, text='Ângulo: ', font=("Times", "11")).grid(row=0, column=0)
         self.angle = Entry(self.frame_rot2, width=3, font=("Times", "11"))
         self.angle.grid(row=0, column=1)
@@ -109,3 +114,29 @@ class Transformation():
 
     def close_window(self):
         self.main_window.destroy()
+
+    def apply_changes(self):
+        self.main_window.destroy()
+
+    def add_transformation(self):
+        try:
+            if self.tab_control.tab(self.tab_control.selected(), "text") == 'Translação':
+                vetor_x = float(self.vetor_x_translation.get())
+                vetor_y = float(self.vetor_y_translation.get())
+                self.table.insert('', 0, values=('Translação', (vetor_x, vetor_y)))
+            elif self.tab_control.tab(self.tab_control.selected(), "text") == 'Escalonamento':
+                vetor_x = float(self.vetor_x_escalation.get())
+                vetor_y = float(self.vetor_y_escalation.get())
+                self.table.insert('', 0, values=('Escalonamento', (vetor_x, vetor_y)))
+            elif self.tab_control.tab(self.tab_control.selected(), "text") == 'Rotação':
+                if self.radio_variable == '?':
+                    pass
+                elif self.radio_variable == '?':
+                    pass
+                elif self.radio_variable == '?':
+                    pass
+        except ValueError:
+            self.erros['text'] = 'Entradas inválidas'
+            
+    def remove_transformation(self):
+        print(self.radio_variable)
