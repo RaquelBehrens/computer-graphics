@@ -1,5 +1,7 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
+from math import degrees
 
 class Transformation():
     def __init__(self):
@@ -41,6 +43,9 @@ class Transformation():
         self.adicionar.grid(row=0, column=2, pady=10, padx=18)
         self.confirmar = Button(self.frame3, font=("Times", "11"), text='Aplicar', command=self.apply_changes)
         self.confirmar.grid(row=0, column=3, pady=10, padx=18)
+
+        self.transformations = [] #(tranformacao, valor)
+                                  #valor quando em torno de algum ponto = [x, y, angulo], senao = angulo
 
     def tab_translation(self):
         self.frame_trans = Frame(self.tab1)
@@ -86,9 +91,11 @@ class Transformation():
         self.seila3 = Radiobutton(self.frame_rot, text='Ponto qualquer', variable=self.radio_variable, value=3).grid(row=2, column=0, stick=W)
 
         Label(self.frame_rot, text='x: ', font=("Times", "10")).grid(row=2, column=1, stick=SE)
-        self.rotation_x = Entry(self.frame_rot, width=3, font=("Times", "10")).grid(row=2, column=2, stick=SE)
+        self.rotation_x = Entry(self.frame_rot, width=3, font=("Times", "10"))
+        self.rotation_x.grid(row=2, column=2, stick=SE)
         Label(self.frame_rot, text='y: ', font=("Times", "10")).grid(row=2, column=3, stick=SE)
-        self.rotation_y = Entry(self.frame_rot, width=3, font=("Times", "10")).grid(row=2, column=4, stick=SE)
+        self.rotation_y = Entry(self.frame_rot, width=3, font=("Times", "10"))
+        self.rotation_y.grid(row=2, column=4, stick=SE)
  
         Label(self.frame_rot2, text='Ângulo: ', font=("Times", "11")).grid(row=0, column=0)
         self.angle = Entry(self.frame_rot2, width=3, font=("Times", "11"))
@@ -120,23 +127,30 @@ class Transformation():
 
     def add_transformation(self):
         try:
-            if self.tab_control.tab(self.tab_control.selected(), "text") == 'Translação':
+            if self.tab_control.tab(self.tab_control.select(), "text") == 'Translação':
                 vetor_x = float(self.vetor_x_translation.get())
                 vetor_y = float(self.vetor_y_translation.get())
                 self.table.insert('', 0, values=('Translação', (vetor_x, vetor_y)))
-            elif self.tab_control.tab(self.tab_control.selected(), "text") == 'Escalonamento':
+            elif self.tab_control.tab(self.tab_control.select(), "text") == 'Escalonamento':
                 vetor_x = float(self.vetor_x_escalation.get())
                 vetor_y = float(self.vetor_y_escalation.get())
                 self.table.insert('', 0, values=('Escalonamento', (vetor_x, vetor_y)))
-            elif self.tab_control.tab(self.tab_control.selected(), "text") == 'Rotação':
-                if self.radio_variable == '?':
-                    pass
-                elif self.radio_variable == '?':
-                    pass
-                elif self.radio_variable == '?':
-                    pass
+            elif self.tab_control.tab(self.tab_control.select(), "text") == 'Rotação':
+                angle = float(self.angle.get())
+                if self.radio_variable.get() == 1:
+                    self.table.insert('', 0, values=('Rotação em torno do mundo', angle))
+                elif self.radio_variable.get() == 2:
+                    self.table.insert('', 0, values=('Rotação em torno do objeto', angle))
+                elif self.radio_variable.get() == 3:
+                    rotation_x = float(self.rotation_x.get())
+                    rotation_y = float(self.rotation_y.get())
+                    self.table.insert('', 0, values=('Rotação em torno do ponto', ('x:', rotation_x, ',', 'y:', rotation_y, ',', angle, '°')))
         except ValueError:
-            self.erros['text'] = 'Entradas inválidas'
+            messagebox.showerror('Erro', 'Entradas inválidas')
             
     def remove_transformation(self):
-        print(self.radio_variable)
+        try:
+            selected_item = self.table.selection()[0]
+            self.table.delete(selected_item)
+        except IndexError:
+            messagebox.showerror('Erro', 'Selecione um item para remover')
