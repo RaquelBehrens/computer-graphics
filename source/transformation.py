@@ -4,12 +4,14 @@ from tkinter import messagebox
 from math import degrees
 
 class Transformation():
-    def __init__(self, viewport, object):
+    def __init__(self, viewport, main_table, object_id, object):
         self.main_window = Toplevel()
         self.main_window.title("Transformações")
         self.transformations = [] #(tranformacao, valor)
                                   #valor quando em torno de algum ponto = [x, y, angulo], senao = angulo
         self.viewport = viewport
+        self.main_table = main_table
+        self.object_id = object_id
         self.object = object
         self.create_widgets()
 
@@ -140,6 +142,10 @@ class Transformation():
             elif id == 5:
                 self.object.rotate_around_point(self.viewport, values)
 
+            #alterar objeto na tabela principal
+            self.main_table.item(self.object_id,
+                                 values=(self.object.getName(), self.object.getPoints(), 
+                                         self.object.getId()))
             self.delete_object_from_table(item)
 
     def add_transformation(self):

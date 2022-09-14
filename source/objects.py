@@ -55,7 +55,7 @@ class Object(ABC):
 class Point(Object):
     def __init__(self, name, points, color): #points = [[x1, y1]]
         super().__init__()
-        self.points = [points]
+        self.points = points
         self.name = name
         self.color = color
         
@@ -64,10 +64,11 @@ class Point(Object):
         self.id = viewport.create_oval(self.points[0][0], viewport_y1, self.points[0][0], viewport_y1, width=POINT_SIZE, fill=self.color)
 
     def translate(self, viewport, translation_points):
+        translation_points = translation_points.split()
         points_matrix = []
         translation_matrix = [[1, 0, 0],
                               [0, 1, 0],
-                              [translation_points[0], translation_points[1], 1]]
+                              [float(translation_points[0]), float(translation_points[1]), 1]]
 
         for point in self.points:
             points_matrix = [point[0], point[1], 1]
@@ -77,7 +78,7 @@ class Point(Object):
 
         #parte de ponto e linha
         viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
-        viewport.coords(self.id, self.points[0][0], viewport_y1)
+        viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[0][0], viewport_y1)
 
 class Line(Object):
     def __init__(self, name, points, color): #points=[[x1, y1],[x2, y2]]
@@ -142,13 +143,16 @@ class Wireframe(Object):  #This is a Polygon
         self.list_ids.append(self.id)
 
     def translate(self, viewport, translation_points):
+        translation_points = translation_points.split()
         points_matrix = []
         translation_matrix = [[1, 0, 0],
                               [0, 1, 0],
-                              [translation_points[0], translation_points[1], 1]]
+                              [float(translation_points[0]), float(translation_points[1]), 1]]
 
         x_aux = None
         y_aux = None
+        first_x = None
+        first_y = None
         for i, point in enumerate(self.points):
             points_matrix = [point[0], point[1], 1]
             result_points = np.matmul(points_matrix, translation_matrix)
@@ -158,7 +162,14 @@ class Wireframe(Object):  #This is a Polygon
             if not (i == 0):
                 viewport_y1 = VIEWPORT_HEIGHT - y_aux
                 viewport_y2 = VIEWPORT_HEIGHT - point[1]
-                viewport.coords(self.list_ids[i-1], x_aux, viewport_y1, point[0], viewport_y2)
+                viewport.coords(self.list_ids[i], x_aux, viewport_y1, point[0], viewport_y2)
+            else:
+                first_x = point[0]
+                first_y = point[1]
 
             x_aux = point[0]
             y_aux = point[1]
+
+        viewport_y1 = VIEWPORT_HEIGHT - y_aux
+        viewport_y2 = VIEWPORT_HEIGHT - first_y
+        viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
