@@ -53,7 +53,7 @@ class Object(ABC):
         
 
 class Point(Object):
-    def __init__(self, name, points, color): #points = [(x1, y1)]
+    def __init__(self, name, points, color): #points = [[x1, y1]]
         super().__init__()
         self.points = [points]
         self.name = name
@@ -80,7 +80,7 @@ class Point(Object):
         viewport.coords(self.id, self.points[0][0], viewport_y1)
 
 class Line(Object):
-    def __init__(self, name, points, color): #points=[(x1, y1),(x2, y2)]
+    def __init__(self, name, points, color): #points=[[x1, y1],[x2, y2]]
         super().__init__()
         self.name = name
         self.points = points
@@ -92,10 +92,11 @@ class Line(Object):
         self.id = viewport.create_line((self.points[0][0], viewport_y1), (self.points[1][0], viewport_y2), width=3, fill=self.color)
 
     def translate(self, viewport, translation_points):
+        translation_points = translation_points.split()
         points_matrix = []
         translation_matrix = [[1, 0, 0],
                               [0, 1, 0],
-                              [translation_points[0], translation_points[1], 1]]
+                              [float(translation_points[0]), float(translation_points[1]), 1]]
 
         for point in self.points:
             points_matrix = [point[0], point[1], 1]
@@ -112,7 +113,7 @@ class Wireframe(Object):  #This is a Polygon
     def __init__(self, name, list_points, color, id=None):
         super().__init__()
         self.name = name
-        self.points = list_points #[(x1,y1), (x2,y2), (x3,y3)]
+        self.points = list_points #[[x1,y1], [x2,y2], [x3,y3]]
         self.id = id
         self.list_ids = []
         self.color = color
