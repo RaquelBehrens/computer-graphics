@@ -61,7 +61,7 @@ class Point(Object):
         
     def drawn(self, viewport):
         viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
-        self.id = viewport.create_oval(self.points[0][0], viewport_y1, self.points[0][0], viewport_y1, width=POINT_SIZE, fill=self.color)
+        self.id = viewport.create_oval(self.points[0][0], viewport_y1, self.points[0][0], viewport_y1, width=POINT_SIZE, outline=self.color)
 
     def translate(self, viewport, translation_points):
         translation_points = translation_points.split()

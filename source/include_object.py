@@ -33,6 +33,7 @@ class IncludeWindow(ABC):
     def choose_color(self):
         color_code = colorchooser.askcolor(title ="Escolha a cor")
         self.color = color_code[1]
+        self.color_button.configure(bg=self.color)
 
 
 class IncludePoint(IncludeWindow):
@@ -68,7 +69,8 @@ class IncludePoint(IncludeWindow):
         self.y1.grid(row=0, column=3, sticky=NW)
 
         Label(self.frame4, text='Defina uma cor', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
-        Button(self.frame5, text='Escolher cor', font=('Times', '11'), command=self.choose_color).grid(row=0, column=3, padx=10)
+        self.color_button = Button(self.frame5, text='Escolher cor', font=('Times', '11'), command=self.choose_color, bg=self.color)
+        self.color_button.grid(row=0, column=3, padx=10)
 
         self.cancelar = Button(self.frame6, font=("Times", "11"), text='Cancelar', command=self.close_window)
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
@@ -157,7 +159,8 @@ class IncludeLine(IncludeWindow):
         self.y2.grid(row=0, column=3, sticky=NW)
 
         Label(self.frame6, text='Defina uma cor', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
-        Button(self.frame7, text='Escolher cor', font=('Times', '11'), command=self.choose_color).grid(row=0, column=3, padx=10)
+        self.color_button = Button(self.frame7, text='Escolher cor', font=('Times', '11'), command=self.choose_color, bg=self.color)
+        self.color_button.grid(row=0, column=3, padx=10)
 
         self.cancelar = Button(self.frame8, font=("Times", "11"), text='Cancelar', command=self.close_window)
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
@@ -344,7 +347,8 @@ class IncludeTriangle(IncludeWindow):
         self.y3.grid(row=0, column=3, sticky=NW)
 
         Label(self.frame6, text='Defina a cor da borda', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
-        Button(self.frame7, text='Escolher cor', font=('Times', '11'), command=self.choose_color).grid(row=0, column=3, padx=10)
+        self.color_button = Button(self.frame7, text='Escolher cor', font=('Times', '11'), command=self.choose_color, bg=self.color)
+        self.color_button.grid(row=0, column=3, padx=10)
 
         self.cancelar = Button(self.frame8, font=("Times", "11"), text='Cancelar', command=self.close_window)
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
@@ -474,7 +478,8 @@ class IncludeQuadrilateral(IncludeWindow):
         self.y4.grid(row=0, column=3, sticky=NW)
 
         Label(self.frame7, text='Defina a cor da borda', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
-        Button(self.frame8, text='Escolher cor', font=('Times', '11'), command=self.choose_color).grid(row=0, column=3, padx=10)
+        self.color_button = Button(self.frame8, text='Escolher cor', font=('Times', '11'), command=self.choose_color, bg=self.color)
+        self.color_button.grid(row=0, column=3, padx=10)
 
         self.cancelar = Button(self.frame9, font=("Times", "11"), text='Cancelar', command=self.close_window)
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
@@ -574,7 +579,8 @@ class IncludePolygon(IncludeWindow):
         Label(self.frame2, text='(x1,y1), (x2,y2), ..., (xn,yn)', font=("Times", "11")).grid(row=1, column=1)
 
         Label(self.frame3, text='Defina a cor da borda', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
-        Button(self.frame4, text='Escolher cor', font=('Times', '11'), command=self.choose_color).grid(row=0, column=3, padx=10)
+        self.color_button = Button(self.frame4, text='Escolher cor', font=('Times', '11'), command=self.choose_color, bg=self.color)
+        self.color_button.grid(row=0, column=3, padx=10)
 
         self.cancelar = Button(self.frame5, font=("Times", "11"), text='Cancelar', command=self.close_window)
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
