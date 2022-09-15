@@ -1,7 +1,6 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
-from math import degrees
 
 class Transformation():
     def __init__(self, viewport, main_table, object_id, object):
@@ -134,7 +133,7 @@ class Transformation():
             if id == 1:
                 self.object.translate(self.viewport, values)
             elif id == 2:
-                self.object.escalonate(self.viewport, values)
+                self.object.scale(self.viewport, values)
             elif id == 3:
                 self.object.rotate_around_world(self.viewport, values)
             elif id == 4:

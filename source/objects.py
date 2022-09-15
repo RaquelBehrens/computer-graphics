@@ -27,8 +27,8 @@ class Object(ABC):
     def translate(self, viewport, translation_points):
         pass
 
-    #@abstractmethod
-    def escalonate(self, viewport, translation_points):
+    @abstractmethod
+    def scale(self, viewport, translation_points):
         pass
 
     #@abstractmethod
@@ -44,12 +44,12 @@ class Object(ABC):
         pass
 
     def calculate_center(self):
-        center_x = None
-        center_y = None
+        center_x = 0
+        center_y = 0
         for point in self.points:
             center_x += point[0]
             center_y += point[1]
-        self.center = (center_x/len(self.points), center_y/len(self.points))
+        self.center = [center_x/len(self.points), center_y/len(self.points)]
         
 
 class Point(Object):
@@ -80,6 +80,37 @@ class Point(Object):
         viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
         viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[0][0], viewport_y1)
 
+    def scale(self, viewport, translation_points):
+        if self.center == None:
+            self.calculate_center()
+
+        translation_points = translation_points.split()
+        points_matrix = []
+        first_translation_matrix = [[1, 0, 0],
+                                    [0, 1, 0],
+                                    [-(self.center[0]), -(self.center[1]), 1]]
+
+        second_translation_matrix = [[1, 0, 0],
+                                     [0, 1, 0],
+                                     [(self.center[0]), (self.center[1]), 1]]
+
+        scale_matrix = [[float(translation_points[0]), 0, 0],
+                        [0, float(translation_points[1]), 0],
+                        [0, 0, 1]]
+
+        for point in self.points:
+            points_matrix = [point[0], point[1], 1]
+            result_points = np.matmul(points_matrix, first_translation_matrix)
+            result_points = np.matmul(result_points, scale_matrix)
+            result_points = np.matmul(result_points, second_translation_matrix)
+            point[0] = result_points[0]
+            point[1] = result_points[1]
+
+        #parte de ponto e linha
+        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
+        viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[0][0], viewport_y1)
+
+
 class Line(Object):
     def __init__(self, name, points, color): #points=[[x1, y1],[x2, y2]]
         super().__init__()
@@ -109,6 +140,38 @@ class Line(Object):
         viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
         viewport_y2 = VIEWPORT_HEIGHT - self.points[1][1]
         viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[1][0], viewport_y2)
+
+    def scale(self, viewport, translation_points):
+        if self.center == None:
+            self.calculate_center()
+
+        translation_points = translation_points.split()
+        points_matrix = []
+        first_translation_matrix = [[1, 0, 0],
+                                    [0, 1, 0],
+                                    [-(self.center[0]), -(self.center[1]), 1]]
+
+        second_translation_matrix = [[1, 0, 0],
+                                     [0, 1, 0],
+                                     [(self.center[0]), (self.center[1]), 1]]
+
+        scale_matrix = [[float(translation_points[0]), 0, 0],
+                        [0, float(translation_points[1]), 0],
+                        [0, 0, 1]]
+
+        for point in self.points:
+            points_matrix = [point[0], point[1], 1]
+            result_points = np.matmul(points_matrix, first_translation_matrix)
+            result_points = np.matmul(result_points, scale_matrix)
+            result_points = np.matmul(result_points, second_translation_matrix)
+            point[0] = result_points[0]
+            point[1] = result_points[1]
+
+        #parte de ponto e linha
+        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
+        viewport_y2 = VIEWPORT_HEIGHT - self.points[1][1]
+        viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[1][0], viewport_y2)
+
 
 class Wireframe(Object):  #This is a Polygon
     def __init__(self, name, list_points, color, id=None):
@@ -156,6 +219,53 @@ class Wireframe(Object):  #This is a Polygon
         for i, point in enumerate(self.points):
             points_matrix = [point[0], point[1], 1]
             result_points = np.matmul(points_matrix, translation_matrix)
+            point[0] = result_points[0]
+            point[1] = result_points[1]
+
+            if not (i == 0):
+                viewport_y1 = VIEWPORT_HEIGHT - y_aux
+                viewport_y2 = VIEWPORT_HEIGHT - point[1]
+                viewport.coords(self.list_ids[i], x_aux, viewport_y1, point[0], viewport_y2)
+            else:
+                first_x = point[0]
+                first_y = point[1]
+
+            x_aux = point[0]
+            y_aux = point[1]
+
+        viewport_y1 = VIEWPORT_HEIGHT - y_aux
+        viewport_y2 = VIEWPORT_HEIGHT - first_y
+        viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+
+    
+    def scale(self, viewport, translation_points):
+        if self.center == None:
+            self.calculate_center()
+
+        translation_points = translation_points.split()
+        points_matrix = []
+        first_translation_matrix = [[1, 0, 0],
+                                    [0, 1, 0],
+                                    [-(self.center[0]), -(self.center[1]), 1]]
+
+        second_translation_matrix = [[1, 0, 0],
+                                     [0, 1, 0],
+                                     [(self.center[0]), (self.center[1]), 1]]
+
+        scale_matrix = [[float(translation_points[0]), 0, 0],
+                        [0, float(translation_points[1]), 0],
+                        [0, 0, 1]]
+
+        x_aux = None
+        y_aux = None
+        first_x = None
+        first_y = None
+
+        for i, point in enumerate(self.points):
+            points_matrix = [point[0], point[1], 1]
+            result_points = np.matmul(points_matrix, first_translation_matrix)
+            result_points = np.matmul(result_points, scale_matrix)
+            result_points = np.matmul(result_points, second_translation_matrix)
             point[0] = result_points[0]
             point[1] = result_points[1]
 
