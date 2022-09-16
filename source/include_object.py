@@ -201,10 +201,11 @@ class IncludeLine(IncludeWindow):
                 self.include_object_in_table(objeto)
                 self.erros['text'] = 'Objeto criado com sucesso'
 
-                formed_polygon, polygons_points_list, polygons_lines_list, copy_lines_list = self.verify_polygon(objeto, self.lines_list) 
-                if formed_polygon:
-                    self.substitute_lines_for_polygon(polygons_points_list, polygons_lines_list)
-                    self.lines_list = copy_lines_list
+                if isinstance(objeto, Line):
+                    formed_polygon, polygons_points_list, polygons_lines_list, copy_lines_list = self.verify_polygon(objeto, self.lines_list) 
+                    if formed_polygon:
+                        self.substitute_lines_for_polygon(polygons_points_list, polygons_lines_list)
+                        self.lines_list = copy_lines_list
             else:
                 if name == '':
                     self.erros['text'] = 'Digite um nome'
