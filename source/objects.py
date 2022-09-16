@@ -31,16 +31,16 @@ class Object(ABC):
     def scale(self, viewport, translation_points):
         pass
 
-    #@abstractmethod
-    def rotate_around_world(self, viewport, translation_points):
+    @abstractmethod
+    def rotate_around_world(self, viewport, rotate_angle):
         pass
 
-    #@abstractmethod
-    def rotate_around_object(self, viewport, translation_points):
+    @abstractmethod
+    def rotate_around_object(self, viewport, rotate_angle):
         pass
 
-    #@abstractmethod
-    def rotate_around_point(self, viewport, translation_points):
+    @abstractmethod
+    def rotate_around_point(self, viewport, rotate_points):
         pass
 
     def calculate_center(self):
@@ -110,6 +110,77 @@ class Point(Object):
         viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
         viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[0][0], viewport_y1)
 
+    def rotate_around_world(self, viewport, rotate_angle):
+        rotate_radian = -(np.radians(float(rotate_angle)))
+        points_matrix = []
+        rotation_matrix = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
+                            [np.sin(rotate_radian), np.cos(rotate_radian), 0],
+                            [0, 0, 1]]
+
+        for point in self.points:
+            points_matrix = [point[0], point[1], 1]
+            result_points = np.matmul(points_matrix, rotation_matrix)
+            point[0] = result_points[0]
+            point[1] = result_points[1]
+
+        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
+        viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[0][0], viewport_y1)
+
+    def rotate_around_object(self, viewport, rotate_angle):
+        if self.center == None:
+            self.calculate_center()
+        
+        rotate_radian = -(np.radians(float(rotate_angle)))
+        points_matrix = []
+        first_translation_matriz = [[1, 0, 0],
+                                    [0, 1, 0],
+                                    [-(self.center[0]), -(self.center[1]), 1]]
+        second_translation_matriz = [[1, 0, 0],
+                                     [0, 1, 0],
+                                     [self.center[0], self.center[1], 1]]
+        rotation_matrix = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
+                            [np.sin(rotate_radian), np.cos(rotate_radian), 0],
+                            [0, 0, 1]]
+
+        for point in self.points:
+            points_matrix = [point[0], point[1], 1]
+            result_points = np.matmul(points_matrix, first_translation_matriz)
+            result_points = np.matmul(result_points, rotation_matrix)
+            result_points = np.matmul(result_points, second_translation_matriz)
+            point[0] = result_points[0]
+            point[1] = result_points[1]
+
+        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
+        viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[0][0], viewport_y1)
+
+    def rotate_around_point(self, viewport, rotate_points):
+        rotate_points = rotate_points.split()
+        point_x = float(rotate_points[1])
+        point_y = float(rotate_points[4])
+        rotate_radian = -(np.radians(float(rotate_points[6])))
+
+        points_matrix = []
+        first_translation_matriz = [[1, 0, 0],
+                                    [0, 1, 0],
+                                    [-(point_x), -(point_y), 1]]
+        second_translation_matriz = [[1, 0, 0],
+                                     [0, 1, 0],
+                                     [point_x, point_y, 1]]
+        rotation_matrix = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
+                            [np.sin(rotate_radian), np.cos(rotate_radian), 0],
+                            [0, 0, 1]]
+
+        for point in self.points:
+            points_matrix = [point[0], point[1], 1]
+            result_points = np.matmul(points_matrix, first_translation_matriz)
+            result_points = np.matmul(result_points, rotation_matrix)
+            result_points = np.matmul(result_points, second_translation_matriz)
+            point[0] = result_points[0]
+            point[1] = result_points[1]
+
+        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
+        viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[0][0], viewport_y1)
+
 
 class Line(Object):
     def __init__(self, name, points, color): #points=[[x1, y1],[x2, y2]]
@@ -168,6 +239,80 @@ class Line(Object):
             point[1] = result_points[1]
 
         #parte de ponto e linha
+        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
+        viewport_y2 = VIEWPORT_HEIGHT - self.points[1][1]
+        viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[1][0], viewport_y2)
+
+    def rotate_around_world(self, viewport, rotate_angle):
+        rotate_radian = -(np.radians(float(rotate_angle)))
+        points_matrix = []
+        rotation_matrix = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
+                           [np.sin(rotate_radian), np.cos(rotate_radian), 0],
+                           [0, 0, 1]]
+
+        for point in self.points:
+            points_matrix = [point[0], point[1], 1]
+            result_points = np.matmul(points_matrix, rotation_matrix)
+            point[0] = result_points[0]
+            point[1] = result_points[1]
+
+        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
+        viewport_y2 = VIEWPORT_HEIGHT - self.points[1][1]
+        viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[1][0], viewport_y2)
+
+    def rotate_around_object(self, viewport, rotate_angle):
+        if self.center == None:
+            self.calculate_center()
+        
+        rotate_radian = -(np.radians(float(rotate_angle)))
+        points_matrix = []
+        first_translation_matriz = [[1, 0, 0],
+                                    [0, 1, 0],
+                                    [-(self.center[0]), -(self.center[1]), 1]]
+        second_translation_matriz = [[1, 0, 0],
+                                     [0, 1, 0],
+                                     [self.center[0], self.center[1], 1]]
+        rotation_matrix = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
+                            [np.sin(rotate_radian), np.cos(rotate_radian), 0],
+                            [0, 0, 1]]
+
+        for point in self.points:
+            points_matrix = [point[0], point[1], 1]
+            result_points = np.matmul(points_matrix, first_translation_matriz)
+            result_points = np.matmul(result_points, rotation_matrix)
+            result_points = np.matmul(result_points, second_translation_matriz)
+            point[0] = result_points[0]
+            point[1] = result_points[1]
+
+        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
+        viewport_y2 = VIEWPORT_HEIGHT - self.points[1][1]
+        viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[1][0], viewport_y2)
+
+    def rotate_around_point(self, viewport, rotate_points):
+        rotate_points = rotate_points.split()
+        point_x = float(rotate_points[1])
+        point_y = float(rotate_points[4])
+        rotate_radian = -(np.radians(float(rotate_points[6])))
+
+        points_matrix = []
+        first_translation_matriz = [[1, 0, 0],
+                                    [0, 1, 0],
+                                    [-(point_x), -(point_y), 1]]
+        second_translation_matriz = [[1, 0, 0],
+                                     [0, 1, 0],
+                                     [point_x, point_y, 1]]
+        rotation_matrix = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
+                            [np.sin(rotate_radian), np.cos(rotate_radian), 0],
+                            [0, 0, 1]]
+
+        for point in self.points:
+            points_matrix = [point[0], point[1], 1]
+            result_points = np.matmul(points_matrix, first_translation_matriz)
+            result_points = np.matmul(result_points, rotation_matrix)
+            result_points = np.matmul(result_points, second_translation_matriz)
+            point[0] = result_points[0]
+            point[1] = result_points[1]
+
         viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
         viewport_y2 = VIEWPORT_HEIGHT - self.points[1][1]
         viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[1][0], viewport_y2)
@@ -266,6 +411,125 @@ class Wireframe(Object):  #This is a Polygon
             result_points = np.matmul(points_matrix, first_translation_matrix)
             result_points = np.matmul(result_points, scale_matrix)
             result_points = np.matmul(result_points, second_translation_matrix)
+            point[0] = result_points[0]
+            point[1] = result_points[1]
+
+            if not (i == 0):
+                viewport_y1 = VIEWPORT_HEIGHT - y_aux
+                viewport_y2 = VIEWPORT_HEIGHT - point[1]
+                viewport.coords(self.list_ids[i], x_aux, viewport_y1, point[0], viewport_y2)
+            else:
+                first_x = point[0]
+                first_y = point[1]
+
+            x_aux = point[0]
+            y_aux = point[1]
+
+        viewport_y1 = VIEWPORT_HEIGHT - y_aux
+        viewport_y2 = VIEWPORT_HEIGHT - first_y
+        viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+
+    def rotate_around_world(self, viewport, rotate_angle):
+        rotate_radian = -(np.radians(float(rotate_angle)))
+        points_matrix = []
+        rotation_matrix = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
+                           [np.sin(rotate_radian), np.cos(rotate_radian), 0],
+                           [0, 0, 1]]
+
+        x_aux = None
+        y_aux = None
+        first_x = None
+        first_y = None
+        for i, point in enumerate(self.points):
+            points_matrix = [point[0], point[1], 1]
+            result_points = np.matmul(points_matrix, rotation_matrix)
+            point[0] = result_points[0]
+            point[1] = result_points[1]
+
+            if not (i == 0):
+                viewport_y1 = VIEWPORT_HEIGHT - y_aux
+                viewport_y2 = VIEWPORT_HEIGHT - point[1]
+                viewport.coords(self.list_ids[i], x_aux, viewport_y1, point[0], viewport_y2)
+            else:
+                first_x = point[0]
+                first_y = point[1]
+
+            x_aux = point[0]
+            y_aux = point[1]
+
+        viewport_y1 = VIEWPORT_HEIGHT - y_aux
+        viewport_y2 = VIEWPORT_HEIGHT - first_y
+        viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+
+    def rotate_around_object(self, viewport, rotate_angle):
+        if self.center == None:
+            self.calculate_center()
+        
+        rotate_radian = -(np.radians(float(rotate_angle)))
+        points_matrix = []
+        first_translation_matriz = [[1, 0, 0],
+                                    [0, 1, 0],
+                                    [-(self.center[0]), -(self.center[1]), 1]]
+        second_translation_matriz = [[1, 0, 0],
+                                     [0, 1, 0],
+                                     [self.center[0], self.center[1], 1]]
+        rotation_matrix = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
+                            [np.sin(rotate_radian), np.cos(rotate_radian), 0],
+                            [0, 0, 1]]
+
+        x_aux = None
+        y_aux = None
+        first_x = None
+        first_y = None
+        for i, point in enumerate(self.points):
+            points_matrix = [point[0], point[1], 1]
+            result_points = np.matmul(points_matrix, first_translation_matriz)
+            result_points = np.matmul(result_points, rotation_matrix)
+            result_points = np.matmul(result_points, second_translation_matriz)
+            point[0] = result_points[0]
+            point[1] = result_points[1]
+
+            if not (i == 0):
+                viewport_y1 = VIEWPORT_HEIGHT - y_aux
+                viewport_y2 = VIEWPORT_HEIGHT - point[1]
+                viewport.coords(self.list_ids[i], x_aux, viewport_y1, point[0], viewport_y2)
+            else:
+                first_x = point[0]
+                first_y = point[1]
+
+            x_aux = point[0]
+            y_aux = point[1]
+
+        viewport_y1 = VIEWPORT_HEIGHT - y_aux
+        viewport_y2 = VIEWPORT_HEIGHT - first_y
+        viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+
+    def rotate_around_point(self, viewport, rotate_points):
+        rotate_points = rotate_points.split()
+        point_x = float(rotate_points[1])
+        point_y = float(rotate_points[4])
+        rotate_radian = -(np.radians(float(rotate_points[6])))
+
+        points_matrix = []
+        first_translation_matriz = [[1, 0, 0],
+                                    [0, 1, 0],
+                                    [-(point_x), -(point_y), 1]]
+        second_translation_matriz = [[1, 0, 0],
+                                     [0, 1, 0],
+                                     [point_x, point_y, 1]]
+        rotation_matrix = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
+                            [np.sin(rotate_radian), np.cos(rotate_radian), 0],
+                            [0, 0, 1]]
+
+        x_aux = None
+        y_aux = None
+        first_x = None
+        first_y = None
+        for i, point in enumerate(self.points):
+            points_matrix = [point[0], point[1], 1]
+            result_points = np.matmul(points_matrix, first_translation_matriz)
+            result_points = np.matmul(result_points, rotation_matrix)
+            result_points = np.matmul(result_points, second_translation_matriz)
             point[0] = result_points[0]
             point[1] = result_points[1]
 
