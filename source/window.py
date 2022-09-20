@@ -160,7 +160,7 @@ class Window(Frame):
                 if object.getId() == selected_item_id:
                     item = object
                     break
-            Transformation(self.viewport, self.table, selected_item, item)
+            Transformation(self.viewport, self.table, selected_item, item, self.modification)
         except IndexError:
             self.erros['text'] = 'Selecione um item para transformar'
 
