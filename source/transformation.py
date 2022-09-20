@@ -1,13 +1,16 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
+from objects import Wireframe
+from constants import VIEWPORT_WIDTH, VIEWPORT_HEIGHT
 
 class Transformation():
-    def __init__(self, viewport, main_table, object_id, object):
+    def __init__(self, viewport, main_table, object_id, object, modification):
         self.main_window = Toplevel()
         self.main_window.title("Transformações")
         self.transformations = [] #(tranformacao, valor)
                                   #valor quando em torno de algum ponto = [x, y, angulo], senao = angulo
+        self.modification = modification
         self.viewport = viewport
         self.main_table = main_table
         self.object_id = object_id
@@ -140,12 +143,31 @@ class Transformation():
                 self.object.rotate_around_object(self.viewport, values)
             elif id == 5:
                 self.object.rotate_around_point(self.viewport, values)
+                
+            if isinstance(self.object, Wireframe):
+                for id in self.object.list_ids:
+                    for element in self.modification:
+                        if element[0] == 'zoom':
+                            self.viewport.scale(id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, element[1], element[1])
+                        elif element[0] == 'move_hor':
+                            self.viewport.move(id, 0, element[1])
+                        else:
+                            self.viewport.move(id, element[1], 0)
+            else:
+                for element in self.modification:
+                    if element[0] == 'zoom':
+                        self.viewport.scale(self.object.id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, element[1], element[1])
+                    elif element[0] == 'move_hor':
+                        self.viewport.move(self.object.id, 0, element[1])
+                    else:
+                        self.viewport.move(self.object.id, element[1], 0)
 
             #alterar objeto na tabela principal
             self.main_table.item(self.object_id,
                                  values=(self.object.getName(), self.object.getPoints(), 
                                          self.object.getId()))
             self.delete_object_from_table(item)
+        self.close_window()
 
     def add_transformation(self):
         try:
