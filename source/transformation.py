@@ -5,12 +5,12 @@ from objects import Wireframe
 from constants import VIEWPORT_WIDTH, VIEWPORT_HEIGHT
 
 class Transformation():
-    def __init__(self, viewport, main_table, object_id, object, modification):
+    def __init__(self, viewport, main_table, object_id, object, coord_scn):
         self.main_window = Toplevel()
         self.main_window.title("Transformações")
         self.transformations = [] #(tranformacao, valor)
                                   #valor quando em torno de algum ponto = [x, y, angulo], senao = angulo
-        self.modification = modification
+        self.coord_scn = coord_scn
         self.viewport = viewport
         self.main_table = main_table
         self.object_id = object_id
@@ -144,23 +144,7 @@ class Transformation():
             elif id == 5:
                 self.object.rotate_around_point(self.viewport, values)
                 
-            if isinstance(self.object, Wireframe):
-                for id in self.object.list_ids:
-                    for element in self.modification:
-                        if element[0] == 'zoom':
-                            self.viewport.scale(id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, element[1], element[1])
-                        elif element[0] == 'move_hor':
-                            self.viewport.move(id, 0, element[1])
-                        else:
-                            self.viewport.move(id, element[1], 0)
-            else:
-                for element in self.modification:
-                    if element[0] == 'zoom':
-                        self.viewport.scale(self.object.id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, element[1], element[1])
-                    elif element[0] == 'move_hor':
-                        self.viewport.move(self.object.id, 0, element[1])
-                    else:
-                        self.viewport.move(self.object.id, element[1], 0)
+            self.coord_scn.generate_scn(self.object)
 
             #alterar objeto na tabela principal
             self.main_table.item(self.object_id,
