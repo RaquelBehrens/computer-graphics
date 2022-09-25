@@ -4,6 +4,7 @@ from constants import WINDOW_HEIGHT, WINDOW_WIDTH, APPLICATION_NAME, VIEWPORT_WI
 from include_object import IncludePoint, IncludeLine, IncludeTriangle, IncludeQuadrilateral, IncludePolygon
 from objects import Line, Wireframe
 from transformation import Transformation
+from normalized_window import NormalizedWindow
 
 
 class Window(Frame):
@@ -18,11 +19,12 @@ class Window(Frame):
 
         self.display_file = []
         self.lines_list = []
-        
-        self.modification = []
 
         self.create_widgets()
         self.create_table()
+        
+        self.coord_scn = NormalizedWindow(self.viewport)
+        self.coord_scn.define_viewport()
 
     def create_widgets(self):
         #labels
@@ -54,18 +56,24 @@ class Window(Frame):
         self.more_zoom.grid(row=8, column=0, sticky=NW, padx=30, pady=0)
         self.less_zoom = Button(self.frame1, text='  -  ', font=('Time', '11'), command=self.zoom_out)
         self.less_zoom.grid(row=8, column=0, columnspan=2, pady=0)
+        
+        Label(self.frame1, text='Rotação: ', font=('Time', '13')).grid(row=9, column=0, sticky=NW, pady=10)
+        self.right_rotation = Button(self.frame1, text='  ↻  ', font=('Time', '11'), command=self.rotate_left)
+        self.right_rotation.grid(row=10, column=0, sticky=NW, padx=30, pady=0)
+        self.left_rotation = Button(self.frame1, text='  ↺  ', font=('Time', '11'), command=self.rotate_right)
+        self.left_rotation.grid(row=10, column=0, columnspan=2, pady=0)
 
-        Label(self.frame1, text='Objetos: ', font=('Time', '13')).grid(row=9, column=0, sticky=NW, pady=10)
+        Label(self.frame1, text='Objetos: ', font=('Time', '13')).grid(row=11, column=0, sticky=NW, pady=10)
         self.more_zoom = Button(self.frame1, text='Criar Ponto', font=('Time', '11'), command=self.include_point)
-        self.more_zoom.grid(row=11, column=0, sticky=NW, padx=10)
+        self.more_zoom.grid(row=12, column=0, sticky=NW, padx=10)
         self.less_zoom = Button(self.frame1, text='Criar Linha', font=('Time', '11'), command=self.include_line)
-        self.less_zoom.grid(row=12, column=0, sticky=NW, padx=10, pady=3)
-        self.less_zoom = Button(self.frame1, text='Criar Triângulo', font=('Time', '11'), command=self.include_triangle)
         self.less_zoom.grid(row=13, column=0, sticky=NW, padx=10, pady=3)
-        self.less_zoom = Button(self.frame1, text='Criar Quadrilátero', font=('Time', '11'), command=self.include_quadrilateral)
+        self.less_zoom = Button(self.frame1, text='Criar Triângulo', font=('Time', '11'), command=self.include_triangle)
         self.less_zoom.grid(row=14, column=0, sticky=NW, padx=10, pady=3)
-        self.less_zoom = Button(self.frame1, text='Criar Outro Polígono', font=('Time', '11'), command=self.include_polygon)
+        self.less_zoom = Button(self.frame1, text='Criar Quadrilátero', font=('Time', '11'), command=self.include_quadrilateral)
         self.less_zoom.grid(row=15, column=0, sticky=NW, padx=10, pady=3)
+        self.less_zoom = Button(self.frame1, text='Criar Outro Polígono', font=('Time', '11'), command=self.include_polygon)
+        self.less_zoom.grid(row=16, column=0, sticky=NW, padx=10, pady=3)
         
         Label(self, text='Objetos: ',  font=('Time', '13')).grid(row=1, column=0, sticky=NW)
         self.delete = Button(self, text='Deletar Objeto', font=('Time', '11'), command=self.delete_object)
@@ -98,19 +106,19 @@ class Window(Frame):
         self.rowconfigure(2, weight=1) # row with treeview    
 
     def include_point(self):
-        IncludePoint(self.viewport, self.erros, self.display_file, self.table, self.modification)
+        IncludePoint(self.viewport, self.erros, self.display_file, self.table, self.coord_scn)
 
     def include_line(self):
-        IncludeLine(self.viewport, self.erros, self.display_file, self.lines_list, self.table, self.modification)
+        IncludeLine(self.viewport, self.erros, self.display_file, self.lines_list, self.table, self.coord_scn)
 
     def include_triangle(self):
-        IncludeTriangle(self.viewport, self.erros, self.display_file, self.table, self.modification)
+        IncludeTriangle(self.viewport, self.erros, self.display_file, self.table, self.coord_scn)
 
     def include_quadrilateral(self):
-        IncludeQuadrilateral(self.viewport, self.erros, self.display_file, self.table, self.modification)
+        IncludeQuadrilateral(self.viewport, self.erros, self.display_file, self.table, self.coord_scn)
 
     def include_polygon(self):
-        IncludePolygon(self.viewport, self.erros, self.display_file, self.table, self.modification)
+        IncludePolygon(self.viewport, self.erros, self.display_file, self.table, self.coord_scn)
 
     def delete_object(self):
         try:
@@ -160,30 +168,56 @@ class Window(Frame):
                 if object.getId() == selected_item_id:
                     item = object
                     break
-            Transformation(self.viewport, self.table, selected_item, item, self.modification)
+            Transformation(self.viewport, self.table, selected_item, item, self.coord_scn)
         except IndexError:
             self.erros['text'] = 'Selecione um item para transformar'
 
     def zoom_in(self):
-        self.modification.append(('zoom', 1.1))
-        self.viewport.scale("all", VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, 1.1, 1.1)
+        self.coord_scn.s[0] *= 1.1
+        self.coord_scn.s[1] *= 1.1
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
     
     def zoom_out(self):
-        self.modification.append(('zoom', 0.9))
-        self.viewport.scale("all", VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, 0.9, 0.9)
+        self.coord_scn.s[0] *= 0.9
+        self.coord_scn.s[1] *= 0.9
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
 
     def move_up(self):
-        self.modification.append(('move_hor', 10))
-        self.viewport.move("all", 0, 10)
+        self.coord_scn.wc[1] += 10
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
 
     def move_left(self):
-        self.modification.append(('move_ver', 10))
-        self.viewport.move("all", 10, 0)
+        self.coord_scn.wc[0] -= 10
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
     
     def move_right(self):
-        self.modification.append(('move_ver', -10))
-        self.viewport.move("all", -10, 0)
+        self.coord_scn.wc[0] += 10
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
 
     def move_down(self):
-        self.modification.append(('move_hor', -10))
-        self.viewport.move("all", 0, -10)
+        self.coord_scn.wc[1] -= 10
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
+
+    def rotate_right(self):
+        self.coord_scn.angle -= 10
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
+
+    def rotate_left(self):
+        self.coord_scn.angle += 10
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
