@@ -9,7 +9,7 @@ from tkinter import colorchooser
 
 class IncludeWindow(ABC):
     @abstractmethod
-    def __init__(self, viewport, erros, display_file, table, modification):
+    def __init__(self, viewport, erros, display_file, table, coord_scn):
         self.main_window = Toplevel()
         self.main_window.title("Incluir objeto")
         self.main_window.geometry(f"{INCLUDE_WINDOW_WIDTH}x{INCLUDE_WINDOW_HEIGHT}")
@@ -17,7 +17,7 @@ class IncludeWindow(ABC):
         self.erros = erros
         self.display_file = display_file
         self.table = table
-        self.modification = modification
+        self.coord_scn = coord_scn
         self.color = "#FFFFFF"
 
     @abstractmethod
@@ -37,8 +37,8 @@ class IncludeWindow(ABC):
 
 
 class IncludePoint(IncludeWindow):
-    def __init__(self, viewport, erros, display_file, table,modification):
-        super().__init__(viewport, erros, display_file, table,modification)
+    def __init__(self, viewport, erros, display_file, table, coord_scn):
+        super().__init__(viewport, erros, display_file, table, coord_scn)
         self.main_window.title("Incluir ponto")
         self.main_window.geometry(f"{INCLUDE_WINDOW_WIDTH}x{INCLUDE_WINDOW_HEIGHT-70}")
 
@@ -91,13 +91,7 @@ class IncludePoint(IncludeWindow):
                 objeto = Point(name, [[x1, y1]], self.color)
                 objeto.drawn(self.viewport)
 
-                for element in self.modification:
-                    if element[0] == 'zoom':
-                        self.viewport.scale(objeto.id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, element[1], element[1])
-                    elif element[0] == 'move_hor':
-                        self.viewport.move(objeto.id, 0, element[1])
-                    else:
-                        self.viewport.move(objeto.id, element[1], 0)
+                self.coord_scn.generate_scn(objeto)
                 
                 self.close_window()                
                 self.display_file.append(objeto)
@@ -114,8 +108,8 @@ class IncludePoint(IncludeWindow):
 
 
 class IncludeLine(IncludeWindow):
-    def __init__(self, viewport, erros, display_file, lines_list, table,modification):
-        super().__init__(viewport, erros, display_file, table,modification)
+    def __init__(self, viewport, erros, display_file, lines_list, table, coord_scn):
+        super().__init__(viewport, erros, display_file, table, coord_scn)
         self.main_window.title("Incluir linha")
         self.lines_list = lines_list
 
@@ -188,13 +182,7 @@ class IncludeLine(IncludeWindow):
 
                 objeto.drawn(self.viewport)
 
-                for element in self.modification:
-                    if element[0] == 'zoom':
-                        self.viewport.scale(objeto.id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, element[1], element[1])
-                    elif element[0] == 'move_hor':
-                        self.viewport.move(objeto.id, 0, element[1])
-                    else:
-                        self.viewport.move(objeto.id, element[1], 0)
+                self.coord_scn.generate_scn(objeto)
                 
                 self.close_window()                
                 self.display_file.append(objeto)
@@ -299,8 +287,8 @@ class IncludeLine(IncludeWindow):
 
 
 class IncludeTriangle(IncludeWindow):
-    def __init__(self, viewport, erros, display_file, table,modification):
-        super().__init__(viewport, erros, display_file, table,modification)
+    def __init__(self, viewport, erros, display_file, table, coord_scn):
+        super().__init__(viewport, erros, display_file, table, coord_scn)
         self.main_window.title("Incluir Triângulo")
 
         self.frame1 = Frame(self.main_window)
@@ -388,14 +376,7 @@ class IncludeTriangle(IncludeWindow):
                     objeto = Wireframe(name, [[x1,y1], [x2,y2], [x3,y3]], self.color)
                     objeto.drawn(self.viewport)
 
-                    for id in objeto.list_ids:
-                        for element in self.modification:
-                            if element[0] == 'zoom':
-                                self.viewport.scale(id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, element[1], element[1])
-                            elif element[0] == 'move_hor':
-                                self.viewport.move(id, 0, element[1])
-                            else:
-                                self.viewport.move(id, element[1], 0)
+                    self.coord_scn.generate_scn(objeto)
                     
                     self.close_window()                
                     self.display_file.append(objeto)
@@ -412,8 +393,8 @@ class IncludeTriangle(IncludeWindow):
 
 
 class IncludeQuadrilateral(IncludeWindow):
-    def __init__(self, viewport, erros, display_file, table,modification):
-        super().__init__(viewport, erros, display_file, table,modification)
+    def __init__(self, viewport, erros, display_file, table, coord_scn):
+        super().__init__(viewport, erros, display_file, table, coord_scn)
         self.main_window.title("Incluir Quadrilátero")
         self.main_window.geometry(f"{INCLUDE_WINDOW_WIDTH}x{INCLUDE_WINDOW_HEIGHT+130}")
 
@@ -525,14 +506,7 @@ class IncludeQuadrilateral(IncludeWindow):
                     objeto = Wireframe(name, [[x1,y1], [x2,y2], [x3,y3], [x4,y4]], self.color)
                     objeto.drawn(self.viewport)
 
-                    for id in objeto.list_ids:
-                        for element in self.modification:
-                            if element[0] == 'zoom':
-                                self.viewport.scale(id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, element[1], element[1])
-                            elif element[0] == 'move_hor':
-                                self.viewport.move(id, 0, element[1])
-                            else:
-                                self.viewport.move(id, element[1], 0)
+                    self.coord_scn.generate_scn(objeto)
                     
                     self.close_window()                
                     self.display_file.append(objeto)
@@ -549,8 +523,8 @@ class IncludeQuadrilateral(IncludeWindow):
 
 
 class IncludePolygon(IncludeWindow):
-    def __init__(self, viewport, erros, display_file, table,modification):
-        super().__init__(viewport, erros, display_file, table,modification)
+    def __init__(self, viewport, erros, display_file, table, coord_scn):
+        super().__init__(viewport, erros, display_file, table, coord_scn)
         self.main_window.title("Incluir Outro Polígono")
         self.main_window.geometry(f"{INCLUDE_WINDOW_WIDTH+100}x{INCLUDE_WINDOW_HEIGHT-50}")
 
@@ -616,14 +590,7 @@ class IncludePolygon(IncludeWindow):
                     objeto = Wireframe(name, coordinates, self.color)
                     objeto.drawn(self.viewport)
 
-                    for id in objeto.list_ids:
-                        for element in self.modification:
-                            if element[0] == 'zoom':
-                                self.viewport.scale(id, VIEWPORT_HEIGHT/2, VIEWPORT_WIDTH/2, element[1], element[1])
-                            elif element[0] == 'move_hor':
-                                self.viewport.move(id, 0, element[1])
-                            else:
-                                self.viewport.move(id, element[1], 0)
+                    self.coord_scn.generate_scn(objeto)
 
                     self.close_window()                
                     self.display_file.append(objeto)
