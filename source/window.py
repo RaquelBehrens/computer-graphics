@@ -5,6 +5,7 @@ from include_object import IncludePoint, IncludeLine, IncludeTriangle, IncludeQu
 from objects import Line, Wireframe
 from transformation import Transformation
 from normalized_window import NormalizedWindow
+import numpy as np
 
 
 class Window(Frame):
@@ -187,25 +188,97 @@ class Window(Frame):
             self.coord_scn.generate_scn(object)
 
     def move_up(self):
-        self.coord_scn.wc[1] += 10
+        #print('cima')
+
+        rotate_radian = (np.radians(float(self.coord_scn.angle)))
+        sin = np.sin(rotate_radian)
+        cos = np.cos(rotate_radian)
+
+        #print(self.coord_scn.angle)
+        #print(sin)
+        #print(cos)
+
+        #print(self.coord_scn.wc[0])
+        #print(self.coord_scn.wc[1])
+
+        self.coord_scn.wc[0] += 10*(1-cos)
+        self.coord_scn.wc[1] += 10*(1-sin)
+
+        #print('depois')
+        #print(self.coord_scn.wc[0])
+        #print(self.coord_scn.wc[1])
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
 
     def move_left(self):
-        self.coord_scn.wc[0] -= 10
+        #print('esquerda')
+
+        rotate_radian = (np.radians(float(self.coord_scn.angle)))
+        sin = np.sin(rotate_radian)
+        cos = np.cos(rotate_radian)
+
+        #print(self.coord_scn.angle)
+        #print(sin)
+        #print(cos)
+
+        #print(self.coord_scn.wc[0])
+        #print(self.coord_scn.wc[1])
+
+        self.coord_scn.wc[0] -= 10*(1-sin)
+        self.coord_scn.wc[1] += 10*(1-cos)
+
+        #print('depois')
+        #print(self.coord_scn.wc[0])
+        #print(self.coord_scn.wc[1])
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
     
     def move_right(self):
-        self.coord_scn.wc[0] += 10
+        #print('direita')
+
+        rotate_radian = (np.radians(float(self.coord_scn.angle)))
+        sin = np.sin(rotate_radian)
+        cos = np.cos(rotate_radian)
+
+        #print(self.coord_scn.angle)
+        #print(sin)
+        #print(cos)
+
+        #print(self.coord_scn.wc[0])
+        #print(self.coord_scn.wc[1])
+
+        self.coord_scn.wc[0] += 10*(1-sin)
+        self.coord_scn.wc[1] -= 10*(1-cos)
+
+        #print('depois')
+        #print(self.coord_scn.wc[0])
+        #print(self.coord_scn.wc[1])
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
 
     def move_down(self):
-        self.coord_scn.wc[1] -= 10
+        #print('baixo')
+
+        rotate_radian = (np.radians(float(self.coord_scn.angle)))
+        sin = np.sin(rotate_radian)
+        cos = np.cos(rotate_radian)
+
+        #print(self.coord_scn.angle)
+        #print(sin)
+        #print(cos)
+
+        #print(self.coord_scn.wc[0])
+        #print(self.coord_scn.wc[1])
+
+        self.coord_scn.wc[0] -= 10*(1-cos)
+        self.coord_scn.wc[1] -= 10*(1-sin)
+
+        #print('depois')
+        #print(self.coord_scn.wc[0])
+        #print(self.coord_scn.wc[1])
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
