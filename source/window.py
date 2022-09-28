@@ -5,6 +5,7 @@ from include_object import IncludePoint, IncludeLine, IncludeTriangle, IncludeQu
 from objects import Line, Wireframe
 from transformation import Transformation
 from normalized_window import NormalizedWindow
+from descritor_obj import DescritorOBJ
 import numpy as np
 
 
@@ -84,6 +85,9 @@ class Window(Frame):
         
         self.transformation = Button(self, text='Transformações', font=('Time', '11'), command=self.transform_object)
         self.transformation.grid(row=4, column=0, sticky=NW, padx=0, pady=5)
+
+        self.generate_obj = Button(self, text='Gerar OBJ file', font=('Time', '11'), command=self.generate_obj_file)
+        self.generate_obj.grid(row=4, column=1, sticky=NW, padx=0, pady=5)
 
         # scroll bar for the terminal outputs
         self.terminal_scrollbar = Scrollbar(self, orient=VERTICAL)
@@ -294,3 +298,6 @@ class Window(Frame):
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
+
+    def generate_obj_file(self):
+        DescritorOBJ(self.viewport, self.display_file)
