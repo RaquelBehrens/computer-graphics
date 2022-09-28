@@ -8,6 +8,7 @@ class Object(ABC):
         self.id = None
         self.name = None
         self.points = []
+        self.color = None
         self.center = None
 
     def get_points(self):
@@ -18,6 +19,9 @@ class Object(ABC):
 
     def get_id(self):
         return self.id
+
+    def get_color(self):
+        return self.color
     
     @abstractmethod
     def drawn(self, viewport):
@@ -54,14 +58,7 @@ class Object(ABC):
             center_x += point[0]
             center_y += point[1]
         self.center = [center_x/len(self.points), center_y/len(self.points)]
-        
-    def hex_to_rgb(self, hex):
-        rgb = []
-        for i in (0, 2, 4):
-            decimal = int(hex[i:i+2], 16)
-            rgb.append(decimal)
-  
-        return tuple(rgb)
+
 
 class Point(Object):
     def __init__(self, name, points, color): #points = [[x1, y1]]
@@ -192,16 +189,11 @@ class Point(Object):
         viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
         viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[0][0], viewport_y1)
 
-    def obj_string(self, list_of_points):
+    def obj_string(self, list_of_points, list_of_colors):
         points = []
 
-        color_name = f"color{self.color}"
-        color_name_line = f"newmtl {color_name}\n"
-        color_rgb = self.hex_to_rgb(self.color[1:])
-        color_code = f"Kd {color_rgb[0]} {color_rgb[1]} {color_rgb[2]}\n"
-
         name = f"o {self.name}\n"
-        color = f"usemtl {color_name}\n"
+        color = f"usemtl color{list_of_colors.get(self.color)}\n"
 
         for point in self.points:
             point_index = list(list_of_points.keys())[list(list_of_points.values()).index(point)]
@@ -210,7 +202,7 @@ class Point(Object):
         points = " ".join(map(str,points))
         points = f"p {points}\n"
 
-        return name, color, points, color_name_line, color_code
+        return name, color, points
 
 class Line(Object):
     def __init__(self, name, points, color): #points=[[x1, y1],[x2, y2]]
@@ -347,16 +339,11 @@ class Line(Object):
         viewport_y2 = VIEWPORT_HEIGHT - self.points[1][1]
         viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[1][0], viewport_y2)
 
-    def obj_string(self, list_of_points):
+    def obj_string(self, list_of_points, list_of_colors):
         points = []
 
-        color_name = f"color{self.color}"
-        color_name_line = f"newmtl {color_name}\n"
-        color_rgb = self.hex_to_rgb(self.color[1:])
-        color_code = f"Kd {color_rgb[0]} {color_rgb[1]} {color_rgb[2]}\n"
-
         name = f"o {self.name}\n"
-        color = f"usemtl {color_name}\n"
+        color = f"usemtl color{list_of_colors.get(self.color)}\n"
 
         for point in self.points:
             point_index = list(list_of_points.keys())[list(list_of_points.values()).index(point)]
@@ -365,7 +352,7 @@ class Line(Object):
         points = " ".join(map(str,points))
         points = f"l {points}\n"
 
-        return name, color, points, color_name_line, color_code
+        return name, color, points
 
 
 class Wireframe(Object):  #This is a Polygon
@@ -598,16 +585,11 @@ class Wireframe(Object):  #This is a Polygon
         viewport_y2 = VIEWPORT_HEIGHT - first_y
         viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
 
-    def obj_string(self, list_of_points):
+    def obj_string(self, list_of_points, list_of_colors):
         points = []
 
-        color_name = f"color{self.color}"
-        color_name_line = f"newmtl {color_name}\n"
-        color_rgb = self.hex_to_rgb(self.color[1:])
-        color_code = f"Kd {color_rgb[0]} {color_rgb[1]} {color_rgb[2]}\n"
-
         name = f"o {self.name}\n"
-        color = f"usemtl {color_name}\n"
+        color = f"usemtl color{list_of_colors.get(self.color)}\n"
 
         for point in self.points:
             point_index = list(list_of_points.keys())[list(list_of_points.values()).index(point)]
@@ -616,4 +598,4 @@ class Wireframe(Object):  #This is a Polygon
         points = " ".join(map(str,points))
         points = f"l {points}\n"
 
-        return name, color, points, color_name_line, color_code
+        return name, color, points
