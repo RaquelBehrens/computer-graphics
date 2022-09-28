@@ -4,11 +4,11 @@ class DescritorOBJ():
         self.viewport = viewport
         self.wavefront_file = open("wavefront.obj", "w")
         self.sample_file = open("sample.mtl", "w")
-        listOfObjects, listOfVertexes = self.objectsInFileType()
-        self.createOBJFile(listOfObjects, listOfVertexes)
+        list_of_objects, list_of_vertexes = self.objects_in_file_type()
+        self.create_OBJ_file(list_of_objects, list_of_vertexes)
 
-    def createOBJFile(self, listOfObjects, listOfVertexes):
-        for vertex in listOfVertexes:
+    def create_OBJ_file(self, list_of_objects, list_of_vertexes):
+        for vertex in list_of_vertexes:
             self.wavefront_file.write(vertex)
 
         self.wavefront_file.write("mtllib sample.mtl\n")
@@ -18,11 +18,11 @@ class DescritorOBJ():
         y0 = self.viewport.winfo_screenheight()/2
         self.wavefront_file.write(f"w {x0} {y0}\n")
 
-        for object in listOfObjects:
+        for object in list_of_objects:
             self.wavefront_file.write(object)
 
-    def objectsInFileType(self):
-        listOfVertexes = []
+    def objects_in_file_type(self):
+        list_of_vertexes = []
         writeList = []
         counter = 1
 
@@ -32,7 +32,7 @@ class DescritorOBJ():
             for point in points:
                 if point not in list_of_points.values():
                     list_of_points[str(counter)] = point
-                    listOfVertexes.append(f"{counter} v {point[0]} {point[1]} 0.0\n")
+                    list_of_vertexes.append(f"{counter} v {point[0]} {point[1]} 0.0\n")
                     counter += 1
         
         for object in self.display_file:
@@ -46,4 +46,4 @@ class DescritorOBJ():
             self.sample_file.write(color_code)
             self.sample_file.write('\n')
 
-        return writeList, listOfVertexes
+        return writeList, list_of_vertexes
