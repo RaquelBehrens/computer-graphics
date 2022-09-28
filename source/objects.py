@@ -43,6 +43,10 @@ class Object(ABC):
     def rotate_around_point(self, viewport, rotate_points):
         pass
 
+    @abstractmethod
+    def objString(self, counter):
+        pass
+
     def calculate_center(self):
         center_x = 0
         center_y = 0
@@ -181,6 +185,21 @@ class Point(Object):
         viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
         viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[0][0], viewport_y1)
 
+    def objString(self, counter):
+        vertexes = []
+        points = []
+
+        for point in self.points:
+            counter += 1
+            vertexes.append(f"{counter} v {point[0]} {point[1]} 0.0")
+            points.append(counter)
+        
+        name = f"o {self.name}"
+        color = f"usemtl {self.color}"
+        points = points.join(" ")
+        points = f"p {points}"
+
+        return vertexes, name, color, points
 
 class Line(Object):
     def __init__(self, name, points, color): #points=[[x1, y1],[x2, y2]]
@@ -316,6 +335,22 @@ class Line(Object):
         viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
         viewport_y2 = VIEWPORT_HEIGHT - self.points[1][1]
         viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[1][0], viewport_y2)
+
+    def objString(self, counter):
+        vertexes = []
+        points = []
+
+        for point in self.points:
+            counter += 1
+            vertexes.append(f"{counter} v {point[0]} {point[1]} 0.0")
+            points.append(counter)
+        
+        name = f"o {self.name}"
+        color = f"usemtl {self.color}"
+        points = points.join(" ")
+        points = f"l {points}"
+
+        return vertexes, name, color, points
 
 
 class Wireframe(Object):  #This is a Polygon
@@ -547,3 +582,19 @@ class Wireframe(Object):  #This is a Polygon
         viewport_y1 = VIEWPORT_HEIGHT - y_aux
         viewport_y2 = VIEWPORT_HEIGHT - first_y
         viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+
+    def objString(self, counter):
+        vertexes = []
+        points = []
+
+        for point in self.points:
+            counter += 1
+            vertexes.append(f"{counter} v {point[0]} {point[1]} 0.0")
+            points.append(counter)
+        
+        name = f"o {self.name}"
+        color = f"usemtl {self.color}"
+        points = points.join(" ")
+        points = f"l {points}"
+
+        return vertexes, name, color, points
