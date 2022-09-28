@@ -201,8 +201,8 @@ class Window(Frame):
         #print(self.coord_scn.wc[0])
         #print(self.coord_scn.wc[1])
 
-        self.coord_scn.wc[0] += 10*(1-cos)
-        self.coord_scn.wc[1] += 10*(1-sin)
+        self.coord_scn.wc[0] += 10*(sin)
+        self.coord_scn.wc[1] += 10*(cos)
 
         #print('depois')
         #print(self.coord_scn.wc[0])
@@ -225,8 +225,8 @@ class Window(Frame):
         #print(self.coord_scn.wc[0])
         #print(self.coord_scn.wc[1])
 
-        self.coord_scn.wc[0] -= 10*(1-sin)
-        self.coord_scn.wc[1] += 10*(1-cos)
+        self.coord_scn.wc[0] -= 10*(cos)
+        self.coord_scn.wc[1] += 10*(sin)
 
         #print('depois')
         #print(self.coord_scn.wc[0])
@@ -249,8 +249,8 @@ class Window(Frame):
         #print(self.coord_scn.wc[0])
         #print(self.coord_scn.wc[1])
 
-        self.coord_scn.wc[0] += 10*(1-sin)
-        self.coord_scn.wc[1] -= 10*(1-cos)
+        self.coord_scn.wc[0] += 10*(cos)
+        self.coord_scn.wc[1] -= 10*(sin)
 
         #print('depois')
         #print(self.coord_scn.wc[0])
@@ -273,8 +273,8 @@ class Window(Frame):
         #print(self.coord_scn.wc[0])
         #print(self.coord_scn.wc[1])
 
-        self.coord_scn.wc[0] -= 10*(1-cos)
-        self.coord_scn.wc[1] -= 10*(1-sin)
+        self.coord_scn.wc[0] -= 10*(sin)
+        self.coord_scn.wc[1] -= 10*(cos)
 
         #print('depois')
         #print(self.coord_scn.wc[0])
