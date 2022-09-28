@@ -143,7 +143,7 @@ class Window(Frame):
             selected_item_id = self.table.item(selected_item).get('values')[2]
 
             for object in self.display_file:
-                if object.getId() == selected_item_id:
+                if object.get_id() == selected_item_id:
                     self.delete_object_from_table(selected_item)
                     self.display_file.remove(object)
                     if isinstance(object, Line):
@@ -162,7 +162,7 @@ class Window(Frame):
         self.table.delete(id)
 
     def update_object_from_table(self, id, item):
-        self.table.item(id, 0, values=(item.getName(), item.getPoints(), item.getId()))
+        self.table.item(id, 0, values=(item.get_name(), item.get_points(), item.get_id()))
         
     def transform_object(self):
         try:
@@ -170,7 +170,7 @@ class Window(Frame):
             selected_item_id = self.table.item(selected_item).get('values')[2]
             item = None
             for object in self.display_file:
-                if object.getId() == selected_item_id:
+                if object.get_id() == selected_item_id:
                     item = object
                     break
             Transformation(self.viewport, self.table, selected_item, item, self.coord_scn)

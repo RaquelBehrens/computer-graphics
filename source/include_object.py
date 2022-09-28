@@ -25,7 +25,7 @@ class IncludeWindow(ABC):
         pass
 
     def include_object_in_table(self, object):
-        self.table.insert('', 0, values=(object.getName(), object.getPoints(), object.getId()))
+        self.table.insert('', 0, values=(object.get_name(), object.get_points(), object.get_id()))
 
     def close_window(self):
         self.main_window.destroy()
@@ -209,23 +209,23 @@ class IncludeLine(IncludeWindow):
 
         list_ids = []
         for line in polygons_lines_list:
-            list_ids.append(line.getId())
+            list_ids.append(line.get_id())
             self.display_file.remove(line)
             self.lines_list.remove(line)
-            self.viewport.itemconfig(line.getId(), fill=self.color)
+            self.viewport.itemconfig(line.get_id(), fill=self.color)
 
         for item in self.table.get_children():
             item_id = self.table.item(item).get('values')[2]
             if item_id in list_ids:
                 self.table.delete(item)
 
-        objeto = Wireframe(name, polygons_points_list, self.color, polygons_lines_list[0].getId())
+        objeto = Wireframe(name, polygons_points_list, self.color, polygons_lines_list[0].get_id())
         objeto.list_ids = list_ids
         self.include_object_in_table(objeto)
         self.display_file.append(objeto)
     
     def verify_polygon(self, last_line, lines_list):
-        last_line_points = last_line.getPoints()
+        last_line_points = last_line.get_points()
         x1 = last_line_points[0][0]
         y1 = last_line_points[0][1]
         x2 = last_line_points[1][0]
@@ -247,7 +247,7 @@ class IncludeLine(IncludeWindow):
             can_continue = False
 
             for line in copy_lines_list:
-                points = line.getPoints()
+                points = line.get_points()
 
                 #checking first point
                 if points[0][0] == x_target and points[0][1] == y_target:

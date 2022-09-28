@@ -148,8 +148,8 @@ class Transformation():
 
             #alterar objeto na tabela principal
             self.main_table.item(self.object_id,
-                                 values=(self.object.getName(), self.object.getPoints(), 
-                                         self.object.getId()))
+                                 values=(self.object.get_name(), self.object.get_points(), 
+                                         self.object.get_id()))
             self.delete_object_from_table(item)
         self.close_window()
 

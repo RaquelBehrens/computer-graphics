@@ -24,12 +24,20 @@ class DescritorOBJ():
     def objectsInFileType(self):
         listOfVertexes = []
         writeList = []
-        counter = 0
+        counter = 1
+
+        list_of_points = {}
+        for object in self.display_file:
+            points = object.get_points()
+            for point in points:
+                if point not in list_of_points.values():
+                    list_of_points[str(counter)] = point
+                    listOfVertexes.append(f"{counter} v {point[0]} {point[1]} 0.0\n")
+                    counter += 1
         
         for object in self.display_file:
-            vertexes, name, color, points, counter, color_name, color_code = object.obj_string(counter)
-            for vertex in vertexes:
-                listOfVertexes.append(vertex)
+            name, color, points, color_name, color_code = object.obj_string(list_of_points)
+
             writeList.append(name)
             writeList.append(color)
             writeList.append(points)
