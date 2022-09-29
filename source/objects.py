@@ -29,7 +29,26 @@ class Object(ABC):
 
     @abstractmethod
     def translate(self, viewport, translation_points, coord_scn):
-        pass
+        translation_points = translation_points.split()
+
+        rotate_radian = (np.radians(float(coord_scn.angle)))
+        sin = np.sin(rotate_radian)
+        cos = np.cos(rotate_radian)
+
+        new_x = 0
+        new_y = 0
+
+        new_x += (float(translation_points[0])*cos)
+        new_y += (float(translation_points[0])*sin)
+        new_x += (float(translation_points[1])*sin)
+        new_y += (float(translation_points[1])*cos)
+
+
+        translation_matrix = [[1, 0, 0],
+                              [0, 1, 0],
+                              [new_x, new_y, 1]]
+
+        return translation_matrix
 
     @abstractmethod
     def scale(self, viewport, translation_points):
@@ -72,16 +91,9 @@ class Point(Object):
         self.id = viewport.create_oval(self.points[0][0], viewport_y1, self.points[0][0], viewport_y1, width=POINT_SIZE, outline=self.color)
 
     def translate(self, viewport, translation_points, coord_scn):
-        translation_points = translation_points.split()
-        rotate_radian = (np.radians(float(coord_scn.angle)))
-        sin = np.sin(rotate_radian)
-        cos = np.cos(rotate_radian)
-
+        translation_matrix = super().translate(viewport, translation_points, coord_scn)
+        
         points_matrix = []
-        translation_matrix = [[1, 0, 0],
-                              [0, 1, 0],
-                              [float(translation_points[0])*sin, float(translation_points[1])*cos, 1]]
-
         for point in self.points:
             points_matrix = [point[0], point[1], 1]
             result_points = np.matmul(points_matrix, translation_matrix)
@@ -221,15 +233,7 @@ class Line(Object):
         self.id = viewport.create_line((self.points[0][0], viewport_y1), (self.points[1][0], viewport_y2), width=3, fill=self.color)
 
     def translate(self, viewport, translation_points, coord_scn):
-        translation_points = translation_points.split()
-        rotate_radian = (np.radians(float(coord_scn.angle)))
-        sin = np.sin(rotate_radian)
-        cos = np.cos(rotate_radian)
-
-        points_matrix = []
-        translation_matrix = [[1, 0, 0],
-                              [0, 1, 0],
-                              [float(translation_points[0])*sin, float(translation_points[1])*cos, 1]]
+        translation_matrix = super().translate(viewport, translation_points, coord_scn)
 
         for point in self.points:
             points_matrix = [point[0], point[1], 1]
@@ -237,7 +241,6 @@ class Line(Object):
             point[0] = result_points[0]
             point[1] = result_points[1]
 
-        #parte de ponto e linha
         viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
         viewport_y2 = VIEWPORT_HEIGHT - self.points[1][1]
         viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[1][0], viewport_y2)
@@ -396,24 +399,7 @@ class Wireframe(Object):  #This is a Polygon
         self.list_ids.append(self.id)
 
     def translate(self, viewport, translation_points, coord_scn):
-        translation_points = translation_points.split()
-        print(translation_points)
-        print(coord_scn.angle)
-        rotate_radian = (np.radians(float(coord_scn.angle)))
-        sin = np.sin(rotate_radian)
-        cos = np.cos(rotate_radian)
-
-        new_x = (float(translation_points[0])*sin)
-        new_y = (float(translation_points[1])*cos)
-
-        print('---')
-        print(new_x)
-        print(new_y)
-
-        points_matrix = []
-        translation_matrix = [[1, 0, 0],
-                              [0, 1, 0],
-                              [new_x, new_y, 1]]
+        translation_matrix = super().translate(viewport, translation_points, coord_scn)
 
         x_aux = None
         y_aux = None
