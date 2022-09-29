@@ -151,7 +151,6 @@ class Transformation():
                                  values=(self.object.get_name(), self.object.get_points(), 
                                          self.object.get_id()))
             self.delete_object_from_table(item)
-        self.close_window()
 
     def add_transformation(self):
         try:

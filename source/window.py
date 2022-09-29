@@ -89,6 +89,9 @@ class Window(Frame):
         self.generate_obj = Button(self, text='Gerar OBJ file', font=('Time', '11'), command=self.generate_obj_file)
         self.generate_obj.grid(row=4, column=1, sticky=NW, padx=0, pady=5)
 
+        self.retore_window_config = Button(self, text='Restaurar configurações da window', font=('Time', '11'), command=self.retore_window)
+        self.retore_window_config.grid(row=3, column=1, sticky=NW, padx=200, pady=5)
+
         # scroll bar for the terminal outputs
         self.terminal_scrollbar = Scrollbar(self, orient=VERTICAL)
         self.terminal_scrollbar.grid(row=5, column=3, sticky=NS)
@@ -192,97 +195,45 @@ class Window(Frame):
             self.coord_scn.generate_scn(object)
 
     def move_up(self):
-        #print('cima')
-
         rotate_radian = (np.radians(float(self.coord_scn.angle)))
         sin = np.sin(rotate_radian)
         cos = np.cos(rotate_radian)
 
-        #print(self.coord_scn.angle)
-        #print(sin)
-        #print(cos)
-
-        #print(self.coord_scn.wc[0])
-        #print(self.coord_scn.wc[1])
-
         self.coord_scn.wc[0] += 10*(sin)
         self.coord_scn.wc[1] += 10*(cos)
-
-        #print('depois')
-        #print(self.coord_scn.wc[0])
-        #print(self.coord_scn.wc[1])
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
 
     def move_left(self):
-        #print('esquerda')
-
         rotate_radian = (np.radians(float(self.coord_scn.angle)))
         sin = np.sin(rotate_radian)
         cos = np.cos(rotate_radian)
 
-        #print(self.coord_scn.angle)
-        #print(sin)
-        #print(cos)
-
-        #print(self.coord_scn.wc[0])
-        #print(self.coord_scn.wc[1])
-
         self.coord_scn.wc[0] -= 10*(cos)
         self.coord_scn.wc[1] += 10*(sin)
-
-        #print('depois')
-        #print(self.coord_scn.wc[0])
-        #print(self.coord_scn.wc[1])
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
     
     def move_right(self):
-        #print('direita')
-
         rotate_radian = (np.radians(float(self.coord_scn.angle)))
         sin = np.sin(rotate_radian)
         cos = np.cos(rotate_radian)
 
-        #print(self.coord_scn.angle)
-        #print(sin)
-        #print(cos)
-
-        #print(self.coord_scn.wc[0])
-        #print(self.coord_scn.wc[1])
-
         self.coord_scn.wc[0] += 10*(cos)
         self.coord_scn.wc[1] -= 10*(sin)
-
-        #print('depois')
-        #print(self.coord_scn.wc[0])
-        #print(self.coord_scn.wc[1])
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
 
     def move_down(self):
-        #print('baixo')
-
         rotate_radian = (np.radians(float(self.coord_scn.angle)))
         sin = np.sin(rotate_radian)
         cos = np.cos(rotate_radian)
 
-        #print(self.coord_scn.angle)
-        #print(sin)
-        #print(cos)
-
-        #print(self.coord_scn.wc[0])
-        #print(self.coord_scn.wc[1])
-
-        self.coord_scn.wc[0] -= 10*(sin)
-        self.coord_scn.wc[1] -= 10*(cos)
-
-        #print('depois')
-        #print(self.coord_scn.wc[0])
-        #print(self.coord_scn.wc[1])
+        self.coord_scn.wc[0] -= 10*(cos)
+        self.coord_scn.wc[1] -= 10*(sin)
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
@@ -295,6 +246,14 @@ class Window(Frame):
 
     def rotate_left(self):
         self.coord_scn.angle += 10
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
+
+    def retore_window(self):
+        self.coord_scn.wc[0] = 0
+        self.coord_scn.wc[1] = 0
+        self.coord_scn.angle = 0
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
