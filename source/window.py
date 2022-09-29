@@ -232,8 +232,8 @@ class Window(Frame):
         sin = np.sin(rotate_radian)
         cos = np.cos(rotate_radian)
 
-        self.coord_scn.wc[0] -= 10*(cos)
-        self.coord_scn.wc[1] -= 10*(sin)
+        self.coord_scn.wc[0] -= 10*(sin)
+        self.coord_scn.wc[1] -= 10*(cos)
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
