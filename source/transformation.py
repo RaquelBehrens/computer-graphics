@@ -134,7 +134,7 @@ class Transformation():
             id, _, values = self.table.item(item).get('values')
             
             if id == 1:
-                self.object.translate(self.viewport, values, self.coord_scn)
+                self.object.translate(self.viewport, values)
             elif id == 2:
                 self.object.scale(self.viewport, values)
             elif id == 3:
