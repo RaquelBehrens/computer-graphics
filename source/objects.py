@@ -28,7 +28,7 @@ class Object(ABC):
         pass
 
     @abstractmethod
-    def translate(self, viewport, translation_points):
+    def translate(self, viewport, translation_points, coord_scn):
         pass
 
     @abstractmethod
@@ -71,16 +71,29 @@ class Point(Object):
         viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
         self.id = viewport.create_oval(self.points[0][0], viewport_y1, self.points[0][0], viewport_y1, width=POINT_SIZE, outline=self.color)
 
-    def translate(self, viewport, translation_points):
+    def translate(self, viewport, translation_points, coord_scn):
         translation_points = translation_points.split()
+        
+        rotate_radian = -(np.radians(float(coord_scn.angle)))
+        rotation_matrix = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
+                           [np.sin(rotate_radian), np.cos(rotate_radian), 0],
+                           [0, 0, 1]]
+    
         points_matrix = []
         translation_matrix = [[1, 0, 0],
                               [0, 1, 0],
                               [float(translation_points[0]), float(translation_points[1]), 1]]
+        
+        rotate_radian = (np.radians(float(coord_scn.angle)))
+        rotation_matrix_inverse = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
+                                   [np.sin(rotate_radian), np.cos(rotate_radian), 0],
+                                   [0, 0, 1]]
 
         for point in self.points:
             points_matrix = [point[0], point[1], 1]
-            result_points = np.matmul(points_matrix, translation_matrix)
+            result_points = np.matmul(points_matrix, rotation_matrix)
+            result_points = np.matmul(result_points, translation_matrix)
+            result_points = np.matmul(result_points, rotation_matrix_inverse)
             point[0] = result_points[0]
             point[1] = result_points[1]
 
@@ -216,16 +229,29 @@ class Line(Object):
         viewport_y2 = VIEWPORT_HEIGHT - self.points[1][1]
         self.id = viewport.create_line((self.points[0][0], viewport_y1), (self.points[1][0], viewport_y2), width=3, fill=self.color)
 
-    def translate(self, viewport, translation_points):
+    def translate(self, viewport, translation_points, coord_scn):
         translation_points = translation_points.split()
+        
+        rotate_radian = -(np.radians(float(coord_scn.angle)))
+        rotation_matrix = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
+                           [np.sin(rotate_radian), np.cos(rotate_radian), 0],
+                           [0, 0, 1]]
+        
         points_matrix = []
         translation_matrix = [[1, 0, 0],
                               [0, 1, 0],
                               [float(translation_points[0]), float(translation_points[1]), 1]]
+       
+        rotate_radian = (np.radians(float(coord_scn.angle)))
+        rotation_matrix_inverse = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
+                                   [np.sin(rotate_radian), np.cos(rotate_radian), 0],
+                                   [0, 0, 1]]
 
         for point in self.points:
             points_matrix = [point[0], point[1], 1]
-            result_points = np.matmul(points_matrix, translation_matrix)
+            result_points = np.matmul(points_matrix, rotation_matrix)
+            result_points = np.matmul(result_points, translation_matrix)
+            result_points = np.matmul(result_points, rotation_matrix_inverse)
             point[0] = result_points[0]
             point[1] = result_points[1]
 
@@ -387,12 +413,23 @@ class Wireframe(Object):  #This is a Polygon
         self.id = viewport.create_line((x_aux, viewport_aux_y), (first_x, first_viewport_y), width=3, fill=self.color)
         self.list_ids.append(self.id)
 
-    def translate(self, viewport, translation_points):
+    def translate(self, viewport, translation_points, coord_scn):
         translation_points = translation_points.split()
+        
+        rotate_radian = -(np.radians(float(coord_scn.angle)))
+        rotation_matrix = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
+                           [np.sin(rotate_radian), np.cos(rotate_radian), 0],
+                           [0, 0, 1]]
+        
         points_matrix = []
         translation_matrix = [[1, 0, 0],
                               [0, 1, 0],
                               [float(translation_points[0]), float(translation_points[1]), 1]]
+        
+        rotate_radian = (np.radians(float(coord_scn.angle)))
+        rotation_matrix_inverse = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
+                                   [np.sin(rotate_radian), np.cos(rotate_radian), 0],
+                                   [0, 0, 1]]
 
         x_aux = None
         y_aux = None
@@ -400,7 +437,9 @@ class Wireframe(Object):  #This is a Polygon
         first_y = None
         for i, point in enumerate(self.points):
             points_matrix = [point[0], point[1], 1]
-            result_points = np.matmul(points_matrix, translation_matrix)
+            result_points = np.matmul(points_matrix, rotation_matrix)
+            result_points = np.matmul(result_points, translation_matrix)
+            result_points = np.matmul(result_points, rotation_matrix_inverse)
             point[0] = result_points[0]
             point[1] = result_points[1]
 
