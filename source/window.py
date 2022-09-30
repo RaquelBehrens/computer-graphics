@@ -6,6 +6,7 @@ from objects import Line, Wireframe
 from transformation import Transformation
 from normalized_window import NormalizedWindow
 from descritor_obj import DescritorOBJ
+from objects import *
 import numpy as np
 
 
@@ -88,6 +89,9 @@ class Window(Frame):
 
         self.generate_obj = Button(self, text='Gerar OBJ file', font=('Time', '11'), command=self.generate_obj_file)
         self.generate_obj.grid(row=4, column=1, sticky=NW, padx=0, pady=5)
+
+        self.read_obj = Button(self, text='Ler OBJ file', font=('Time', '11'), command=self.read_obj_file)
+        self.read_obj.grid(row=4, column=1, sticky=NW, padx=200, pady=5)
 
         self.retore_window_config = Button(self, text='Restaurar configurações da window', font=('Time', '11'), command=self.retore_window)
         self.retore_window_config.grid(row=3, column=1, sticky=NW, padx=200, pady=5)
@@ -259,4 +263,42 @@ class Window(Frame):
             self.coord_scn.generate_scn(object)
 
     def generate_obj_file(self):
-        DescritorOBJ(self.viewport, self.display_file)
+        descritor_obj = DescritorOBJ(self.viewport, self.display_file)
+        descritor_obj.create_OBJ_file()
+
+    def read_obj_file(self):
+        descritor_obj = DescritorOBJ(self.viewport, self.display_file)
+        objetos = descritor_obj.read_OBJ_file()
+
+        for objeto in objetos:
+            tipo, nome, cor, vertices = objeto
+            cor = f'#{self.rgb_to_hex(cor)}'
+
+            for vertice in vertices:
+                for i in range(len(vertice)):
+                    vertice[i] = float(vertice[i])
+
+                vertice.pop()
+
+            if tipo == 'ponto':
+                objeto = Point(nome, vertices, cor)
+            if tipo == 'linha':
+                objeto = Line(nome, vertices, cor)                
+            if tipo == 'triangulo':
+                objeto = Wireframe(nome, vertices, cor)
+
+            objeto.drawn(self.viewport)
+            self.coord_scn.generate_scn(objeto)
+            self.display_file.append(objeto)
+            self.include_object_in_table(objeto)
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
+
+    def include_object_in_table(self, object):
+        self.table.insert('', 0, values=(object.get_name(), object.get_points(), object.get_id()))
+
+    def rgb_to_hex(self, rgb):
+        for i in range(len(rgb)):
+            rgb[i] = int(rgb[i])
+        return '%02x%02x%02x' % tuple(rgb)

@@ -206,7 +206,7 @@ class Point(Object):
         points = []
 
         name = f"o {self.name}\n"
-        color = f"usemtl color{list_of_colors.get(self.color)}\n"
+        color = f"usemtl {list_of_colors.get(self.color)}\n"
 
         for point in self.points:
             point_index = list(list_of_points.keys())[list(list_of_points.values()).index(point)]
@@ -369,7 +369,7 @@ class Line(Object):
         points = []
 
         name = f"o {self.name}\n"
-        color = f"usemtl color{list_of_colors.get(self.color)}\n"
+        color = f"usemtl {list_of_colors.get(self.color)}\n"
 
         for point in self.points:
             point_index = list(list_of_points.keys())[list(list_of_points.values()).index(point)]
@@ -628,7 +628,7 @@ class Wireframe(Object):  #This is a Polygon
         points = []
 
         name = f"o {self.name}\n"
-        color = f"usemtl color{list_of_colors.get(self.color)}\n"
+        color = f"usemtl {list_of_colors.get(self.color)}\n"
 
         for point in self.points:
             point_index = list(list_of_points.keys())[list(list_of_points.values()).index(point)]
