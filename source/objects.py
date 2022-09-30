@@ -30,23 +30,19 @@ class Object(ABC):
     @abstractmethod
     def translate(self, viewport, translation_points, coord_scn):
         translation_points = translation_points.split()
+        t_x = float(translation_points[0])
+        t_y = float(translation_points[1])
 
-        rotate_radian = (np.radians(float(coord_scn.angle)))
-        sin = np.sin(rotate_radian)
-        cos = np.cos(rotate_radian)
+        self.calculate_center()
+        translation_point_object = Point('', [[t_x, t_y]], '')
+        translation_point_object.generic_rotate_around_point([0, 0, -(coord_scn.angle)])
 
-        new_x = 0
-        new_y = 0
-
-        new_x += (float(translation_points[0])*cos)
-        new_y += (float(translation_points[0])*sin)
-        new_x += (float(translation_points[1])*sin)
-        new_y += (float(translation_points[1])*cos)
-
+        t_x = translation_point_object.get_points()[0][0]
+        t_y = translation_point_object.get_points()[0][1]
 
         translation_matrix = [[1, 0, 0],
                               [0, 1, 0],
-                              [new_x, new_y, 1]]
+                              [t_x, t_y, 1]]
 
         return translation_matrix
 
@@ -77,6 +73,30 @@ class Object(ABC):
             center_x += point[0]
             center_y += point[1]
         self.center = [center_x/len(self.points), center_y/len(self.points)]
+
+    def generic_rotate_around_point(self, rotate_points):
+        point_x = float(rotate_points[0])
+        point_y = float(rotate_points[1])
+        rotate_radian = -(np.radians(float(rotate_points[2])))
+
+        points_matrix = []
+        first_translation_matriz = [[1, 0, 0],
+                                    [0, 1, 0],
+                                    [-(point_x), -(point_y), 1]]
+        second_translation_matriz = [[1, 0, 0],
+                                     [0, 1, 0],
+                                     [point_x, point_y, 1]]
+        rotation_matrix = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
+                            [np.sin(rotate_radian), np.cos(rotate_radian), 0],
+                            [0, 0, 1]]
+
+        for point in self.points:
+            points_matrix = [point[0], point[1], 1]
+            result_points = np.matmul(points_matrix, first_translation_matriz)
+            result_points = np.matmul(result_points, rotation_matrix)
+            result_points = np.matmul(result_points, second_translation_matriz)
+            point[0] = result_points[0]
+            point[1] = result_points[1]
 
 
 class Point(Object):
