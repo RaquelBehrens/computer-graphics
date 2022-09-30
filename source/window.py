@@ -1,11 +1,12 @@
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from constants import WINDOW_HEIGHT, WINDOW_WIDTH, APPLICATION_NAME, VIEWPORT_WIDTH, VIEWPORT_HEIGHT
 from include_object import IncludePoint, IncludeLine, IncludeTriangle, IncludeQuadrilateral, IncludePolygon
 from objects import Line, Wireframe
 from transformation import Transformation
 from normalized_window import NormalizedWindow
 from descritor_obj import DescritorOBJ
+from utils import rgb_to_hex
 from objects import *
 import numpy as np
 
@@ -267,33 +268,51 @@ class Window(Frame):
         descritor_obj.create_OBJ_file()
 
     def read_obj_file(self):
-        descritor_obj = DescritorOBJ(self.viewport, self.display_file)
-        objetos = descritor_obj.read_OBJ_file()
+        try:
+            descritor_obj = DescritorOBJ(self.viewport, self.display_file)
+            objetos = descritor_obj.read_OBJ_file()
 
-        for objeto in objetos:
-            tipo, nome, cor, vertices = objeto
-            cor = f'#{self.rgb_to_hex(cor)}'
+            for objeto in objetos:
+                tipo, nome, cor, vertices = objeto
+                cor = f'#{rgb_to_hex(cor)}'
+                lista_objetos = []
 
-            for vertice in vertices:
-                for i in range(len(vertice)):
-                    vertice[i] = float(vertice[i])
+                for vertice in vertices:
+                    for i in range(len(vertice)):
+                        vertice[i] = float(vertice[i])
 
-                vertice.pop()
+                    vertice.pop()
 
-            if tipo == 'ponto':
-                objeto = Point(nome, vertices, cor)
-            if tipo == 'linha':
-                objeto = Line(nome, vertices, cor)                
-            if tipo == 'triangulo':
-                objeto = Wireframe(nome, vertices, cor)
+                if tipo == 'ponto':
+                    objeto = Point(nome, vertices, cor)
+                    lista_objetos.append(objeto)
+                if tipo == 'linha':
+                    if len(vertices) == 2:
+                        objeto = Line(nome, vertices, cor)   
+                        lista_objetos.append(objeto)             
+                    else:
+                        for i in range(len(vertices)):
+                            if i == len(vertices)-1:
+                                objeto = Line(nome, [vertices[i], vertices[0]], cor)
+                            else:
+                                objeto = Line(nome, [vertices[i], vertices[i+1]], cor)
+                            lista_objetos.append(objeto) 
+                if tipo == 'triangulo':
+                    objeto = Wireframe(nome, vertices, cor)
+                    lista_objetos.append(objeto)
 
-            objeto.drawn(self.viewport)
-            self.coord_scn.generate_scn(objeto)
-            self.display_file.append(objeto)
-            self.include_object_in_table(objeto)
+                for objeto in lista_objetos:
+                    objeto.drawn(self.viewport)
+                    self.coord_scn.generate_scn(objeto)
+                    self.display_file.append(objeto)
+                    self.include_object_in_table(objeto)
 
-        for object in self.display_file:
-            self.coord_scn.generate_scn(object)
+            for object in self.display_file:
+                self.coord_scn.generate_scn(object)
+
+            messagebox.showerror('Sucesso', 'Arquivo OBJ lido e objetos criados!')
+        except:
+            messagebox.showerror('Erro', 'Algo falhou!')
 
     def include_object_in_table(self, object):
         self.table.insert('', 0, values=(object.get_name(), object.get_points(), object.get_id()))

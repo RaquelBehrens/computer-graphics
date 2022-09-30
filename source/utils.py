@@ -5,3 +5,8 @@ def hex_to_rgb(hex):
         rgb.append(decimal)
 
     return tuple(rgb)
+
+def rgb_to_hex(self, rgb):
+    for i in range(len(rgb)):
+        rgb[i] = int(rgb[i])
+    return '%02x%02x%02x' % tuple(rgb)

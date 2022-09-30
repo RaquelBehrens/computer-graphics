@@ -1,3 +1,4 @@
+from tkinter import messagebox
 from utils import hex_to_rgb
 
 class DescritorOBJ():
@@ -74,42 +75,46 @@ class DescritorOBJ():
         objeto_atual = ''
         vertices_atuais = []
         cor_atual = ''
-        
-        with open('wavefront.obj') as f:
-            lines = f.readlines()
-            for i, line in enumerate(lines):
-                line_words_list = line.strip("\n").split(" ")
-                
-                
+        try:
+            with open('wavefront.obj') as f:
+                lines = f.readlines()
+                for i, line in enumerate(lines):
+                    line_words_list = line.strip("\n").split(" ")
+                    
+                    
 
-                if line_words_list[0] == 'v':
-                    v_dict[i+1] = [line_words_list[1], line_words_list[2], line_words_list[3]]
+                    if line_words_list[0] == 'v':
+                        v_dict[i+1] = [line_words_list[1], line_words_list[2], line_words_list[3]]
 
-                elif line_words_list[0] == 'mtllib':
-                    color_dict = self.get_color_dict(line_words_list[1])
+                    elif line_words_list[0] == 'mtllib':
+                        color_dict = self.get_color_dict(line_words_list[1])
 
-                elif line_words_list[0] == 'o':
-                    objeto_atual = line_words_list[1]
+                    elif line_words_list[0] == 'o':
+                        objeto_atual = line_words_list[1]
 
-                elif line_words_list[0] == 'w':
-                    vertices_atuais = [float(line_words_list[1]), float(line_words_list[2])]
+                    elif line_words_list[0] == 'w':
+                        vertices_atuais = [float(line_words_list[1]), float(line_words_list[2])]
 
-                elif line_words_list[0] == 'usemtl':
-                    cor_atual = color_dict.get(line_words_list[1])
+                    elif line_words_list[0] == 'usemtl':
+                        cor_atual = color_dict.get(line_words_list[1])
 
-                elif line_words_list[0] == 'p':
-                    vertices_atuais = [v_dict.get(int(line_words_list[1]))]
-                    objetos.append(['ponto', objeto_atual, cor_atual, vertices_atuais])
+                    elif line_words_list[0] == 'p':
+                        vertices_atuais = [v_dict.get(int(line_words_list[1]))]
+                        objetos.append(['ponto', objeto_atual, cor_atual, vertices_atuais])
 
-                elif line_words_list[0] == 'l':
-                    vertices_atuais = [v_dict.get(int(line_words_list[1])), v_dict.get(int(line_words_list[2]))]
-                    objetos.append(['linha', objeto_atual, cor_atual, vertices_atuais])
+                    elif line_words_list[0] == 'l':
+                        vertices_atuais = []
+                        for i in range(1, len(line_words_list), 1):
+                            vertices_atuais.append(v_dict.get(int(line_words_list[i])))
+                        objetos.append(['linha', objeto_atual, cor_atual, vertices_atuais])
 
-                elif line_words_list[0] == 'f':
-                    vertices_atuais = [v_dict.get(int(line_words_list[1])), v_dict.get(int(line_words_list[2])), v_dict.get(int(line_words_list[3]))]
-                    objetos.append(['triangulo', objeto_atual, cor_atual, vertices_atuais])
-                                 
-        return objetos
+                    elif line_words_list[0] == 'f':
+                        vertices_atuais = [v_dict.get(int(line_words_list[1])), v_dict.get(int(line_words_list[2])), v_dict.get(int(line_words_list[3]))]
+                        objetos.append(['triangulo', objeto_atual, cor_atual, vertices_atuais])
+                                    
+            return objetos
+        except Exception as e:
+            messagebox.showerror('Erro', e)
 
     def get_color_dict(self, file_name):
         sample_list = []
