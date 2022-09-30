@@ -33,7 +33,6 @@ class Object(ABC):
         t_x = float(translation_points[0])
         t_y = float(translation_points[1])
 
-        self.calculate_center()
         translation_point_object = Point('', [[t_x, t_y]], '')
         translation_point_object.generic_rotate_around_point([0, 0, -(coord_scn.angle)])
 
