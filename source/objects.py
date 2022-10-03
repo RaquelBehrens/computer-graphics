@@ -10,6 +10,7 @@ class Object(ABC):
         self.points = []
         self.color = None
         self.center = None
+        self.clipped = None
 
     def get_points(self):
         return self.points
@@ -24,7 +25,7 @@ class Object(ABC):
         return self.color
     
     @abstractmethod
-    def drawn(self, viewport):
+    def drawn(self, viewport, normalized_window):
         pass
 
     @abstractmethod
@@ -32,19 +33,19 @@ class Object(ABC):
         pass
 
     @abstractmethod
-    def scale(self, viewport, translation_points):
+    def scale(self, viewport, translation_points, normalized_window):
         pass
 
     @abstractmethod
-    def rotate_around_world(self, viewport, rotate_angle):
+    def rotate_around_world(self, viewport, rotate_angle, normalized_window):
         pass
 
     @abstractmethod
-    def rotate_around_object(self, viewport, rotate_angle):
+    def rotate_around_object(self, viewport, rotate_angle, normalized_window):
         pass
 
     @abstractmethod
-    def rotate_around_point(self, viewport, rotate_points):
+    def rotate_around_point(self, viewport, rotate_points, normalized_window):
         pass
 
     @abstractmethod
@@ -67,9 +68,11 @@ class Point(Object):
         self.name = name
         self.color = color
         
-    def drawn(self, viewport):
-        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
-        self.id = viewport.create_oval(self.points[0][0], viewport_y1, self.points[0][0], viewport_y1, width=POINT_SIZE, outline=self.color)
+    def drawn(self, viewport, normalized_window):
+        normalized_window.point_clipping(self)
+        if not self.clipped:
+            viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
+            self.id = viewport.create_oval(self.points[0][0], viewport_y1, self.points[0][0], viewport_y1, width=POINT_SIZE, outline=self.color)
 
     def translate(self, viewport, translation_points, coord_scn):
         translation_points = translation_points.split()
@@ -98,10 +101,16 @@ class Point(Object):
             point[1] = result_points[1]
 
         #parte de ponto e linha
-        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
-        viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[0][0], viewport_y1)
+        if self.id != None:
+            coord_scn.point_clipping(self)
+            if not self.clipped:
+                viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
+                viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[0][0], viewport_y1)
+        else:
+            self.drawn(viewport, coord_scn)
+            coord_scn.update_table(self)
 
-    def scale(self, viewport, translation_points):
+    def scale(self, viewport, translation_points, normalized_window):
         if self.center == None:
             self.calculate_center()
 
@@ -128,10 +137,16 @@ class Point(Object):
             point[1] = result_points[1]
 
         #parte de ponto e linha
-        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
-        viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[0][0], viewport_y1)
+        if self.id != None:
+            normalized_window.point_clipping(self)
+            if not self.clipped:
+                viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
+                viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[0][0], viewport_y1)
+        else:
+            self.drawn(viewport, normalized_window)
+            normalized_window.update_table(self)
 
-    def rotate_around_world(self, viewport, rotate_angle):
+    def rotate_around_world(self, viewport, rotate_angle, normalized_window):
         rotate_radian = -(np.radians(float(rotate_angle)))
         points_matrix = []
         rotation_matrix = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
@@ -144,10 +159,16 @@ class Point(Object):
             point[0] = result_points[0]
             point[1] = result_points[1]
 
-        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
-        viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[0][0], viewport_y1)
+        if self.id != None:
+            normalized_window.point_clipping(self)
+            if not self.clipped:
+                viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
+                viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[0][0], viewport_y1)
+        else:
+            self.drawn(viewport, normalized_window)
+            normalized_window.update_table(self)
 
-    def rotate_around_object(self, viewport, rotate_angle):
+    def rotate_around_object(self, viewport, rotate_angle, normalized_window):
         if self.center == None:
             self.calculate_center()
         
@@ -171,10 +192,16 @@ class Point(Object):
             point[0] = result_points[0]
             point[1] = result_points[1]
 
-        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
-        viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[0][0], viewport_y1)
+        if self.id != None:
+            normalized_window.point_clipping(self)
+            if not self.clipped:
+                viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
+                viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[0][0], viewport_y1)
+        else:
+            self.drawn(viewport, normalized_window)
+            normalized_window.update_table(self)
 
-    def rotate_around_point(self, viewport, rotate_points):
+    def rotate_around_point(self, viewport, rotate_points, normalized_window):
         rotate_points = rotate_points.split()
         point_x = float(rotate_points[1])
         point_y = float(rotate_points[4])
@@ -199,8 +226,14 @@ class Point(Object):
             point[0] = result_points[0]
             point[1] = result_points[1]
 
-        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
-        viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[0][0], viewport_y1)
+        if self.id != None:
+            normalized_window.point_clipping(self)
+            if not self.clipped:
+                viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
+                viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[0][0], viewport_y1)
+        else:
+            self.drawn(viewport, normalized_window)
+            normalized_window.update_table(self)
 
     def obj_string(self, list_of_points, list_of_colors):
         points = []
@@ -224,10 +257,15 @@ class Line(Object):
         self.points = points
         self.color = color
        
-    def drawn(self, viewport):
-        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
-        viewport_y2 = VIEWPORT_HEIGHT - self.points[1][1]
-        self.id = viewport.create_line((self.points[0][0], viewport_y1), (self.points[1][0], viewport_y2), width=3, fill=self.color)
+    def drawn(self, viewport, normalized_window):
+        if normalized_window.clipping_mode.get() == 1:
+            new_point = normalized_window.line_clipping_CS(self, self.points)
+        else:
+            new_point = normalized_window.line_clipping_LB(self, self.points)
+        if not self.clipped:
+            viewport_y1 = VIEWPORT_HEIGHT - new_point[0][1]
+            viewport_y2 = VIEWPORT_HEIGHT - new_point[1][1]
+            self.id = viewport.create_line((new_point[0][0], viewport_y1), (new_point[1][0], viewport_y2), width=3, fill=self.color)
 
     def translate(self, viewport, translation_points, coord_scn):
         translation_points = translation_points.split()
@@ -256,11 +294,20 @@ class Line(Object):
             point[1] = result_points[1]
 
         #parte de ponto e linha
-        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
-        viewport_y2 = VIEWPORT_HEIGHT - self.points[1][1]
-        viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[1][0], viewport_y2)
+        if self.id != None:
+            if coord_scn.clipping_mode.get() == 1:
+                new_point = coord_scn.line_clipping_CS(self, self.points)
+            else:
+                new_point = coord_scn.line_clipping_LB(self, self.points)
+            if not self.clipped:
+                viewport_y1 = VIEWPORT_HEIGHT - new_point[0][1]
+                viewport_y2 = VIEWPORT_HEIGHT - new_point[1][1]
+                viewport.coords(self.id, new_point[0][0], viewport_y1, new_point[1][0], viewport_y2)
+        else:
+            self.drawn(viewport, coord_scn)
+            coord_scn.update_table(self)
 
-    def scale(self, viewport, translation_points):
+    def scale(self, viewport, translation_points, normalized_window):
         if self.center == None:
             self.calculate_center()
 
@@ -287,11 +334,20 @@ class Line(Object):
             point[1] = result_points[1]
 
         #parte de ponto e linha
-        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
-        viewport_y2 = VIEWPORT_HEIGHT - self.points[1][1]
-        viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[1][0], viewport_y2)
+        if self.id != None:
+            if normalized_window.clipping_mode.get() == 1:
+                new_point = normalized_window.line_clipping_CS(self, self.points)
+            else:
+                new_point = normalized_window.line_clipping_LB(self, self.points)
+            if not self.clipped:
+                viewport_y1 = VIEWPORT_HEIGHT - new_point[0][1]
+                viewport_y2 = VIEWPORT_HEIGHT - new_point[1][1]
+                viewport.coords(self.id, new_point[0][0], viewport_y1, new_point[1][0], viewport_y2)
+        else:
+            self.drawn(viewport, normalized_window)
+            normalized_window.update_table(self)
 
-    def rotate_around_world(self, viewport, rotate_angle):
+    def rotate_around_world(self, viewport, rotate_angle, normalized_window):
         rotate_radian = -(np.radians(float(rotate_angle)))
         points_matrix = []
         rotation_matrix = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
@@ -304,11 +360,20 @@ class Line(Object):
             point[0] = result_points[0]
             point[1] = result_points[1]
 
-        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
-        viewport_y2 = VIEWPORT_HEIGHT - self.points[1][1]
-        viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[1][0], viewport_y2)
+        if self.id != None:
+            if normalized_window.clipping_mode.get() == 1:
+                new_point = normalized_window.line_clipping_CS(self, self.points)
+            else:
+                new_point = normalized_window.line_clipping_LB(self, self.points)
+            if not self.clipped:
+                viewport_y1 = VIEWPORT_HEIGHT - new_point[0][1]
+                viewport_y2 = VIEWPORT_HEIGHT - new_point[1][1]
+                viewport.coords(self.id, new_point[0][0], viewport_y1, new_point[1][0], viewport_y2)
+        else:
+            self.drawn(viewport, normalized_window)
+            normalized_window.update_table(self)
 
-    def rotate_around_object(self, viewport, rotate_angle):
+    def rotate_around_object(self, viewport, rotate_angle, normalized_window):
         if self.center == None:
             self.calculate_center()
         
@@ -332,11 +397,20 @@ class Line(Object):
             point[0] = result_points[0]
             point[1] = result_points[1]
 
-        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
-        viewport_y2 = VIEWPORT_HEIGHT - self.points[1][1]
-        viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[1][0], viewport_y2)
+        if self.id != None:
+            if normalized_window.clipping_mode.get() == 1:
+                new_point = normalized_window.line_clipping_CS(self, self.points)
+            else:
+                new_point = normalized_window.line_clipping_LB(self, self.points)
+            if not self.clipped:
+                viewport_y1 = VIEWPORT_HEIGHT - new_point[0][1]
+                viewport_y2 = VIEWPORT_HEIGHT - new_point[1][1]
+                viewport.coords(self.id, new_point[0][0], viewport_y1, new_point[1][0], viewport_y2)
+        else:
+            self.drawn(viewport, normalized_window)
+            normalized_window.update_table(self)
 
-    def rotate_around_point(self, viewport, rotate_points):
+    def rotate_around_point(self, viewport, rotate_points, normalized_window):
         rotate_points = rotate_points.split()
         point_x = float(rotate_points[1])
         point_y = float(rotate_points[4])
@@ -361,9 +435,18 @@ class Line(Object):
             point[0] = result_points[0]
             point[1] = result_points[1]
 
-        viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
-        viewport_y2 = VIEWPORT_HEIGHT - self.points[1][1]
-        viewport.coords(self.id, self.points[0][0], viewport_y1, self.points[1][0], viewport_y2)
+        if self.id != None:
+            if normalized_window.clipping_mode.get() == 1:
+                new_point = normalized_window.line_clipping_CS(self, self.points)
+            else:
+                new_point = normalized_window.line_clipping_LB(self, self.points)
+            if not self.clipped:
+                viewport_y1 = VIEWPORT_HEIGHT - new_point[0][1]
+                viewport_y2 = VIEWPORT_HEIGHT - new_point[1][1]
+                viewport.coords(self.id, new_point[0][0], viewport_y1, new_point[1][0], viewport_y2)
+        else:
+            self.drawn(viewport, normalized_window)
+            normalized_window.update_table(self)
 
     def obj_string(self, list_of_points, list_of_colors):
         points = []
@@ -390,7 +473,7 @@ class Wireframe(Object):  #This is a Polygon
         self.list_ids = []
         self.color = color
             
-    def drawn(self, viewport):
+    def drawn(self, viewport, normalized_window):
         x_aux = None
         viewport_aux_y = None
 
@@ -459,7 +542,7 @@ class Wireframe(Object):  #This is a Polygon
         viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
 
     
-    def scale(self, viewport, translation_points):
+    def scale(self, viewport, translation_points, normalized_window):
         if self.center == None:
             self.calculate_center()
 
@@ -505,7 +588,7 @@ class Wireframe(Object):  #This is a Polygon
         viewport_y2 = VIEWPORT_HEIGHT - first_y
         viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
 
-    def rotate_around_world(self, viewport, rotate_angle):
+    def rotate_around_world(self, viewport, rotate_angle, normalized_window):
         rotate_radian = -(np.radians(float(rotate_angle)))
         points_matrix = []
         rotation_matrix = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
@@ -537,7 +620,7 @@ class Wireframe(Object):  #This is a Polygon
         viewport_y2 = VIEWPORT_HEIGHT - first_y
         viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
 
-    def rotate_around_object(self, viewport, rotate_angle):
+    def rotate_around_object(self, viewport, rotate_angle, normalized_window):
         if self.center == None:
             self.calculate_center()
         
@@ -580,7 +663,7 @@ class Wireframe(Object):  #This is a Polygon
         viewport_y2 = VIEWPORT_HEIGHT - first_y
         viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
 
-    def rotate_around_point(self, viewport, rotate_points):
+    def rotate_around_point(self, viewport, rotate_points, normalized_window):
         rotate_points = rotate_points.split()
         point_x = float(rotate_points[1])
         point_y = float(rotate_points[4])
