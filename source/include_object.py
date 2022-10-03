@@ -89,7 +89,7 @@ class IncludePoint(IncludeWindow):
 
             if name != '' and not already_used:
                 objeto = Point(name, [[x1, y1]], self.color)
-                objeto.drawn(self.viewport)
+                objeto.drawn(self.viewport, self.coord_scn)
 
                 self.coord_scn.generate_scn(objeto)
                 
@@ -180,7 +180,7 @@ class IncludeLine(IncludeWindow):
                     objeto = Line(name, [[x1, y1], [x2, y2]], self.color)
                     self.lines_list.append(objeto)
 
-                objeto.drawn(self.viewport)
+                objeto.drawn(self.viewport, self.coord_scn)
 
                 self.coord_scn.generate_scn(objeto)
                 
@@ -374,7 +374,7 @@ class IncludeTriangle(IncludeWindow):
                     self.erros['text'] = 'Não formam um triângulo'
                 else:
                     objeto = Wireframe(name, [[x1,y1], [x2,y2], [x3,y3]], self.color)
-                    objeto.drawn(self.viewport)
+                    objeto.drawn(self.viewport, self.coord_scn)
 
                     self.coord_scn.generate_scn(objeto)
                     
@@ -504,7 +504,7 @@ class IncludeQuadrilateral(IncludeWindow):
                     self.erros['text'] = 'Não formam um quadrilátero'
                 else:
                     objeto = Wireframe(name, [[x1,y1], [x2,y2], [x3,y3], [x4,y4]], self.color)
-                    objeto.drawn(self.viewport)
+                    objeto.drawn(self.viewport, self.coord_scn)
 
                     self.coord_scn.generate_scn(objeto)
                     
@@ -588,7 +588,7 @@ class IncludePolygon(IncludeWindow):
                     self.erros['text'] = 'Não formam um polígono'
                 else:
                     objeto = Wireframe(name, coordinates, self.color)
-                    objeto.drawn(self.viewport)
+                    objeto.drawn(self.viewport, self.coord_scn)
 
                     self.coord_scn.generate_scn(objeto)
 
