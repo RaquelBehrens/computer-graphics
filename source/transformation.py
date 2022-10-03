@@ -1,8 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
-from objects import Wireframe
-from constants import VIEWPORT_WIDTH, VIEWPORT_HEIGHT
+
 
 class Transformation():
     def __init__(self, viewport, main_table, object_id, object, coord_scn):
@@ -90,9 +89,9 @@ class Transformation():
         self.radio_variable = IntVar()
         self.radio_variable.set(0)
 
-        self.seila1 = Radiobutton(self.frame_rot, text='Centro do mundo', variable=self.radio_variable, value=1).grid(row=0, column=0, stick=W)
-        self.seila2 = Radiobutton(self.frame_rot, text='Centro do objeto', variable=self.radio_variable, value=2).grid(row=1, column=0, stick=W)
-        self.seila3 = Radiobutton(self.frame_rot, text='Ponto qualquer', variable=self.radio_variable, value=3).grid(row=2, column=0, stick=W)
+        Radiobutton(self.frame_rot, text='Centro do mundo', variable=self.radio_variable, value=1).grid(row=0, column=0, stick=W)
+        Radiobutton(self.frame_rot, text='Centro do objeto', variable=self.radio_variable, value=2).grid(row=1, column=0, stick=W)
+        Radiobutton(self.frame_rot, text='Ponto qualquer', variable=self.radio_variable, value=3).grid(row=2, column=0, stick=W)
 
         Label(self.frame_rot, text='x: ', font=("Times", "10")).grid(row=2, column=1, stick=SE)
         self.rotation_x = Entry(self.frame_rot, width=3, font=("Times", "10"))
@@ -136,13 +135,13 @@ class Transformation():
             if id == 1:
                 self.object.translate(self.viewport, values, self.coord_scn)
             elif id == 2:
-                self.object.scale(self.viewport, values)
+                self.object.scale(self.viewport, values, self.coord_scn)
             elif id == 3:
-                self.object.rotate_around_world(self.viewport, values)
+                self.object.rotate_around_world(self.viewport, values, self.coord_scn)
             elif id == 4:
-                self.object.rotate_around_object(self.viewport, values)
+                self.object.rotate_around_object(self.viewport, values, self.coord_scn)
             elif id == 5:
-                self.object.rotate_around_point(self.viewport, values)
+                self.object.rotate_around_point(self.viewport, values, self.coord_scn)
                 
             self.coord_scn.generate_scn(self.object)
 
