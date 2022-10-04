@@ -26,8 +26,10 @@ class Window(Frame):
 
         self.create_widgets()
         self.create_table()
+        self.clipping_select()
         
-        self.coord_scn = NormalizedWindow(self.viewport)
+        self.coord_scn = NormalizedWindow(self.viewport, self.table)
+        self.coord_scn.clipping_mode = self.radio_variable
         self.coord_scn.define_viewport()
 
     def create_widgets(self):
@@ -175,10 +177,10 @@ class Window(Frame):
     def transform_object(self):
         try:
             selected_item = self.table.selection()[0]
-            selected_item_id = self.table.item(selected_item).get('values')[2]
+            selected_item_name = self.table.item(selected_item).get('values')[0]
             item = None
             for object in self.display_file:
-                if object.get_id() == selected_item_id:
+                if object.get_name() == selected_item_name:
                     item = object
                     break
             Transformation(self.viewport, self.table, selected_item, item, self.coord_scn)
@@ -321,3 +323,10 @@ class Window(Frame):
         for i in range(len(rgb)):
             rgb[i] = int(rgb[i])
         return '%02x%02x%02x' % tuple(rgb)
+
+    def clipping_select(self):
+        self.radio_variable = IntVar()
+        self.radio_variable.set(1)
+
+        Radiobutton(self.frame2, text='Recorte de linha de CS', variable=self.radio_variable, value=1).grid(row=2, column=1, stick=N)
+        Radiobutton(self.frame2, text='Recorte de linha de LB', variable=self.radio_variable, value=2).grid(row=2, column=1, stick=S)
