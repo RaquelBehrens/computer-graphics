@@ -480,21 +480,24 @@ class Wireframe(Object):  #This is a Polygon
         first_x = None
         first_viewport_y = None
 
-        for i, point in enumerate(self.points):
-            x = point[0]
-            viewport_y = VIEWPORT_HEIGHT - point[1]
+        new_points = normalized_window.wireframe_clipping(self, self.points)
 
-            if i == 0 :
-                x_aux = first_x = point[0]
-                viewport_aux_y = first_viewport_y = VIEWPORT_HEIGHT - point[1]
-            else:
-                id = viewport.create_line((x_aux, viewport_aux_y), (x, viewport_y), width=3, fill=self.color)
-                x_aux = x
-                viewport_aux_y = viewport_y
-                self.list_ids.append(id)
+        if not self.clipped:
+            for i, point in enumerate(new_points):
+                x = point[0]
+                viewport_y = VIEWPORT_HEIGHT - point[1]
 
-        self.id = viewport.create_line((x_aux, viewport_aux_y), (first_x, first_viewport_y), width=3, fill=self.color)
-        self.list_ids.append(self.id)
+                if i == 0 :
+                    x_aux = first_x = point[0]
+                    viewport_aux_y = first_viewport_y = VIEWPORT_HEIGHT - point[1]
+                else:
+                    id = viewport.create_line((x_aux, viewport_aux_y), (x, viewport_y), width=3, fill=self.color)
+                    x_aux = x
+                    viewport_aux_y = viewport_y
+                    self.list_ids.append(id)
+
+            self.id = viewport.create_line((x_aux, viewport_aux_y), (first_x, first_viewport_y), width=3, fill=self.color)
+            self.list_ids.append(self.id)
 
     def translate(self, viewport, translation_points, coord_scn):
         translation_points = translation_points.split()
@@ -514,10 +517,6 @@ class Wireframe(Object):  #This is a Polygon
                                    [np.sin(rotate_radian), np.cos(rotate_radian), 0],
                                    [0, 0, 1]]
 
-        x_aux = None
-        y_aux = None
-        first_x = None
-        first_y = None
         for i, point in enumerate(self.points):
             points_matrix = [point[0], point[1], 1]
             result_points = np.matmul(points_matrix, rotation_matrix)
@@ -526,20 +525,30 @@ class Wireframe(Object):  #This is a Polygon
             point[0] = result_points[0]
             point[1] = result_points[1]
 
-            if not (i == 0):
-                viewport_y1 = VIEWPORT_HEIGHT - y_aux
-                viewport_y2 = VIEWPORT_HEIGHT - point[1]
-                viewport.coords(self.list_ids[i], x_aux, viewport_y1, point[0], viewport_y2)
-            else:
-                first_x = point[0]
-                first_y = point[1]
+        if self.id != None:
+            new_points = coord_scn.wireframe_clipping(self, self.points)
+            x_aux = None
+            y_aux = None
+            first_x = None
+            first_y = None
+            for i, point in enumerate(new_points):
+                if not (i == 0):
+                    viewport_y1 = VIEWPORT_HEIGHT - y_aux
+                    viewport_y2 = VIEWPORT_HEIGHT - point[1]
+                    viewport.coords(self.list_ids[i], x_aux, viewport_y1, point[0], viewport_y2)
+                else:
+                    first_x = point[0]
+                    first_y = point[1]
 
-            x_aux = point[0]
-            y_aux = point[1]
+                x_aux = point[0]
+                y_aux = point[1]
 
-        viewport_y1 = VIEWPORT_HEIGHT - y_aux
-        viewport_y2 = VIEWPORT_HEIGHT - first_y
-        viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+            viewport_y1 = VIEWPORT_HEIGHT - y_aux
+            viewport_y2 = VIEWPORT_HEIGHT - first_y
+            viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+        else:
+            self.drawn(viewport, coord_scn)
+            coord_scn.update_table(self)
 
     
     def scale(self, viewport, translation_points, normalized_window):
@@ -560,33 +569,39 @@ class Wireframe(Object):  #This is a Polygon
                         [0, float(translation_points[1]), 0],
                         [0, 0, 1]]
 
-        x_aux = None
-        y_aux = None
-        first_x = None
-        first_y = None
-
         for i, point in enumerate(self.points):
-            points_matrix = [point[0], point[1], 1]
-            result_points = np.matmul(points_matrix, first_translation_matrix)
-            result_points = np.matmul(result_points, scale_matrix)
-            result_points = np.matmul(result_points, second_translation_matrix)
-            point[0] = result_points[0]
-            point[1] = result_points[1]
+                points_matrix = [point[0], point[1], 1]
+                result_points = np.matmul(points_matrix, first_translation_matrix)
+                result_points = np.matmul(result_points, scale_matrix)
+                result_points = np.matmul(result_points, second_translation_matrix)
+                point[0] = result_points[0]
+                point[1] = result_points[1]
 
-            if not (i == 0):
-                viewport_y1 = VIEWPORT_HEIGHT - y_aux
-                viewport_y2 = VIEWPORT_HEIGHT - point[1]
-                viewport.coords(self.list_ids[i], x_aux, viewport_y1, point[0], viewport_y2)
-            else:
-                first_x = point[0]
-                first_y = point[1]
+        if self.id != None:
+            new_points = normalized_window.wireframe_clipping(self, self.points)
+            x_aux = None
+            y_aux = None
+            first_x = None
+            first_y = None
+            for i, point in enumerate(new_points):
+                if not (i == 0):
+                    viewport_y1 = VIEWPORT_HEIGHT - y_aux
+                    viewport_y2 = VIEWPORT_HEIGHT - point[1]
+                    viewport.coords(self.list_ids[i], x_aux, viewport_y1, point[0], viewport_y2)
+                else:
+                    first_x = point[0]
+                    first_y = point[1]
 
-            x_aux = point[0]
-            y_aux = point[1]
+                x_aux = point[0]
+                y_aux = point[1]
 
-        viewport_y1 = VIEWPORT_HEIGHT - y_aux
-        viewport_y2 = VIEWPORT_HEIGHT - first_y
-        viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+            viewport_y1 = VIEWPORT_HEIGHT - y_aux
+            viewport_y2 = VIEWPORT_HEIGHT - first_y
+            viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+
+        else:
+            self.drawn(viewport, normalized_window)
+            normalized_window.update_table(self)
 
     def rotate_around_world(self, viewport, rotate_angle, normalized_window):
         rotate_radian = -(np.radians(float(rotate_angle)))
@@ -595,30 +610,38 @@ class Wireframe(Object):  #This is a Polygon
                            [np.sin(rotate_radian), np.cos(rotate_radian), 0],
                            [0, 0, 1]]
 
-        x_aux = None
-        y_aux = None
-        first_x = None
-        first_y = None
         for i, point in enumerate(self.points):
             points_matrix = [point[0], point[1], 1]
             result_points = np.matmul(points_matrix, rotation_matrix)
-            point[0] = result_points[0]
-            point[1] = result_points[1]
 
-            if not (i == 0):
-                viewport_y1 = VIEWPORT_HEIGHT - y_aux
-                viewport_y2 = VIEWPORT_HEIGHT - point[1]
-                viewport.coords(self.list_ids[i], x_aux, viewport_y1, point[0], viewport_y2)
-            else:
-                first_x = point[0]
-                first_y = point[1]
+        if self.id != None:
+            new_points = normalized_window.wireframe_clipping(self, self.points)
+            x_aux = None
+            y_aux = None
+            first_x = None
+            first_y = None
+            for i, point in enumerate(new_points):
+                point[0] = result_points[0]
+                point[1] = result_points[1]
 
-            x_aux = point[0]
-            y_aux = point[1]
+                if not (i == 0):
+                    viewport_y1 = VIEWPORT_HEIGHT - y_aux
+                    viewport_y2 = VIEWPORT_HEIGHT - point[1]
+                    viewport.coords(self.list_ids[i], x_aux, viewport_y1, point[0], viewport_y2)
+                else:
+                    first_x = point[0]
+                    first_y = point[1]
 
-        viewport_y1 = VIEWPORT_HEIGHT - y_aux
-        viewport_y2 = VIEWPORT_HEIGHT - first_y
-        viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+                x_aux = point[0]
+                y_aux = point[1]
+
+            viewport_y1 = VIEWPORT_HEIGHT - y_aux
+            viewport_y2 = VIEWPORT_HEIGHT - first_y
+            viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+
+        else:
+            self.drawn(viewport, normalized_window)
+            normalized_window.update_table(self)
 
     def rotate_around_object(self, viewport, rotate_angle, normalized_window):
         if self.center == None:
@@ -636,11 +659,7 @@ class Wireframe(Object):  #This is a Polygon
                             [np.sin(rotate_radian), np.cos(rotate_radian), 0],
                             [0, 0, 1]]
 
-        x_aux = None
-        y_aux = None
-        first_x = None
-        first_y = None
-        for i, point in enumerate(self.points):
+        for i, point in enumerate(new_points):
             points_matrix = [point[0], point[1], 1]
             result_points = np.matmul(points_matrix, first_translation_matriz)
             result_points = np.matmul(result_points, rotation_matrix)
@@ -648,20 +667,31 @@ class Wireframe(Object):  #This is a Polygon
             point[0] = result_points[0]
             point[1] = result_points[1]
 
-            if not (i == 0):
-                viewport_y1 = VIEWPORT_HEIGHT - y_aux
-                viewport_y2 = VIEWPORT_HEIGHT - point[1]
-                viewport.coords(self.list_ids[i], x_aux, viewport_y1, point[0], viewport_y2)
-            else:
-                first_x = point[0]
-                first_y = point[1]
+        if self.id != None:
+            new_points = normalized_window.wireframe_clipping(self, self.points)
+            x_aux = None
+            y_aux = None
+            first_x = None
+            first_y = None
+            for i, point in enumerate(new_points):
+                if not (i == 0):
+                    viewport_y1 = VIEWPORT_HEIGHT - y_aux
+                    viewport_y2 = VIEWPORT_HEIGHT - point[1]
+                    viewport.coords(self.list_ids[i], x_aux, viewport_y1, point[0], viewport_y2)
+                else:
+                    first_x = point[0]
+                    first_y = point[1]
 
-            x_aux = point[0]
-            y_aux = point[1]
+                x_aux = point[0]
+                y_aux = point[1]
 
-        viewport_y1 = VIEWPORT_HEIGHT - y_aux
-        viewport_y2 = VIEWPORT_HEIGHT - first_y
-        viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+            viewport_y1 = VIEWPORT_HEIGHT - y_aux
+            viewport_y2 = VIEWPORT_HEIGHT - first_y
+            viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+
+        else:
+            self.drawn(viewport, normalized_window)
+            normalized_window.update_table(self)
 
     def rotate_around_point(self, viewport, rotate_points, normalized_window):
         rotate_points = rotate_points.split()
@@ -680,10 +710,6 @@ class Wireframe(Object):  #This is a Polygon
                             [np.sin(rotate_radian), np.cos(rotate_radian), 0],
                             [0, 0, 1]]
 
-        x_aux = None
-        y_aux = None
-        first_x = None
-        first_y = None
         for i, point in enumerate(self.points):
             points_matrix = [point[0], point[1], 1]
             result_points = np.matmul(points_matrix, first_translation_matriz)
@@ -692,20 +718,31 @@ class Wireframe(Object):  #This is a Polygon
             point[0] = result_points[0]
             point[1] = result_points[1]
 
-            if not (i == 0):
-                viewport_y1 = VIEWPORT_HEIGHT - y_aux
-                viewport_y2 = VIEWPORT_HEIGHT - point[1]
-                viewport.coords(self.list_ids[i], x_aux, viewport_y1, point[0], viewport_y2)
-            else:
-                first_x = point[0]
-                first_y = point[1]
+        if self.id != None:
+            new_points = normalized_window.wireframe_clipping(self, self.points)
+            x_aux = None
+            y_aux = None
+            first_x = None
+            first_y = None
+            for i, point in enumerate(new_points):
+                if not (i == 0):
+                    viewport_y1 = VIEWPORT_HEIGHT - y_aux
+                    viewport_y2 = VIEWPORT_HEIGHT - point[1]
+                    viewport.coords(self.list_ids[i], x_aux, viewport_y1, point[0], viewport_y2)
+                else:
+                    first_x = point[0]
+                    first_y = point[1]
 
-            x_aux = point[0]
-            y_aux = point[1]
+                x_aux = point[0]
+                y_aux = point[1]
 
-        viewport_y1 = VIEWPORT_HEIGHT - y_aux
-        viewport_y2 = VIEWPORT_HEIGHT - first_y
-        viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+            viewport_y1 = VIEWPORT_HEIGHT - y_aux
+            viewport_y2 = VIEWPORT_HEIGHT - first_y
+            viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+
+        else:
+            self.drawn(viewport, normalized_window)
+            normalized_window.update_table(self)
 
     def obj_string(self, list_of_points, list_of_colors):
         points = []

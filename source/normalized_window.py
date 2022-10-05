@@ -62,20 +62,25 @@ class NormalizedWindow:
                 new_points[i][0] = result_points[0]
                 new_points[i][1] = result_points[1]
 
-                if not (i == 0):
-                    viewport_y1 = VIEWPORT_HEIGHT - y_aux
-                    viewport_y2 = VIEWPORT_HEIGHT - new_points[i][1]
-                    self.viewport.coords(object.list_ids[i], x_aux, viewport_y1, new_points[i][0], viewport_y2)
-                else:
-                    first_x = new_points[i][0]
-                    first_y = new_points[i][1]
+            new_points = self.wireframe_clipping(object, new_points)
 
-                x_aux = new_points[i][0]
-                y_aux = new_points[i][1]
+            if not object.clipped:
+                for i, point in enumerate(object.points):
+                    if not (i == 0):
+                        viewport_y1 = VIEWPORT_HEIGHT - y_aux
+                        viewport_y2 = VIEWPORT_HEIGHT - new_points[i][1]
+                        self.viewport.coords(object.list_ids[i], x_aux, viewport_y1, new_points[i][0], viewport_y2)
+                    else:
+                        first_x = new_points[i][0]
+                        first_y = new_points[i][1]
 
-            viewport_y1 = VIEWPORT_HEIGHT - y_aux
-            viewport_y2 = VIEWPORT_HEIGHT - first_y
-            self.viewport.coords(object.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+                    x_aux = new_points[i][0]
+                    y_aux = new_points[i][1]
+
+                viewport_y1 = VIEWPORT_HEIGHT - y_aux
+                viewport_y2 = VIEWPORT_HEIGHT - first_y
+                self.viewport.coords(object.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+                self.update_table(object)
 
     def transformation_matrix(self):
         rotate_radian = -(np.radians(float(self.angle)))
@@ -302,7 +307,10 @@ class NormalizedWindow:
                         in_limit = False
                     else:
                         should_not_clip = True
-                        #new_points.append([first_point_x, first_point_y])
+                        if new_points[-1] != return_values[0]:
+                            new_points.append(return_values[0])
+                        if new_points[-2] != return_values[1]:
+                            new_points.append(return_values[1])
                 elif element < 0:
                     r[0].append(q[i] / element)
                 else:
@@ -326,12 +334,14 @@ class NormalizedWindow:
                         if zeta[0] != 0:
                             return_values[0][0] = points[0][0] + (zeta[0] * p[1])
                             return_values[0][1] = points[0][1] + (zeta[0] * p[3])
+                            new_points.append(return_values[0])
 
                         if zeta[1] != 1:
                             return_values[1][0] = points[0][0] + (zeta[1] * p[1])
                             return_values[1][1] = points[0][1] + (zeta[1] * p[3])
+                        
+                        new_points.append(return_values[1])
 
-                        #new_points.append(?)
 
         if not object.clipped:
             self.viewport.itemconfigure(object.id, state='normal')
@@ -341,4 +351,5 @@ class NormalizedWindow:
                 # Quando o objeto já está desenhado, caso esteja fora da window, "esconde" ele
                 self.viewport.itemconfigure(object.id, state='hidden')
 
+        return new_points
     
