@@ -259,3 +259,86 @@ class NormalizedWindow:
             if old_clipping == False:
                 # Quando o objeto já está desenhado, caso esteja fora da window, "esconde" ele
                 self.viewport.itemconfigure(object.id, state='hidden')
+
+    def wireframe_clipping(self, object, points):
+        new_points = []
+        old_clipping = object.clipped
+        object.clipped = False
+        in_limit = True
+
+        for i in range(len(points)):
+            should_not_clip = False
+
+            first_point_x = points[i][0]
+            first_point_y = points[i][1]
+            if i !=(len(points) - 1):
+                last_point_x = points[i+1][0]
+                last_point_y = points[i+1][1]
+            else:
+                last_point_x = points[0][0]
+                last_point_y = points[0][1]
+            
+            p = [None] * 4
+            q = [None] * 4
+            zeta = [None] * 2
+            
+            r = [[], []]
+            return_values = [[first_point_x, first_point_y], [last_point_x, last_point_y]]
+            
+            p[0] = -(last_point_x - first_point_x)
+            p[1] = last_point_x - first_point_x
+            p[2] = -(last_point_y - first_point_y)
+            p[3] = last_point_y - first_point_y
+
+            q[0] = first_point_x - self.x_min
+            q[1] = self.x_max - first_point_x
+            q[2] = first_point_y - self.y_min
+            q[3] = self.y_max - first_point_y
+
+            for i, element in enumerate(p):
+                if element == 0:
+                    if q[i] < 0:
+                        object.clipped = True
+                        in_limit = False
+                    else:
+                        should_not_clip = True
+                        #new_points.append([first_point_x, first_point_y])
+                elif element < 0:
+                    r[0].append(q[i] / element)
+                else:
+                    r[1].append(q[i] / element)
+
+            if not should_not_clip:
+                if in_limit:
+                    zeta[0] = 0
+                    zeta[1] = 1
+
+                    for value in r[0]:
+                        if value > zeta[0]:
+                            zeta[0] = value
+                    for value in r[1]:
+                        if value < zeta[1]:
+                            zeta[1] = value
+
+                    if zeta[0] > zeta[1]:
+                        object.clipped = True
+                    else:
+                        if zeta[0] != 0:
+                            return_values[0][0] = points[0][0] + (zeta[0] * p[1])
+                            return_values[0][1] = points[0][1] + (zeta[0] * p[3])
+
+                        if zeta[1] != 1:
+                            return_values[1][0] = points[0][0] + (zeta[1] * p[1])
+                            return_values[1][1] = points[0][1] + (zeta[1] * p[3])
+
+                        #new_points.append(?)
+
+        if not object.clipped:
+            self.viewport.itemconfigure(object.id, state='normal')
+            #return return_values
+        else:
+            if old_clipping == False:
+                # Quando o objeto já está desenhado, caso esteja fora da window, "esconde" ele
+                self.viewport.itemconfigure(object.id, state='hidden')
+
+    
