@@ -271,12 +271,12 @@ class NormalizedWindow:
         object.clipped = False
         in_limit = True
 
-        for i in range(len(points)):
+        for i in range(len(points)-1):
             should_not_clip = False
 
             first_point_x = points[i][0]
             first_point_y = points[i][1]
-            if i !=(len(points) - 1):
+            if i <= (len(points) - 1):
                 last_point_x = points[i+1][0]
                 last_point_y = points[i+1][1]
             else:
@@ -288,7 +288,7 @@ class NormalizedWindow:
             zeta = [None] * 2
             
             r = [[], []]
-            return_values = [[first_point_x, first_point_y], [last_point_x, last_point_y]]
+            return_values = points
             
             p[0] = -(last_point_x - first_point_x)
             p[1] = last_point_x - first_point_x
@@ -300,21 +300,21 @@ class NormalizedWindow:
             q[2] = first_point_y - self.y_min
             q[3] = self.y_max - first_point_y
 
-            for i, element in enumerate(p):
+            amount_of_lines_not_to_draw = 0
+            for j, element in enumerate(p):
                 if element == 0:
-                    if q[i] < 0:
+                    if q[j] < 0:
                         object.clipped = True
                         in_limit = False
                     else:
-                        should_not_clip = True
-                        if new_points[-1] != return_values[0]:
-                            new_points.append(return_values[0])
-                        if new_points[-2] != return_values[1]:
-                            new_points.append(return_values[1])
+                        amount_of_lines_not_to_draw += 1
                 elif element < 0:
-                    r[0].append(q[i] / element)
+                    r[0].append(q[j] / element)
                 else:
-                    r[1].append(q[i] / element)
+                    r[1].append(q[j] / element)
+
+            if amount_of_lines_not_to_draw == len(points) -1:
+                should_not_clip = True
 
             if not should_not_clip:
                 if in_limit:
@@ -332,17 +332,18 @@ class NormalizedWindow:
                         object.clipped = True
                     else:
                         if zeta[0] != 0:
-                            return_values[0][0] = points[0][0] + (zeta[0] * p[1])
-                            return_values[0][1] = points[0][1] + (zeta[0] * p[3])
-                            new_points.append(return_values[0])
+                            return_values[i][0] = points[i][0] + (zeta[0] * p[1])
+                            return_values[i][1] = points[i][1] + (zeta[0] * p[3])
 
                         if zeta[1] != 1:
-                            return_values[1][0] = points[0][0] + (zeta[1] * p[1])
-                            return_values[1][1] = points[0][1] + (zeta[1] * p[3])
+                            if i >= len(points) - 1:
+                                return_values[0][0] = points[i][0] + (zeta[1] * p[1])
+                                return_values[0][1] = points[i][1] + (zeta[1] * p[3])
+                            else:
+                                return_values[i+1][0] = points[i][0] + (zeta[1] * p[1])
+                                return_values[i+1][1] = points[i][1] + (zeta[1] * p[3])
+
                         
-                        new_points.append(return_values[1])
-
-
         if not object.clipped:
             self.viewport.itemconfigure(object.id, state='normal')
             #return return_values
@@ -351,5 +352,5 @@ class NormalizedWindow:
                 # Quando o objeto já está desenhado, caso esteja fora da window, "esconde" ele
                 self.viewport.itemconfigure(object.id, state='hidden')
 
-        return new_points
+        return return_values
     
