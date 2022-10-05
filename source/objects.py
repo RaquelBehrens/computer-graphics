@@ -613,6 +613,8 @@ class Wireframe(Object):  #This is a Polygon
         for i, point in enumerate(self.points):
             points_matrix = [point[0], point[1], 1]
             result_points = np.matmul(points_matrix, rotation_matrix)
+            point[0] = result_points[0]
+            point[1] = result_points[1]
 
         if self.id != None:
             new_points = normalized_window.wireframe_clipping(self, self.points)
@@ -621,9 +623,6 @@ class Wireframe(Object):  #This is a Polygon
             first_x = None
             first_y = None
             for i, point in enumerate(new_points):
-                point[0] = result_points[0]
-                point[1] = result_points[1]
-
                 if not (i == 0):
                     viewport_y1 = VIEWPORT_HEIGHT - y_aux
                     viewport_y2 = VIEWPORT_HEIGHT - point[1]
@@ -659,7 +658,7 @@ class Wireframe(Object):  #This is a Polygon
                             [np.sin(rotate_radian), np.cos(rotate_radian), 0],
                             [0, 0, 1]]
 
-        for i, point in enumerate(new_points):
+        for i, point in enumerate(self.points):
             points_matrix = [point[0], point[1], 1]
             result_points = np.matmul(points_matrix, first_translation_matriz)
             result_points = np.matmul(result_points, rotation_matrix)
