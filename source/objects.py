@@ -535,7 +535,7 @@ class Wireframe(Object):  #This is a Polygon
                 if not (i == 0):
                     viewport_y1 = VIEWPORT_HEIGHT - y_aux
                     viewport_y2 = VIEWPORT_HEIGHT - point[1]
-                    viewport.coords(self.list_ids[i], x_aux, viewport_y1, point[0], viewport_y2)
+                    viewport.coords(self.list_ids[i-1], x_aux, viewport_y1, point[0], viewport_y2)
                 else:
                     first_x = point[0]
                     first_y = point[1]
@@ -545,7 +545,7 @@ class Wireframe(Object):  #This is a Polygon
 
             viewport_y1 = VIEWPORT_HEIGHT - y_aux
             viewport_y2 = VIEWPORT_HEIGHT - first_y
-            viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+            viewport.coords(self.id, x_aux, viewport_y1, first_x, viewport_y2)
         else:
             self.drawn(viewport, coord_scn)
             coord_scn.update_table(self)
@@ -587,7 +587,7 @@ class Wireframe(Object):  #This is a Polygon
                 if not (i == 0):
                     viewport_y1 = VIEWPORT_HEIGHT - y_aux
                     viewport_y2 = VIEWPORT_HEIGHT - point[1]
-                    viewport.coords(self.list_ids[i], x_aux, viewport_y1, point[0], viewport_y2)
+                    viewport.coords(self.list_ids[i-1], x_aux, viewport_y1, point[0], viewport_y2)
                 else:
                     first_x = point[0]
                     first_y = point[1]
@@ -597,7 +597,7 @@ class Wireframe(Object):  #This is a Polygon
 
             viewport_y1 = VIEWPORT_HEIGHT - y_aux
             viewport_y2 = VIEWPORT_HEIGHT - first_y
-            viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+            viewport.coords(self.id, x_aux, viewport_y1, first_x, viewport_y2)
 
         else:
             self.drawn(viewport, normalized_window)
@@ -627,7 +627,7 @@ class Wireframe(Object):  #This is a Polygon
                 if not (i == 0):
                     viewport_y1 = VIEWPORT_HEIGHT - y_aux
                     viewport_y2 = VIEWPORT_HEIGHT - point[1]
-                    viewport.coords(self.list_ids[i], x_aux, viewport_y1, point[0], viewport_y2)
+                    viewport.coords(self.list_ids[i-1], x_aux, viewport_y1, point[0], viewport_y2)
                 else:
                     first_x = point[0]
                     first_y = point[1]
@@ -637,7 +637,7 @@ class Wireframe(Object):  #This is a Polygon
 
             viewport_y1 = VIEWPORT_HEIGHT - y_aux
             viewport_y2 = VIEWPORT_HEIGHT - first_y
-            viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+            viewport.coords(self.id, x_aux, viewport_y1, first_x, viewport_y2)
 
         else:
             self.drawn(viewport, normalized_window)
@@ -677,7 +677,7 @@ class Wireframe(Object):  #This is a Polygon
                 if not (i == 0):
                     viewport_y1 = VIEWPORT_HEIGHT - y_aux
                     viewport_y2 = VIEWPORT_HEIGHT - point[1]
-                    viewport.coords(self.list_ids[i], x_aux, viewport_y1, point[0], viewport_y2)
+                    viewport.coords(self.list_ids[i-1], x_aux, viewport_y1, point[0], viewport_y2)
                 else:
                     first_x = point[0]
                     first_y = point[1]
@@ -687,7 +687,7 @@ class Wireframe(Object):  #This is a Polygon
 
             viewport_y1 = VIEWPORT_HEIGHT - y_aux
             viewport_y2 = VIEWPORT_HEIGHT - first_y
-            viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+            viewport.coords(self.id, x_aux, viewport_y1, first_x, viewport_y2)
 
         else:
             self.drawn(viewport, normalized_window)
@@ -728,7 +728,7 @@ class Wireframe(Object):  #This is a Polygon
                 if not (i == 0):
                     viewport_y1 = VIEWPORT_HEIGHT - y_aux
                     viewport_y2 = VIEWPORT_HEIGHT - point[1]
-                    viewport.coords(self.list_ids[i], x_aux, viewport_y1, point[0], viewport_y2)
+                    viewport.coords(self.list_ids[i-1], x_aux, viewport_y1, point[0], viewport_y2)
                 else:
                     first_x = point[0]
                     first_y = point[1]
@@ -738,7 +738,7 @@ class Wireframe(Object):  #This is a Polygon
 
             viewport_y1 = VIEWPORT_HEIGHT - y_aux
             viewport_y2 = VIEWPORT_HEIGHT - first_y
-            viewport.coords(self.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+            viewport.coords(self.id, x_aux, viewport_y1, first_x, viewport_y2)
 
         else:
             self.drawn(viewport, normalized_window)
