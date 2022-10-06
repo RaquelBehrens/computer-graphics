@@ -480,7 +480,7 @@ class Wireframe(Object):  #This is a Polygon
         first_x = None
         first_viewport_y = None
 
-        new_points = normalized_window.wireframe_clipping(self, self.points)
+        new_points = normalized_window.wireframe_clipping(self.points)
 
         if not self.clipped:
             for i, point in enumerate(new_points):
@@ -526,7 +526,7 @@ class Wireframe(Object):  #This is a Polygon
             point[1] = result_points[1]
 
         if self.id != None:
-            new_points = coord_scn.wireframe_clipping(self, self.points)
+            new_points = coord_scn.wireframe_clipping(self.points)
             x_aux = None
             y_aux = None
             first_x = None
@@ -586,7 +586,7 @@ class Wireframe(Object):  #This is a Polygon
                 point[1] = result_points[1]
 
         if self.id != None:
-            new_points = normalized_window.wireframe_clipping(self, self.points)
+            new_points = normalized_window.wireframe_clipping(self.points)
             x_aux = None
             y_aux = None
             first_x = None
@@ -632,7 +632,7 @@ class Wireframe(Object):  #This is a Polygon
             point[1] = result_points[1]
 
         if self.id != None:
-            new_points = normalized_window.wireframe_clipping(self, self.points)
+            new_points = normalized_window.wireframe_clipping(self.points)
             x_aux = None
             y_aux = None
             first_x = None
@@ -690,7 +690,7 @@ class Wireframe(Object):  #This is a Polygon
 
         
         if self.id != None:
-            new_points = normalized_window.wireframe_clipping(self, self.points)
+            new_points = normalized_window.wireframe_clipping(self.points)
             x_aux = None
             y_aux = None
             first_x = None
@@ -749,7 +749,7 @@ class Wireframe(Object):  #This is a Polygon
 
         
         if self.id != None:
-            new_points = normalized_window.wireframe_clipping(self, self.points)
+            new_points = normalized_window.wireframe_clipping(self.points)
             x_aux = None
             y_aux = None
             first_x = None

@@ -63,7 +63,7 @@ class NormalizedWindow:
                 new_points[i][0] = result_points[0]
                 new_points[i][1] = result_points[1]
 
-            new_points = self.wireframe_clipping(object, new_points)
+            new_points = self.wireframe_clipping(new_points)
 
             for i in range(len(object.list_ids)):
                 self.viewport.delete(object.list_ids[i])
@@ -284,148 +284,148 @@ class NormalizedWindow:
         return clipped_points
     
     def clip_left_x(self, points):
-        points_with_intersection = []
-        zeta = [0, 0]
+        new_points = []
+        delta = [0, 0]
 
         for p0, p1 in adjacents(points):
             if p0[0] < self.x_min < p1[0]:
-                zeta[0] = p1[0] - p0[0]
-                zeta[1] = p1[1] - p0[1]
-                if zeta[0] == 0:
+                delta[0] = p1[0] - p0[0]
+                delta[1] = p1[1] - p0[1]
+                if delta[0] == 0:
                     continue
-                m = zeta[1] / zeta[0]
+                r =  delta[1] / delta[0]
                 x = self.x_min 
-                y = m * (x - p0[0]) + p0[1]
-                points_with_intersection.append([x, y])
+                y = r * (x - p0[0]) + p0[1]
+                new_points.append([x, y])
 
             elif p1[0] < self.x_min < p0[0]:
-                zeta[0] = p0[0] - p1[0]
-                zeta[1] = p0[1] - p1[1]
-                if zeta[0] == 0:
+                delta[0] = p0[0] - p1[0]
+                delta[1] = p0[1] - p1[1]
+                if delta[0] == 0:
                     continue
-                m = zeta[1] / zeta[0]
+                r =  delta[1] / delta[0]
                 x = self.x_min 
-                y = m * (x - p1[0]) + p1[1]
-                points_with_intersection.append([x, y])
+                y = r * (x - p1[0]) + p1[1]
+                new_points.append([x, y])
             
-            points_with_intersection.append(p1)
+            new_points.append(p1)
 
         clipped = []
 
-        for point in points_with_intersection:
+        for point in new_points:
             if point[0] >= self.x_min:
                 clipped.append(point)
 
         return clipped
 
     def clip_right_x(self, points):
-        points_with_intersection = []
-        zeta = [0, 0]
+        new_points = []
+        delta = [0, 0]
 
         for p0, p1 in adjacents(points):
             if p0[0] > self.x_max > p1[0]:
-                zeta[0] = p1[0] - p0[0]
-                zeta[1] = p1[1] - p0[1]
-                if zeta[0] == 0:
+                delta[0] = p1[0] - p0[0]
+                delta[1] = p1[1] - p0[1]
+                if delta[0] == 0:
                     continue
-                m = zeta[1] / zeta[0]
+                r =  delta[1] / delta[0]
                 x = self.x_max 
-                y = m * (x - p0[0]) + p0[1]
-                points_with_intersection.append([x,y])
+                y = r * (x - p0[0]) + p0[1]
+                new_points.append([x,y])
 
             elif p1[0] > self.x_max > p0[0]:
-                zeta[0] = p0[0] - p1[0]
-                zeta[1] = p0[1] - p1[1]
-                if zeta[0] == 0:
+                delta[0] = p0[0] - p1[0]
+                delta[1] = p0[1] - p1[1]
+                if delta[0] == 0:
                     continue
-                m = zeta[1] / zeta[0]
+                r =  delta[1] / delta[0]
                 x = self.x_max 
-                y = m * (x - p1[0]) + p1[1]
-                points_with_intersection.append([x,y])
+                y = r * (x - p1[0]) + p1[1]
+                new_points.append([x,y])
             
-            points_with_intersection.append(p1)
+            new_points.append(p1)
             
         clipped = []
 
-        for point in points_with_intersection:
+        for point in new_points:
             if point[0] <= self.x_max:
                 clipped.append(point)
 
         return clipped
 
     def clip_bottom_y(self, points):
-        points_with_intersection = []
-        zeta = [0, 0]
+        new_points = []
+        delta = [0, 0]
 
         for p0, p1 in adjacents(points):
             if p0[1] < self.y_min < p1[1]:
-                zeta[0] = p1[0] - p0[0]
-                zeta[1] = p1[1] - p0[1]
-                if zeta[0] == 0:
+                delta[0] = p1[0] - p0[0]
+                delta[1] = p1[1] - p0[1]
+                if delta[0] == 0:
                     y = self.y_min
                     x = p0[0] 
                 else:
-                    m = zeta[1] / zeta[0]
+                    r =  delta[1] / delta[0]
                     y = self.y_min
                     x = p0[0] + (y - p0[1]) / m
-                points_with_intersection.append([x,y])
+                new_points.append([x,y])
 
             elif p1[1] < self.y_min < p0[1]:
-                zeta[0] = p0[0] - p1[0]
-                zeta[1] = p0[1] - p1[1]
-                if zeta[0] == 0:
+                delta[0] = p0[0] - p1[0]
+                delta[1] = p0[1] - p1[1]
+                if delta[0] == 0:
                     y = self.y_min
                     x = p1[0]
                 else: 
-                    m = zeta[1] / zeta[0]
+                    r =  delta[1] / delta[0]
                     y = self.y_min
                     x = p1[0] + (y - p1[1]) / m
-                points_with_intersection.append([x,y])
+                new_points.append([x,y])
             
-            points_with_intersection.append(p1)
+            new_points.append(p1)
 
         clipped = []
 
-        for point in points_with_intersection:
+        for point in new_points:
             if point[1] >= self.y_min:
                 clipped.append(point)
 
         return clipped
 
     def clip_upper_y(self, points):
-        points_with_intersection = []
-        zeta = [0, 0]
+        new_points = []
+        delta = [0, 0]
 
         for p0, p1 in adjacents(points):
             if p0[1] > self.y_max > p1[1]:
-                zeta[0] = p1[0] - p0[0]
-                zeta[1] = p1[1] - p0[1]
-                if zeta[0] == 0:
+                delta[0] = p1[0] - p0[0]
+                delta[1] = p1[1] - p0[1]
+                if delta[0] == 0:
                     y = self.y_max
                     x = p0[0]
                 else:
-                    m = zeta[1]/ zeta[0]
+                    r =  delta[1]/ delta[0]
                     y = self.y_max
                     x = p0[0] + (y - p0[1]) / m
-                points_with_intersection.append([x,y])
+                new_points.append([x,y])
 
             elif p1[1]> self.y_max > p0[1]:
-                zeta[0] = p0[0] - p1[0]
-                zeta[1] = p0[1] - p1[1]
-                if zeta[0]== 0:
+                delta[0] = p0[0] - p1[0]
+                delta[1] = p0[1] - p1[1]
+                if delta[0]== 0:
                     y = self.y_max
                     x = p1[0]
                 else: 
-                    m = zeta[1]/ zeta[0]
+                    r =  delta[1]/ delta[0]
                     y = self.y_max
                     x = p1[0] + (y - p1[1]) / m
-                points_with_intersection.append([x,y])
+                new_points.append([x,y])
             
-            points_with_intersection.append(p1)
+            new_points.append(p1)
 
         clipped = []
 
-        for point in points_with_intersection:
+        for point in new_points:
             if point[1]<= self.y_max:
                 clipped.append(point)
 
