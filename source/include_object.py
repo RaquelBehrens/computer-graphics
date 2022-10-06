@@ -219,7 +219,7 @@ class IncludeLine(IncludeWindow):
             if item_id in list_ids:
                 self.table.delete(item)
 
-        objeto = Wireframe(name, polygons_points_list, self.color, polygons_lines_list[0].get_id())
+        objeto = Wireframe(name, polygons_points_list, self.color, 1, polygons_lines_list[0].get_id())
         objeto.list_ids = list_ids
         self.include_object_in_table(objeto)
         self.display_file.append(objeto)
@@ -290,6 +290,7 @@ class IncludeTriangle(IncludeWindow):
     def __init__(self, viewport, erros, display_file, table, coord_scn):
         super().__init__(viewport, erros, display_file, table, coord_scn)
         self.main_window.title("Incluir Triângulo")
+        self.main_window.geometry(f"{INCLUDE_WINDOW_WIDTH}x{INCLUDE_WINDOW_HEIGHT+10}")
 
         self.frame1 = Frame(self.main_window)
         self.frame1.grid()
@@ -335,7 +336,14 @@ class IncludeTriangle(IncludeWindow):
         self.y3 = Entry(self.frame5, width=3, font=("Times", "11"))
         self.y3.grid(row=0, column=3, sticky=NW)
 
-        Label(self.frame6, text='Defina a cor da borda', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
+        Label(self.frame6, text='Defina a cor', font=("Times", "11")).grid(row=0, column=0, columnspan=2)
+        
+        self.radio_variable = IntVar()
+        self.radio_variable.set(0)
+
+        Radiobutton(self.frame6, text='Apenas a borda', variable=self.radio_variable, value=1).grid(row=1, column=0, stick=W)
+        Radiobutton(self.frame6, text='Objeto preenchido', variable=self.radio_variable, value=2).grid(row=2, column=0, stick=W)
+        
         self.color_button = Button(self.frame7, text='Escolher cor', font=('Times', '11'), command=self.choose_color, bg=self.color)
         self.color_button.grid(row=0, column=3, padx=10)
 
@@ -373,15 +381,18 @@ class IncludeTriangle(IncludeWindow):
                 elif not self.verify_triangle((x1,y1),(x2,y2),(x3,y3)):
                     self.erros['text'] = 'Não formam um triângulo'
                 else:
-                    objeto = Wireframe(name, [[x1,y1], [x2,y2], [x3,y3]], self.color)
-                    objeto.drawn(self.viewport, self.coord_scn)
+                    if self.radio_variable.get() != 0:
+                        objeto = Wireframe(name, [[x1,y1], [x2,y2], [x3,y3]], self.color, self.radio_variable.get())
+                        objeto.drawn(self.viewport, self.coord_scn)
 
-                    self.coord_scn.generate_scn(objeto)
-                    
-                    self.close_window()                
-                    self.display_file.append(objeto)
-                    self.include_object_in_table(objeto)
-                    self.erros['text'] = 'Objeto criado com sucesso'
+                        self.coord_scn.generate_scn(objeto)
+
+                        self.close_window()                
+                        self.display_file.append(objeto)
+                        self.include_object_in_table(objeto)
+                        self.erros['text'] = 'Objeto criado com sucesso'
+                    else:
+                        self.erros['text'] = 'Selecione uma opção de preenchimento'
             else:
                 if name == '':
                     self.erros['text'] = 'Digite um nome'
@@ -396,7 +407,7 @@ class IncludeQuadrilateral(IncludeWindow):
     def __init__(self, viewport, erros, display_file, table, coord_scn):
         super().__init__(viewport, erros, display_file, table, coord_scn)
         self.main_window.title("Incluir Quadrilátero")
-        self.main_window.geometry(f"{INCLUDE_WINDOW_WIDTH}x{INCLUDE_WINDOW_HEIGHT+130}")
+        self.main_window.geometry(f"{INCLUDE_WINDOW_WIDTH}x{INCLUDE_WINDOW_HEIGHT+170}")
 
         self.frame0 = Frame(self.main_window)
         self.frame0.grid()
@@ -459,7 +470,14 @@ class IncludeQuadrilateral(IncludeWindow):
         self.y4 = Entry(self.frame6, width=3, font=("Times", "11"))
         self.y4.grid(row=0, column=3, sticky=NW)
 
-        Label(self.frame7, text='Defina a cor da borda', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
+        Label(self.frame7, text='Defina a cor', font=("Times", "11")).grid(row=0, column=0, columnspan=2)
+        
+        self.radio_variable = IntVar()
+        self.radio_variable.set(0)
+
+        Radiobutton(self.frame7, text='Apenas a borda', variable=self.radio_variable, value=1).grid(row=1, column=0, stick=W)
+        Radiobutton(self.frame7, text='Objeto preenchido', variable=self.radio_variable, value=2).grid(row=2, column=0, stick=W)
+        
         self.color_button = Button(self.frame8, text='Escolher cor', font=('Times', '11'), command=self.choose_color, bg=self.color)
         self.color_button.grid(row=0, column=3, padx=10)
 
@@ -503,15 +521,18 @@ class IncludeQuadrilateral(IncludeWindow):
                 elif not self.verify_quadrilateral((x1,y1),(x2,y2),(x3,y3),(x4,y4)):
                     self.erros['text'] = 'Não formam um quadrilátero'
                 else:
-                    objeto = Wireframe(name, [[x1,y1], [x2,y2], [x3,y3], [x4,y4]], self.color)
-                    objeto.drawn(self.viewport, self.coord_scn)
+                    if self.radio_variable.get() != 0:
+                        objeto = Wireframe(name, [[x1,y1], [x2,y2], [x3,y3], [x4,y4]], self.color, self.radio_variable.get())
+                        objeto.drawn(self.viewport, self.coord_scn)
 
-                    self.coord_scn.generate_scn(objeto)
-                    
-                    self.close_window()                
-                    self.display_file.append(objeto)
-                    self.include_object_in_table(objeto)
-                    self.erros['text'] = 'Objeto criado com sucesso'
+                        self.coord_scn.generate_scn(objeto)
+
+                        self.close_window()                
+                        self.display_file.append(objeto)
+                        self.include_object_in_table(objeto)
+                        self.erros['text'] = 'Objeto criado com sucesso'
+                    else:
+                        self.erros['text'] = 'Selecione uma opção de preenchimento'
             else:
                 if name == '':
                     self.erros['text'] = 'Digite um nome'
@@ -526,7 +547,7 @@ class IncludePolygon(IncludeWindow):
     def __init__(self, viewport, erros, display_file, table, coord_scn):
         super().__init__(viewport, erros, display_file, table, coord_scn)
         self.main_window.title("Incluir Outro Polígono")
-        self.main_window.geometry(f"{INCLUDE_WINDOW_WIDTH+100}x{INCLUDE_WINDOW_HEIGHT-50}")
+        self.main_window.geometry(f"{INCLUDE_WINDOW_WIDTH+100}x{INCLUDE_WINDOW_HEIGHT-10}")
 
         self.frame0 = Frame(self.main_window)
         self.frame0.grid()
@@ -553,7 +574,14 @@ class IncludePolygon(IncludeWindow):
         self.entry_polygon.grid(row=0, column=1, sticky=NW)
         Label(self.frame2, text='(x1,y1), (x2,y2), ..., (xn,yn)', font=("Times", "11")).grid(row=1, column=1)
 
-        Label(self.frame3, text='Defina a cor da borda', font=("Times", "11"), height=2).grid(row=0, column=0, columnspan=2)
+        Label(self.frame3, text='Defina a cor', font=("Times", "11")).grid(row=0, column=0, columnspan=2)
+        
+        self.radio_variable = IntVar()
+        self.radio_variable.set(0)
+
+        Radiobutton(self.frame3, text='Apenas a borda', variable=self.radio_variable, value=1).grid(row=1, column=0, stick=W)
+        Radiobutton(self.frame3, text='Objeto preenchido', variable=self.radio_variable, value=2).grid(row=2, column=0, stick=W)
+        
         self.color_button = Button(self.frame4, text='Escolher cor', font=('Times', '11'), command=self.choose_color, bg=self.color)
         self.color_button.grid(row=0, column=3, padx=10)
 
@@ -587,15 +615,18 @@ class IncludePolygon(IncludeWindow):
                 if not self.verify_polygon(coordinates):
                     self.erros['text'] = 'Não formam um polígono'
                 else:
-                    objeto = Wireframe(name, coordinates, self.color)
-                    objeto.drawn(self.viewport, self.coord_scn)
+                    if self.radio_variable.get() != 0:
+                        objeto = Wireframe(name, coordinates, self.color, self.radio_variable.get())
+                        objeto.drawn(self.viewport, self.coord_scn)
 
-                    self.coord_scn.generate_scn(objeto)
+                        self.coord_scn.generate_scn(objeto)
 
-                    self.close_window()                
-                    self.display_file.append(objeto)
-                    self.include_object_in_table(objeto)
-                    self.erros['text'] = 'Objeto criado com sucesso'
+                        self.close_window()                
+                        self.display_file.append(objeto)
+                        self.include_object_in_table(objeto)
+                        self.erros['text'] = 'Objeto criado com sucesso'
+                    else:
+                        self.erros['text'] = 'Selecione uma opção de preenchimento'
             else:
                 if name == '':
                     self.erros['text'] = 'Digite um nome'
