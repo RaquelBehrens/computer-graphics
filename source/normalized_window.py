@@ -52,45 +52,14 @@ class NormalizedWindow:
                         object.id = self.viewport.create_oval(new_points[0][0], viewport_y1, new_points[0][0], viewport_y1, width=POINT_SIZE, outline=object.color)
                         self.update_table(object)
         else:
-            x_aux = None
-            y_aux = None
-            first_x = None
-            first_y = None
-
             for i, point in enumerate(object.points):
                 points_matrix = [point[0], point[1], 1]
                 result_points = np.matmul(points_matrix, self.transformation_matrix())
                 new_points[i][0] = result_points[0]
                 new_points[i][1] = result_points[1]
 
-            new_points = self.wireframe_clipping(new_points)
-
-            for i in range(len(object.list_ids)):
-                self.viewport.delete(object.list_ids[i])
-            
-            object.list_ids = []
-
-            if not object.clipped:
-                for i, point in enumerate(new_points):
-                    if not (i == 0):
-                        viewport_y1 = VIEWPORT_HEIGHT - y_aux
-                        viewport_y2 = VIEWPORT_HEIGHT - new_points[i][1]
-                        new_id = self.viewport.create_line((x_aux, viewport_y1), (new_points[i][0], viewport_y2), width=3, fill=object.color)
-                        object.list_ids.append(new_id)
-                    else:
-                        first_x = new_points[i][0]
-                        first_y = new_points[i][1]
-
-                    x_aux = new_points[i][0]
-                    y_aux = new_points[i][1]
-
-                if y_aux != None:
-                    viewport_y1 = VIEWPORT_HEIGHT - y_aux
-                    viewport_y2 = VIEWPORT_HEIGHT - first_y
-                    new_id = self.viewport.create_line((x_aux, viewport_y1), (first_x, viewport_y2), width=3, fill=object.color)
-                    object.list_ids.append(new_id)
-
-                self.update_table(object)
+            object.drawn(self.viewport, self, new_points)
+            self.update_table(object)
 
     def transformation_matrix(self):
         rotate_radian = -(np.radians(float(self.angle)))
