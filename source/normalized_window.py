@@ -367,7 +367,7 @@ class NormalizedWindow:
                 else:
                     r =  delta[1] / delta[0]
                     y = self.y_min
-                    x = p0[0] + (y - p0[1]) / m
+                    x = p0[0] + (y - p0[1]) / r
                 new_points.append([x,y])
 
             elif p1[1] < self.y_min < p0[1]:
@@ -379,7 +379,7 @@ class NormalizedWindow:
                 else: 
                     r =  delta[1] / delta[0]
                     y = self.y_min
-                    x = p1[0] + (y - p1[1]) / m
+                    x = p1[0] + (y - p1[1]) / r
                 new_points.append([x,y])
             
             new_points.append(p1)
@@ -406,7 +406,7 @@ class NormalizedWindow:
                 else:
                     r =  delta[1]/ delta[0]
                     y = self.y_max
-                    x = p0[0] + (y - p0[1]) / m
+                    x = p0[0] + (y - p0[1]) / r
                 new_points.append([x,y])
 
             elif p1[1]> self.y_max > p0[1]:
@@ -418,7 +418,7 @@ class NormalizedWindow:
                 else: 
                     r =  delta[1]/ delta[0]
                     y = self.y_max
-                    x = p1[0] + (y - p1[1]) / m
+                    x = p1[0] + (y - p1[1]) / r
                 new_points.append([x,y])
             
             new_points.append(p1)
