@@ -531,11 +531,17 @@ class Wireframe(Object):  #This is a Polygon
             y_aux = None
             first_x = None
             first_y = None
+
+            for i in range(len(self.list_ids)):
+                viewport.delete(self.list_ids[i])
+            self.list_ids = []
+
             for i, point in enumerate(new_points):
                 if not (i == 0):
                     viewport_y1 = VIEWPORT_HEIGHT - y_aux
                     viewport_y2 = VIEWPORT_HEIGHT - point[1]
-                    viewport.coords(self.list_ids[i-1], x_aux, viewport_y1, point[0], viewport_y2)
+                    self.id = viewport.create_line((x_aux, viewport_y1), (point[0], viewport_y2), width=3, fill=self.color)
+                    self.list_ids.append(self.id)
                 else:
                     first_x = point[0]
                     first_y = point[1]
@@ -543,9 +549,11 @@ class Wireframe(Object):  #This is a Polygon
                 x_aux = point[0]
                 y_aux = point[1]
 
-            viewport_y1 = VIEWPORT_HEIGHT - y_aux
-            viewport_y2 = VIEWPORT_HEIGHT - first_y
-            viewport.coords(self.id, x_aux, viewport_y1, first_x, viewport_y2)
+            if y_aux != None:
+                viewport_y1 = VIEWPORT_HEIGHT - y_aux
+                viewport_y2 = VIEWPORT_HEIGHT - first_y
+                self.id = viewport.create_line((x_aux, viewport_y1), (first_x, viewport_y2), width=3, fill=self.color)
+                self.list_ids.append(self.id)
         else:
             self.drawn(viewport, coord_scn)
             coord_scn.update_table(self)
@@ -583,11 +591,17 @@ class Wireframe(Object):  #This is a Polygon
             y_aux = None
             first_x = None
             first_y = None
+
+            for i in range(len(self.list_ids)):
+                viewport.delete(self.list_ids[i])
+            self.list_ids = []
+
             for i, point in enumerate(new_points):
                 if not (i == 0):
                     viewport_y1 = VIEWPORT_HEIGHT - y_aux
                     viewport_y2 = VIEWPORT_HEIGHT - point[1]
-                    viewport.coords(self.list_ids[i-1], x_aux, viewport_y1, point[0], viewport_y2)
+                    self.id = viewport.create_line((x_aux, viewport_y1), (point[0], viewport_y2), width=3, fill=self.color)
+                    self.list_ids.append(self.id)
                 else:
                     first_x = point[0]
                     first_y = point[1]
@@ -595,10 +609,11 @@ class Wireframe(Object):  #This is a Polygon
                 x_aux = point[0]
                 y_aux = point[1]
 
-            viewport_y1 = VIEWPORT_HEIGHT - y_aux
-            viewport_y2 = VIEWPORT_HEIGHT - first_y
-            viewport.coords(self.id, x_aux, viewport_y1, first_x, viewport_y2)
-
+            if y_aux != None:
+                viewport_y1 = VIEWPORT_HEIGHT - y_aux
+                viewport_y2 = VIEWPORT_HEIGHT - first_y
+                self.id = viewport.create_line((x_aux, viewport_y1), (first_x, viewport_y2), width=3, fill=self.color)
+                self.list_ids.append(self.id)
         else:
             self.drawn(viewport, normalized_window)
             normalized_window.update_table(self)
@@ -622,11 +637,17 @@ class Wireframe(Object):  #This is a Polygon
             y_aux = None
             first_x = None
             first_y = None
+
+            for i in range(len(self.list_ids)):
+                viewport.delete(self.list_ids[i])
+            self.list_ids = []
+
             for i, point in enumerate(new_points):
                 if not (i == 0):
                     viewport_y1 = VIEWPORT_HEIGHT - y_aux
                     viewport_y2 = VIEWPORT_HEIGHT - point[1]
-                    viewport.coords(self.list_ids[i-1], x_aux, viewport_y1, point[0], viewport_y2)
+                    self.id = viewport.create_line((x_aux, viewport_y1), (point[0], viewport_y2), width=3, fill=self.color)
+                    self.list_ids.append(self.id)
                 else:
                     first_x = point[0]
                     first_y = point[1]
@@ -634,10 +655,11 @@ class Wireframe(Object):  #This is a Polygon
                 x_aux = point[0]
                 y_aux = point[1]
 
-            viewport_y1 = VIEWPORT_HEIGHT - y_aux
-            viewport_y2 = VIEWPORT_HEIGHT - first_y
-            viewport.coords(self.id, x_aux, viewport_y1, first_x, viewport_y2)
-
+            if y_aux != None:
+                viewport_y1 = VIEWPORT_HEIGHT - y_aux
+                viewport_y2 = VIEWPORT_HEIGHT - first_y
+                self.id = viewport.create_line((x_aux, viewport_y1), (first_x, viewport_y2), width=3, fill=self.color)
+                self.list_ids.append(self.id)
         else:
             self.drawn(viewport, normalized_window)
             normalized_window.update_table(self)
@@ -666,17 +688,24 @@ class Wireframe(Object):  #This is a Polygon
             point[0] = result_points[0]
             point[1] = result_points[1]
 
+        
         if self.id != None:
             new_points = normalized_window.wireframe_clipping(self, self.points)
             x_aux = None
             y_aux = None
             first_x = None
             first_y = None
+
+            for i in range(len(self.list_ids)):
+                viewport.delete(self.list_ids[i])
+            self.list_ids = []
+
             for i, point in enumerate(new_points):
                 if not (i == 0):
                     viewport_y1 = VIEWPORT_HEIGHT - y_aux
                     viewport_y2 = VIEWPORT_HEIGHT - point[1]
-                    viewport.coords(self.list_ids[i-1], x_aux, viewport_y1, point[0], viewport_y2)
+                    self.id = viewport.create_line((x_aux, viewport_y1), (point[0], viewport_y2), width=3, fill=self.color)
+                    self.list_ids.append(self.id)
                 else:
                     first_x = point[0]
                     first_y = point[1]
@@ -684,10 +713,11 @@ class Wireframe(Object):  #This is a Polygon
                 x_aux = point[0]
                 y_aux = point[1]
 
-            viewport_y1 = VIEWPORT_HEIGHT - y_aux
-            viewport_y2 = VIEWPORT_HEIGHT - first_y
-            viewport.coords(self.id, x_aux, viewport_y1, first_x, viewport_y2)
-
+            if y_aux != None:
+                viewport_y1 = VIEWPORT_HEIGHT - y_aux
+                viewport_y2 = VIEWPORT_HEIGHT - first_y
+                self.id = viewport.create_line((x_aux, viewport_y1), (first_x, viewport_y2), width=3, fill=self.color)
+                self.list_ids.append(self.id)
         else:
             self.drawn(viewport, normalized_window)
             normalized_window.update_table(self)
@@ -717,17 +747,24 @@ class Wireframe(Object):  #This is a Polygon
             point[0] = result_points[0]
             point[1] = result_points[1]
 
+        
         if self.id != None:
             new_points = normalized_window.wireframe_clipping(self, self.points)
             x_aux = None
             y_aux = None
             first_x = None
             first_y = None
+
+            for i in range(len(self.list_ids)):
+                viewport.delete(self.list_ids[i])
+            self.list_ids = []
+
             for i, point in enumerate(new_points):
                 if not (i == 0):
                     viewport_y1 = VIEWPORT_HEIGHT - y_aux
                     viewport_y2 = VIEWPORT_HEIGHT - point[1]
-                    viewport.coords(self.list_ids[i-1], x_aux, viewport_y1, point[0], viewport_y2)
+                    self.id = viewport.create_line((x_aux, viewport_y1), (point[0], viewport_y2), width=3, fill=self.color)
+                    self.list_ids.append(self.id)
                 else:
                     first_x = point[0]
                     first_y = point[1]
@@ -735,10 +772,11 @@ class Wireframe(Object):  #This is a Polygon
                 x_aux = point[0]
                 y_aux = point[1]
 
-            viewport_y1 = VIEWPORT_HEIGHT - y_aux
-            viewport_y2 = VIEWPORT_HEIGHT - first_y
-            viewport.coords(self.id, x_aux, viewport_y1, first_x, viewport_y2)
-
+            if y_aux != None:
+                viewport_y1 = VIEWPORT_HEIGHT - y_aux
+                viewport_y2 = VIEWPORT_HEIGHT - first_y
+                self.id = viewport.create_line((x_aux, viewport_y1), (first_x, viewport_y2), width=3, fill=self.color)
+                self.list_ids.append(self.id)
         else:
             self.drawn(viewport, normalized_window)
             normalized_window.update_table(self)

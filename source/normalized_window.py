@@ -2,6 +2,7 @@ from tkinter import *
 import numpy as np
 from constants import POINT_SIZE, VIEWPORT_HEIGHT, VIEWPORT_WIDTH
 from objects import Line, Wireframe
+from utils import adjacents
 
 class NormalizedWindow:
     def __init__(self, viewport, main_table):
@@ -64,12 +65,18 @@ class NormalizedWindow:
 
             new_points = self.wireframe_clipping(object, new_points)
 
+            for i in range(len(object.list_ids)):
+                self.viewport.delete(object.list_ids[i])
+            
+            object.list_ids = []
+
             if not object.clipped:
                 for i, point in enumerate(new_points):
                     if not (i == 0):
                         viewport_y1 = VIEWPORT_HEIGHT - y_aux
                         viewport_y2 = VIEWPORT_HEIGHT - new_points[i][1]
-                        self.viewport.coords(object.list_ids[i], x_aux, viewport_y1, new_points[i][0], viewport_y2)
+                        new_id = self.viewport.create_line((x_aux, viewport_y1), (new_points[i][0], viewport_y2), width=3, fill=object.color)
+                        object.list_ids.append(new_id)
                     else:
                         first_x = new_points[i][0]
                         first_y = new_points[i][1]
@@ -77,9 +84,12 @@ class NormalizedWindow:
                     x_aux = new_points[i][0]
                     y_aux = new_points[i][1]
 
-                viewport_y1 = VIEWPORT_HEIGHT - y_aux
-                viewport_y2 = VIEWPORT_HEIGHT - first_y
-                self.viewport.coords(object.list_ids[0], x_aux, viewport_y1, first_x, viewport_y2)
+                if y_aux != None:
+                    viewport_y1 = VIEWPORT_HEIGHT - y_aux
+                    viewport_y2 = VIEWPORT_HEIGHT - first_y
+                    new_id = self.viewport.create_line((x_aux, viewport_y1), (first_x, viewport_y2), width=3, fill=object.color)
+                    object.list_ids.append(new_id)
+
                 self.update_table(object)
 
     def transformation_matrix(self):
@@ -265,131 +275,158 @@ class NormalizedWindow:
                 # Quando o objeto já está desenhado, caso esteja fora da window, "esconde" ele
                 self.viewport.itemconfigure(object.id, state='hidden')
 
-    def wireframe_clipping(self, object, points):
-        new_points = {}
-        num_ids = len(object.list_ids)
-
-        for i in range(len(points)):
-            p = [None] * 4
-            q = [None] * 4
-            zeta = [None] * 2
-        
-            r = [[], []]
-            return_values = points
-            old_clipping = object.clipped
-            object.clipped = False
-            in_limit = True
-            
-            if i != len(points)-1:
-                p[0] = -(points[i+1][0] - points[i][0])
-                p[1] = points[i+1][0] - points[i][0]
-                p[2] = -(points[i+1][1] - points[i][1])
-                p[3] = points[i+1][1] - points[i][1]
-            else:
-                p[0] = -(points[i][0] - points[0][0])
-                p[1] = points[i][0] - points[0][0]
-                p[2] = -(points[i][1] - points[0][1])
-                p[3] = points[i][1] - points[0][1]
-
-            q[0] = points[i][0] - self.x_min
-            q[1] = self.x_max - points[0][0]
-            q[2] = points[i][1] - self.y_min
-            q[3] = self.y_max - points[i][1]
-
-            for j, element in enumerate(p):
-                if element == 0:
-                    if q[j] < 0:
-                        object.clipped = True
-                        in_limit = False
-                elif element < 0:
-                    r[0].append(q[j] / element)
-                else:
-                    r[1].append(q[j] / element)
-
-            if in_limit:
-                zeta[0] = 0
-                zeta[1] = 1
-
-                for value in r[0]:
-                    if value > zeta[0]:
-                        zeta[0] = value
-                for value in r[1]:
-                    if value < zeta[1]:
-                        zeta[1] = value
-
-                if zeta[0] > zeta[1]:
-                    object.clipped = True
-                else:
-                    if zeta[0] != 0:
-                        #print('z0: ', points[i][0], points[i][1])
-                        clipping_point_x = points[i][0] + (zeta[0] * p[1])
-                        clipping_point_y = points[i][1] + (zeta[0] * p[3])
-                        if clipping_point_x != return_values[i][0] and clipping_point_y != return_values[i][1]:
-                            new_points[i] = [clipping_point_x, clipping_point_y]
-                        else:
-                            return_values[i][0] = clipping_point_x
-                            return_values[i][1] = clipping_point_y
-                        #print(return_values)
-
-                        #new_points.append('entrando')
-                        #new_points.append(return_values[i])
-
-                    if zeta[1] != 1:
-                        #print('z1: ', points[i][0], points[i][1])
-                        clipping_point_x = points[i][0] + (zeta[1] * p[1])
-                        clipping_point_y = points[i][1] + (zeta[1] * p[3])
-                        if i != len(points)-1:
-                            if clipping_point_x != return_values[i+1][0] and clipping_point_y != return_values[i+1][1]:
-                                new_points[i+1] = [clipping_point_x, clipping_point_y]
-                            else:
-                                return_values[i+1][0] = clipping_point_x
-                                return_values[i+1][1] = clipping_point_y
-                            #print(return_values)
-                        else:
-                            if clipping_point_x != return_values[0][0] and clipping_point_y != return_values[0][1]:
-                                new_points[i+1] = [clipping_point_x, clipping_point_y]
-                            else:
-                                return_values[0][0] = clipping_point_x
-                                return_values[0][1] = clipping_point_y
-                        
-                        #new_points.append('saindo')
-                        #new_points.append(return_values[i])
-        
-            if return_values[i][0] < self.x_min:
-                return_values[i][0] = self.x_min
-            elif return_values[i][0] > self.x_max:
-                return_values[i][0] = self.x_max
-            
-            if return_values[i][1] < self.y_min:
-                return_values[i][1] = self.y_min
-            elif return_values[i][1] > self.y_max:
-                return_values[i][1] = self.y_max
-
-        print(return_values)
-            
-        for key, value in new_points.items():
-            # if key == 0:
-            #     old_element = return_values[0]
-            #     return_values.remove(old_element)
-            #     return_values.append(old_element)
-            return_values.insert(key, value)
-            print(return_values)
-            # Indiferente os valores criados, vai trocar no viewport.coord()
-            if num_ids < len(return_values):
-                id = self.viewport.create_line((return_values[-1][0], return_values[-1][1]), (return_values[1][0], return_values[1][1]), width=3, fill=object.color)
-                object.list_ids.append(id)
-        
-        if num_ids > len(return_values):
-            self.viewport.delete(object.list_ids[-1])
-            object.list_ids.remove(object.list_ids[-1])
-                        
-        if not object.clipped:
-            self.viewport.itemconfigure(object.id, state='normal')
-            #return return_values
-        else:
-            if old_clipping == False:
-                # Quando o objeto já está desenhado, caso esteja fora da window, "esconde" ele
-                self.viewport.itemconfigure(object.id, state='hidden')
-
-        return return_values
+    def wireframe_clipping(self, points):
+        clipped_points = points
+        clipped_points = self.clip_right_x(clipped_points)
+        clipped_points = self.clip_left_x(clipped_points)
+        clipped_points = self.clip_upper_y(clipped_points)
+        clipped_points = self.clip_bottom_y(clipped_points)
+        return clipped_points
     
+    def clip_left_x(self, points):
+        points_with_intersection = []
+        zeta = [0, 0]
+
+        for p0, p1 in adjacents(points):
+            if p0[0] < self.x_min < p1[0]:
+                zeta[0] = p1[0] - p0[0]
+                zeta[1] = p1[1] - p0[1]
+                if zeta[0] == 0:
+                    continue
+                m = zeta[1] / zeta[0]
+                x = self.x_min 
+                y = m * (x - p0[0]) + p0[1]
+                points_with_intersection.append([x, y])
+
+            elif p1[0] < self.x_min < p0[0]:
+                zeta[0] = p0[0] - p1[0]
+                zeta[1] = p0[1] - p1[1]
+                if zeta[0] == 0:
+                    continue
+                m = zeta[1] / zeta[0]
+                x = self.x_min 
+                y = m * (x - p1[0]) + p1[1]
+                points_with_intersection.append([x, y])
+            
+            points_with_intersection.append(p1)
+
+        clipped = []
+
+        for point in points_with_intersection:
+            if point[0] >= self.x_min:
+                clipped.append(point)
+
+        return clipped
+
+    def clip_right_x(self, points):
+        points_with_intersection = []
+        zeta = [0, 0]
+
+        for p0, p1 in adjacents(points):
+            if p0[0] > self.x_max > p1[0]:
+                zeta[0] = p1[0] - p0[0]
+                zeta[1] = p1[1] - p0[1]
+                if zeta[0] == 0:
+                    continue
+                m = zeta[1] / zeta[0]
+                x = self.x_max 
+                y = m * (x - p0[0]) + p0[1]
+                points_with_intersection.append([x,y])
+
+            elif p1[0] > self.x_max > p0[0]:
+                zeta[0] = p0[0] - p1[0]
+                zeta[1] = p0[1] - p1[1]
+                if zeta[0] == 0:
+                    continue
+                m = zeta[1] / zeta[0]
+                x = self.x_max 
+                y = m * (x - p1[0]) + p1[1]
+                points_with_intersection.append([x,y])
+            
+            points_with_intersection.append(p1)
+            
+        clipped = []
+
+        for point in points_with_intersection:
+            if point[0] <= self.x_max:
+                clipped.append(point)
+
+        return clipped
+
+    def clip_bottom_y(self, points):
+        points_with_intersection = []
+        zeta = [0, 0]
+
+        for p0, p1 in adjacents(points):
+            if p0[1] < self.y_min < p1[1]:
+                zeta[0] = p1[0] - p0[0]
+                zeta[1] = p1[1] - p0[1]
+                if zeta[0] == 0:
+                    y = self.y_min
+                    x = p0[0] 
+                else:
+                    m = zeta[1] / zeta[0]
+                    y = self.y_min
+                    x = p0[0] + (y - p0[1]) / m
+                points_with_intersection.append([x,y])
+
+            elif p1[1] < self.y_min < p0[1]:
+                zeta[0] = p0[0] - p1[0]
+                zeta[1] = p0[1] - p1[1]
+                if zeta[0] == 0:
+                    y = self.y_min
+                    x = p1[0]
+                else: 
+                    m = zeta[1] / zeta[0]
+                    y = self.y_min
+                    x = p1[0] + (y - p1[1]) / m
+                points_with_intersection.append([x,y])
+            
+            points_with_intersection.append(p1)
+
+        clipped = []
+
+        for point in points_with_intersection:
+            if point[1] >= self.y_min:
+                clipped.append(point)
+
+        return clipped
+
+    def clip_upper_y(self, points):
+        points_with_intersection = []
+        zeta = [0, 0]
+
+        for p0, p1 in adjacents(points):
+            if p0[1] > self.y_max > p1[1]:
+                zeta[0] = p1[0] - p0[0]
+                zeta[1] = p1[1] - p0[1]
+                if zeta[0] == 0:
+                    y = self.y_max
+                    x = p0[0]
+                else:
+                    m = zeta[1]/ zeta[0]
+                    y = self.y_max
+                    x = p0[0] + (y - p0[1]) / m
+                points_with_intersection.append([x,y])
+
+            elif p1[1]> self.y_max > p0[1]:
+                zeta[0] = p0[0] - p1[0]
+                zeta[1] = p0[1] - p1[1]
+                if zeta[0]== 0:
+                    y = self.y_max
+                    x = p1[0]
+                else: 
+                    m = zeta[1]/ zeta[0]
+                    y = self.y_max
+                    x = p1[0] + (y - p1[1]) / m
+                points_with_intersection.append([x,y])
+            
+            points_with_intersection.append(p1)
+
+        clipped = []
+
+        for point in points_with_intersection:
+            if point[1]<= self.y_max:
+                clipped.append(point)
+
+        return clipped

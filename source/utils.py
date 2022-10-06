@@ -6,7 +6,18 @@ def hex_to_rgb(hex):
 
     return tuple(rgb)
 
-def rgb_to_hex(self, rgb):
+def rgb_to_hex(rgb):
     for i in range(len(rgb)):
         rgb[i] = int(rgb[i])
     return '%02x%02x%02x' % tuple(rgb)
+
+
+def adjacents(sequence):
+    if not sequence:
+        return None
+
+    for i in range(len(sequence) - 1):
+        yield (sequence[i], sequence[i+1])
+
+    yield (sequence[-1], sequence[0])
+
