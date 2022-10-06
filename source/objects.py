@@ -465,13 +465,15 @@ class Line(Object):
 
 
 class Wireframe(Object):  #This is a Polygon
-    def __init__(self, name, list_points, color, id=None):
+    def __init__(self, name, list_points, color, color_mode, id=None):
         super().__init__()
         self.name = name
         self.points = list_points #[[x1,y1], [x2,y2], [x3,y3]]
         self.id = id
         self.list_ids = []
         self.color = color
+        self.color_mode = color_mode
+        self.fill_form = None
             
     def drawn(self, viewport, normalized_window, new_points=None):
         x_aux = None
@@ -480,6 +482,10 @@ class Wireframe(Object):  #This is a Polygon
         first_x = None
         first_viewport_y = None
 
+        if self.fill_form != None:
+            viewport.delete(self.fill_form)
+            self.fill_form = None
+      
         if not new_points:
             new_points = normalized_window.wireframe_clipping(self.points)
         else: 
@@ -490,6 +496,13 @@ class Wireframe(Object):  #This is a Polygon
             
             self.list_ids = []
 
+        new_points = self.convert_to_list(new_points)
+
+        if new_points == []:
+            self.clipped = True
+        else:
+            self.clipped = False
+        
         if not self.clipped:
             for i, point in enumerate(new_points):
                 x = point[0]
@@ -508,6 +521,11 @@ class Wireframe(Object):  #This is a Polygon
                 self.id = viewport.create_line((x_aux, viewport_aux_y), (first_x, first_viewport_y), width=3, fill=self.color)
                 self.list_ids.append(self.id)
 
+            if self.color_mode == 2:
+                for point in new_points:    
+                    point[1] = VIEWPORT_HEIGHT - point[1]
+                self.fill_form = viewport.create_polygon(new_points, fill=self.color)
+ 
     def translate(self, viewport, translation_points, normalized_window):
         translation_points = translation_points.split()
         
@@ -525,7 +543,9 @@ class Wireframe(Object):  #This is a Polygon
         rotation_matrix_inverse = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
                                    [np.sin(rotate_radian), np.cos(rotate_radian), 0],
                                    [0, 0, 1]]
-
+        
+        self.points = self.convert_to_list(self.points)
+        
         for i, point in enumerate(self.points):
             points_matrix = [point[0], point[1], 1]
             result_points = np.matmul(points_matrix, rotation_matrix)
@@ -555,6 +575,8 @@ class Wireframe(Object):  #This is a Polygon
                         [0, float(translation_points[1]), 0],
                         [0, 0, 1]]
 
+        self.points = self.convert_to_list(self.points)
+        
         for i, point in enumerate(self.points):
                 points_matrix = [point[0], point[1], 1]
                 result_points = np.matmul(points_matrix, first_translation_matrix)
@@ -573,6 +595,8 @@ class Wireframe(Object):  #This is a Polygon
                            [np.sin(rotate_radian), np.cos(rotate_radian), 0],
                            [0, 0, 1]]
 
+        self.points = self.convert_to_list(self.points)
+        
         for i, point in enumerate(self.points):
             points_matrix = [point[0], point[1], 1]
             result_points = np.matmul(points_matrix, rotation_matrix)
@@ -596,6 +620,8 @@ class Wireframe(Object):  #This is a Polygon
                             [np.sin(rotate_radian), np.cos(rotate_radian), 0],
                             [0, 0, 1]]
 
+        self.points = self.convert_to_list(self.points)
+        
         for i, point in enumerate(self.points):
             points_matrix = [point[0], point[1], 1]
             result_points = np.matmul(points_matrix, first_translation_matriz)
@@ -624,6 +650,8 @@ class Wireframe(Object):  #This is a Polygon
                             [np.sin(rotate_radian), np.cos(rotate_radian), 0],
                             [0, 0, 1]]
 
+        self.points = self.convert_to_list(self.points)
+        
         for i, point in enumerate(self.points):
             points_matrix = [point[0], point[1], 1]
             result_points = np.matmul(points_matrix, first_translation_matriz)
@@ -635,6 +663,12 @@ class Wireframe(Object):  #This is a Polygon
         self.drawn(viewport, normalized_window)
         normalized_window.update_table(self)
 
+    def convert_to_list(self, points):
+        tuple_points = []
+        for point in points:
+            tuple_points.append(list(point))
+        return tuple_points
+ 
     def obj_string(self, list_of_points, list_of_colors):
         points = []
 
