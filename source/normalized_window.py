@@ -65,7 +65,7 @@ class NormalizedWindow:
             new_points = self.wireframe_clipping(object, new_points)
 
             if not object.clipped:
-                for i, point in enumerate(object.points):
+                for i, point in enumerate(new_points):
                     if not (i == 0):
                         viewport_y1 = VIEWPORT_HEIGHT - y_aux
                         viewport_y2 = VIEWPORT_HEIGHT - new_points[i][1]
@@ -266,83 +266,122 @@ class NormalizedWindow:
                 self.viewport.itemconfigure(object.id, state='hidden')
 
     def wireframe_clipping(self, object, points):
-        new_points = []
-        old_clipping = object.clipped
-        object.clipped = False
-        in_limit = True
+        new_points = {}
+        num_ids = len(object.list_ids)
 
-        for i in range(len(points)-1):
-            should_not_clip = False
-
-            first_point_x = points[i][0]
-            first_point_y = points[i][1]
-            if i <= (len(points) - 1):
-                last_point_x = points[i+1][0]
-                last_point_y = points[i+1][1]
-            else:
-                last_point_x = points[0][0]
-                last_point_y = points[0][1]
-            
+        for i in range(len(points)):
             p = [None] * 4
             q = [None] * 4
             zeta = [None] * 2
-            
+        
             r = [[], []]
             return_values = points
+            old_clipping = object.clipped
+            object.clipped = False
+            in_limit = True
             
-            p[0] = -(last_point_x - first_point_x)
-            p[1] = last_point_x - first_point_x
-            p[2] = -(last_point_y - first_point_y)
-            p[3] = last_point_y - first_point_y
+            if i != len(points)-1:
+                p[0] = -(points[i+1][0] - points[i][0])
+                p[1] = points[i+1][0] - points[i][0]
+                p[2] = -(points[i+1][1] - points[i][1])
+                p[3] = points[i+1][1] - points[i][1]
+            else:
+                p[0] = -(points[i][0] - points[0][0])
+                p[1] = points[i][0] - points[0][0]
+                p[2] = -(points[i][1] - points[0][1])
+                p[3] = points[i][1] - points[0][1]
 
-            q[0] = first_point_x - self.x_min
-            q[1] = self.x_max - first_point_x
-            q[2] = first_point_y - self.y_min
-            q[3] = self.y_max - first_point_y
+            q[0] = points[i][0] - self.x_min
+            q[1] = self.x_max - points[0][0]
+            q[2] = points[i][1] - self.y_min
+            q[3] = self.y_max - points[i][1]
 
-            amount_of_lines_not_to_draw = 0
             for j, element in enumerate(p):
                 if element == 0:
                     if q[j] < 0:
                         object.clipped = True
                         in_limit = False
-                    else:
-                        amount_of_lines_not_to_draw += 1
                 elif element < 0:
                     r[0].append(q[j] / element)
                 else:
                     r[1].append(q[j] / element)
 
-            if amount_of_lines_not_to_draw == len(points) -1:
-                should_not_clip = True
+            if in_limit:
+                zeta[0] = 0
+                zeta[1] = 1
 
-            if not should_not_clip:
-                if in_limit:
-                    zeta[0] = 0
-                    zeta[1] = 1
+                for value in r[0]:
+                    if value > zeta[0]:
+                        zeta[0] = value
+                for value in r[1]:
+                    if value < zeta[1]:
+                        zeta[1] = value
 
-                    for value in r[0]:
-                        if value > zeta[0]:
-                            zeta[0] = value
-                    for value in r[1]:
-                        if value < zeta[1]:
-                            zeta[1] = value
+                if zeta[0] > zeta[1]:
+                    object.clipped = True
+                else:
+                    if zeta[0] != 0:
+                        #print('z0: ', points[i][0], points[i][1])
+                        clipping_point_x = points[i][0] + (zeta[0] * p[1])
+                        clipping_point_y = points[i][1] + (zeta[0] * p[3])
+                        if clipping_point_x != return_values[i][0] and clipping_point_y != return_values[i][1]:
+                            new_points[i] = [clipping_point_x, clipping_point_y]
+                        else:
+                            return_values[i][0] = clipping_point_x
+                            return_values[i][1] = clipping_point_y
+                        #print(return_values)
 
-                    if zeta[0] > zeta[1]:
-                        object.clipped = True
-                    else:
-                        if zeta[0] != 0:
-                            return_values[i][0] = points[i][0] + (zeta[0] * p[1])
-                            return_values[i][1] = points[i][1] + (zeta[0] * p[3])
+                        #new_points.append('entrando')
+                        #new_points.append(return_values[i])
 
-                        if zeta[1] != 1:
-                            if i >= len(points) - 1:
-                                return_values[0][0] = points[i][0] + (zeta[1] * p[1])
-                                return_values[0][1] = points[i][1] + (zeta[1] * p[3])
+                    if zeta[1] != 1:
+                        #print('z1: ', points[i][0], points[i][1])
+                        clipping_point_x = points[i][0] + (zeta[1] * p[1])
+                        clipping_point_y = points[i][1] + (zeta[1] * p[3])
+                        if i != len(points)-1:
+                            if clipping_point_x != return_values[i+1][0] and clipping_point_y != return_values[i+1][1]:
+                                new_points[i+1] = [clipping_point_x, clipping_point_y]
                             else:
-                                return_values[i+1][0] = points[i][0] + (zeta[1] * p[1])
-                                return_values[i+1][1] = points[i][1] + (zeta[1] * p[3])
+                                return_values[i+1][0] = clipping_point_x
+                                return_values[i+1][1] = clipping_point_y
+                            #print(return_values)
+                        else:
+                            if clipping_point_x != return_values[0][0] and clipping_point_y != return_values[0][1]:
+                                new_points[i+1] = [clipping_point_x, clipping_point_y]
+                            else:
+                                return_values[0][0] = clipping_point_x
+                                return_values[0][1] = clipping_point_y
+                        
+                        #new_points.append('saindo')
+                        #new_points.append(return_values[i])
+        
+            if return_values[i][0] < self.x_min:
+                return_values[i][0] = self.x_min
+            elif return_values[i][0] > self.x_max:
+                return_values[i][0] = self.x_max
+            
+            if return_values[i][1] < self.y_min:
+                return_values[i][1] = self.y_min
+            elif return_values[i][1] > self.y_max:
+                return_values[i][1] = self.y_max
 
+        print(return_values)
+            
+        for key, value in new_points.items():
+            # if key == 0:
+            #     old_element = return_values[0]
+            #     return_values.remove(old_element)
+            #     return_values.append(old_element)
+            return_values.insert(key, value)
+            print(return_values)
+            # Indiferente os valores criados, vai trocar no viewport.coord()
+            if num_ids < len(return_values):
+                id = self.viewport.create_line((return_values[-1][0], return_values[-1][1]), (return_values[1][0], return_values[1][1]), width=3, fill=object.color)
+                object.list_ids.append(id)
+        
+        if num_ids > len(return_values):
+            self.viewport.delete(object.list_ids[-1])
+            object.list_ids.remove(object.list_ids[-1])
                         
         if not object.clipped:
             self.viewport.itemconfigure(object.id, state='normal')
