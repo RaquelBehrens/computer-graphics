@@ -14,6 +14,7 @@ class Curve(Object):  #This is a Polygon
         self.color = color
 
         self.epsilon = 0.2
+        self.bezier_points = []
             
     def drawn(self, viewport, normalized_window, new_points=None):
         x_aux = None
@@ -23,7 +24,7 @@ class Curve(Object):  #This is a Polygon
         first_viewport_y = None
       
         if not new_points:
-            new_points = normalized_window.wireframe_clipping(self.points)
+            new_points = normalized_window.wireframe_clipping(self.bezier_points)
         else: 
             new_points = normalized_window.wireframe_clipping(new_points)
 
@@ -57,6 +58,21 @@ class Curve(Object):  #This is a Polygon
                 self.id = viewport.create_line((x_aux, viewport_aux_y), (first_x, first_viewport_y), width=3, fill=self.color)
                 self.list_ids.append(self.id)
  
+    def bezier_algorythm(self, t, points):
+        t = np.array([t * t * t, t * t, t, 1])
+        bezier_matrix = np.array([[-1, 3, -3, 1], [3, -6, 3, 0], [-3, 3, 0, 0], [1, 0, 0, 0]])
+
+        px, py = []
+
+        for i in range(points):
+            px.append(points[i][0])
+            py.append(points[i][1])
+
+        x = t @ bezier_matrix @ px
+        y = t @ bezier_matrix @ py
+
+        return x, y
+
     def translate(self, viewport, translation_points, normalized_window):
         translation_points = translation_points.split()
         
@@ -108,13 +124,13 @@ class Curve(Object):  #This is a Polygon
 
         self.points = self.convert_to_list(self.points)
         
-        for i, point in enumerate(self.points):
-                points_matrix = [point[0], point[1], 1]
-                result_points = np.matmul(points_matrix, first_translation_matrix)
-                result_points = np.matmul(result_points, scale_matrix)
-                result_points = np.matmul(result_points, second_translation_matrix)
-                point[0] = result_points[0]
-                point[1] = result_points[1]
+        for point in enumerate(self.points):
+            points_matrix = [point[0], point[1], 1]
+            result_points = np.matmul(points_matrix, first_translation_matrix)
+            result_points = np.matmul(result_points, scale_matrix)
+            result_points = np.matmul(result_points, second_translation_matrix)
+            point[0] = result_points[0]
+            point[1] = result_points[1]
 
         self.drawn(viewport, normalized_window)
         normalized_window.update_table(self)
