@@ -1,10 +1,11 @@
 from tkinter import *
 from abc import ABC, abstractmethod
-from constants import INCLUDE_WINDOW_WIDTH, INCLUDE_WINDOW_HEIGHT, VIEWPORT_HEIGHT, VIEWPORT_WIDTH, POINT_SIZE
 from copy import copy
-from objects import *
 from tkinter import simpledialog
 from tkinter import colorchooser
+
+from constants import INCLUDE_WINDOW_WIDTH, INCLUDE_WINDOW_HEIGHT
+from objects import (Point, Line, Wireframe)
 
 
 class IncludeWindow(ABC):

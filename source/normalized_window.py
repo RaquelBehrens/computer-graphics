@@ -1,7 +1,8 @@
-from tkinter import *
 import numpy as np
+from tkinter import *
+
 from constants import POINT_SIZE, VIEWPORT_HEIGHT, VIEWPORT_WIDTH
-from objects import Line, Wireframe
+from objects import (Line, Wireframe)
 from utils import adjacents
 
 class NormalizedWindow:

@@ -1,14 +1,15 @@
+import numpy as np
 from tkinter import *
 from tkinter import ttk, messagebox
-from constants import WINDOW_HEIGHT, WINDOW_WIDTH, APPLICATION_NAME, VIEWPORT_WIDTH, VIEWPORT_HEIGHT
-from include_object import IncludePoint, IncludeLine, IncludeTriangle, IncludeQuadrilateral, IncludePolygon
-from objects import Line, Wireframe
+
+from objects import (Point, Line, Wireframe)
+from include_object import *
 from transformation import Transformation
 from normalized_window import NormalizedWindow
 from descritor_obj import DescritorOBJ
+
+from constants import WINDOW_HEIGHT, WINDOW_WIDTH, APPLICATION_NAME, VIEWPORT_WIDTH, VIEWPORT_HEIGHT
 from utils import rgb_to_hex
-from objects import *
-import numpy as np
 
 
 class Window(Frame):
