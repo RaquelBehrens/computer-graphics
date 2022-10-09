@@ -13,7 +13,7 @@ class Curve(Object):  #This is a Polygon
         self.list_ids = []
         self.color = color
 
-        self.epsilon = 0.2
+        self.epsilon = 5
         self.bezier_points = []
             
     def drawn(self, viewport, normalized_window, new_points=None):
@@ -22,6 +22,8 @@ class Curve(Object):  #This is a Polygon
 
         first_x = None
         first_viewport_y = None
+
+        self.bezier_points = self.bezier_algorythm(self.points)
       
         if not new_points:
             new_points = normalized_window.wireframe_clipping(self.bezier_points)
@@ -56,20 +58,31 @@ class Curve(Object):  #This is a Polygon
                 self.id = viewport.create_line((x_aux, viewport_aux_y), (first_x, first_viewport_y), width=3, fill=self.color)
                 self.list_ids.append(self.id)
  
-    def bezier_algorythm(self, t, points):
-        t = np.array([t * t * t, t * t, t, 1])
+    def bezier_algorythm(self, points):
         bezier_matrix = np.array([[-1, 3, -3, 1], [3, -6, 3, 0], [-3, 3, 0, 0], [1, 0, 0, 0]])
+        points_set = self.points_set(points)
+        new_points = []
 
-        px, py = []
+        for bezier_points in points_set:
+            for i in range(self.epsilon+1):
+                t = i / self.epsilon
+                t_list = np.array([t * t * t, t * t, t, 1])        
+                px = []
+                py = []
 
-        for i in range(points):
-            px.append(points[i][0])
-            py.append(points[i][1])
+                for i in range(len(bezier_points)):
+                    px.append(bezier_points[i][0])
+                    py.append(bezier_points[i][1])
 
-        x = t @ bezier_matrix @ px
-        y = t @ bezier_matrix @ py
+                x = t_list @ bezier_matrix @ px
+                y = t_list @ bezier_matrix @ py
+                new_points.append([x,y])
+    
+        return new_points
 
-        return x, y
+    def points_set(self, points):
+        for i in range(0, len(points) - 1, 3):
+            yield points[i : (i + 4)]
 
     def translate(self, viewport, translation_points, normalized_window):
         translation_points = translation_points.split()

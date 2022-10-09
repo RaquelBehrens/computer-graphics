@@ -81,7 +81,7 @@ class Window(Frame):
         self.quadrilateral.grid(row=13, column=0, sticky=NW, padx=(125,0), pady=3)
         self.polygon = Button(self.frame1, text='Criar Outro Polígono', font=('Time', '11'), command=self.include_polygon)
         self.polygon.grid(row=14, column=0, sticky=NW, padx=10, pady=3)
-        self.curve = Button(self.frame1, text='Criar Cruva', font=('Time', '11'), command=self.include_curve)
+        self.curve = Button(self.frame1, text='Criar Curva', font=('Time', '11'), command=self.include_curve)
         self.curve.grid(row=15, column=0, sticky=NW, padx=10, pady=3)
         
         Label(self, text='Objetos: ',  font=('Time', '13')).grid(row=1, column=0, sticky=NW)
