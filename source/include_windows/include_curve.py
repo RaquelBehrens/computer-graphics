@@ -2,12 +2,12 @@ from tkinter import *
 
 from constants import INCLUDE_WINDOW_WIDTH, INCLUDE_WINDOW_HEIGHT
 from .include_window import IncludeWindow
-from objects import (Wireframe)
+from objects import (Curve)
 
 class IncludeCurve(IncludeWindow):
     def __init__(self, viewport, erros, display_file, table, coord_scn):
         super().__init__(viewport, erros, display_file, table, coord_scn)
-        self.main_window.title("Incluir Outro Polígono")
+        self.main_window.title("Incluir Curva")
         self.main_window.geometry(f"{INCLUDE_WINDOW_WIDTH+100}x{INCLUDE_WINDOW_HEIGHT-10}")
 
         self.frame0 = Frame(self.main_window)
@@ -37,12 +37,6 @@ class IncludeCurve(IncludeWindow):
 
         Label(self.frame3, text='Defina a cor', font=("Times", "11")).grid(row=0, column=0, columnspan=2)
         
-        self.radio_variable = IntVar()
-        self.radio_variable.set(0)
-
-        Radiobutton(self.frame3, text='Apenas a borda', variable=self.radio_variable, value=1).grid(row=1, column=0, stick=W)
-        Radiobutton(self.frame3, text='Objeto preenchido', variable=self.radio_variable, value=2).grid(row=2, column=0, stick=W)
-        
         self.color_button = Button(self.frame4, text='Escolher cor', font=('Times', '11'), command=self.choose_color, bg=self.color)
         self.color_button.grid(row=0, column=3, padx=10)
 
@@ -50,18 +44,6 @@ class IncludeCurve(IncludeWindow):
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
         self.confirmar = Button(self.frame5, font=("Times", "11"), text='Confirmar', command=self.create_object)
         self.confirmar.grid(row=0, column=1, pady=15, padx=18)
-        
-    def verify_polygon(self, coordinates):
-        det_right = 0
-        det_left = 0
-        for i in range(len(coordinates)):
-            det_right += coordinates[i][0] * coordinates[(i+1) % (len(coordinates))][1]
-            det_left += coordinates[i][1] * coordinates[(i+1) % (len(coordinates))][0]
-        det_total = det_right - det_left
-
-        if det_total != 0:
-            return True
-        return False
 
     def create_object(self):
         try:
@@ -73,21 +55,15 @@ class IncludeCurve(IncludeWindow):
                     already_used = True
 
             if name != '' and not already_used:
-                if not self.verify_polygon(coordinates):
-                    self.erros['text'] = 'Não formam um polígono'
-                else:
-                    if self.radio_variable.get() != 0:
-                        objeto = Wireframe(name, coordinates, self.color, self.radio_variable.get())
-                        objeto.drawn(self.viewport, self.coord_scn)
+                objeto = Curve(name, coordinates, self.color)
+                objeto.drawn(self.viewport, self.coord_scn)
 
-                        self.coord_scn.generate_scn(objeto)
+                self.coord_scn.generate_scn(objeto)
 
-                        self.close_window()                
-                        self.display_file.append(objeto)
-                        self.include_object_in_table(objeto)
-                        self.erros['text'] = 'Objeto criado com sucesso'
-                    else:
-                        self.erros['text'] = 'Selecione uma opção de preenchimento'
+                self.close_window()                
+                self.display_file.append(objeto)
+                self.include_object_in_table(objeto)
+                self.erros['text'] = 'Objeto criado com sucesso'
             else:
                 if name == '':
                     self.erros['text'] = 'Digite um nome'
