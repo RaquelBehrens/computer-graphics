@@ -92,7 +92,7 @@ class IncludeCurve(IncludeWindow):
 
         if len(aux_coords) % 2 == 0 and len(aux_coords) >= 6:    
             for i in range(0, len(aux_coords), 2):
-                coords.append((aux_coords[i], aux_coords[i+1]))
+                coords.append([aux_coords[i], aux_coords[i+1]])
             return coords
         else:
             self.erros['text'] = 'Entradas inválidas'

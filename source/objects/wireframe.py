@@ -82,7 +82,7 @@ class Wireframe(Object):  #This is a Polygon
                                    [np.sin(rotate_radian), np.cos(rotate_radian), 0],
                                    [0, 0, 1]]
         
-        for point in enumerate(self.points):
+        for point in self.points:
             points_matrix = [point[0], point[1], 1]
             result_points = np.matmul(points_matrix, rotation_matrix)
             result_points = np.matmul(result_points, translation_matrix)
@@ -111,7 +111,7 @@ class Wireframe(Object):  #This is a Polygon
                         [0, float(translation_points[1]), 0],
                         [0, 0, 1]]
         
-        for i, point in enumerate(self.points):
+        for point in self.points:
                 points_matrix = [point[0], point[1], 1]
                 result_points = np.matmul(points_matrix, first_translation_matrix)
                 result_points = np.matmul(result_points, scale_matrix)
@@ -129,7 +129,7 @@ class Wireframe(Object):  #This is a Polygon
                            [np.sin(rotate_radian), np.cos(rotate_radian), 0],
                            [0, 0, 1]]
 
-        for i, point in enumerate(self.points):
+        for point in self.points:
             points_matrix = [point[0], point[1], 1]
             result_points = np.matmul(points_matrix, rotation_matrix)
             point[0] = result_points[0]
@@ -152,7 +152,7 @@ class Wireframe(Object):  #This is a Polygon
                             [np.sin(rotate_radian), np.cos(rotate_radian), 0],
                             [0, 0, 1]]
         
-        for i, point in enumerate(self.points):
+        for point in self.points:
             points_matrix = [point[0], point[1], 1]
             result_points = np.matmul(points_matrix, first_translation_matriz)
             result_points = np.matmul(result_points, rotation_matrix)
@@ -180,7 +180,7 @@ class Wireframe(Object):  #This is a Polygon
                             [np.sin(rotate_radian), np.cos(rotate_radian), 0],
                             [0, 0, 1]]
 
-        for i, point in enumerate(self.points):
+        for point in self.points:
             points_matrix = [point[0], point[1], 1]
             result_points = np.matmul(points_matrix, first_translation_matriz)
             result_points = np.matmul(result_points, rotation_matrix)
