@@ -2,8 +2,8 @@ import numpy as np
 from tkinter import *
 from tkinter import ttk, messagebox
 
-from objects import (Point, Line, Wireframe)
-from include_object import *
+from objects import (Point, Line, Wireframe, Curve)
+from include_windows import (IncludePoint, IncludeLine, IncludeTriangle, IncludeQuadrilateral, IncludePolygon, IncludeCurve)
 from transformation import Transformation
 from normalized_window import NormalizedWindow
 from descritor_obj import DescritorOBJ
@@ -71,16 +71,18 @@ class Window(Frame):
         self.left_rotation.grid(row=10, column=0, columnspan=2, pady=0)
 
         Label(self.frame1, text='Objetos: ', font=('Time', '13')).grid(row=11, column=0, sticky=NW, pady=10)
-        self.more_zoom = Button(self.frame1, text='Criar Ponto', font=('Time', '11'), command=self.include_point)
-        self.more_zoom.grid(row=12, column=0, sticky=NW, padx=10)
-        self.less_zoom = Button(self.frame1, text='Criar Linha', font=('Time', '11'), command=self.include_line)
-        self.less_zoom.grid(row=13, column=0, sticky=NW, padx=10, pady=3)
-        self.less_zoom = Button(self.frame1, text='Criar Triângulo', font=('Time', '11'), command=self.include_triangle)
-        self.less_zoom.grid(row=14, column=0, sticky=NW, padx=10, pady=3)
-        self.less_zoom = Button(self.frame1, text='Criar Quadrilátero', font=('Time', '11'), command=self.include_quadrilateral)
-        self.less_zoom.grid(row=15, column=0, sticky=NW, padx=10, pady=3)
-        self.less_zoom = Button(self.frame1, text='Criar Outro Polígono', font=('Time', '11'), command=self.include_polygon)
-        self.less_zoom.grid(row=16, column=0, sticky=NW, padx=10, pady=3)
+        self.point = Button(self.frame1, text='Criar Ponto', font=('Time', '11'), command=self.include_point)
+        self.point.grid(row=12, column=0, sticky=NW, padx=10)
+        self.line = Button(self.frame1, text='Criar Linha', font=('Time', '11'), command=self.include_line)
+        self.line.grid(row=12, column=0, sticky=NW, padx=(102,0))
+        self.triangle = Button(self.frame1, text='Criar Triângulo', font=('Time', '11'), command=self.include_triangle)
+        self.triangle.grid(row=13, column=0, sticky=NW, padx=10, pady=3)
+        self.quadrilateral = Button(self.frame1, text='Criar Quadrilátero', font=('Time', '11'), command=self.include_quadrilateral)
+        self.quadrilateral.grid(row=13, column=0, sticky=NW, padx=(125,0), pady=3)
+        self.polygon = Button(self.frame1, text='Criar Outro Polígono', font=('Time', '11'), command=self.include_polygon)
+        self.polygon.grid(row=14, column=0, sticky=NW, padx=10, pady=3)
+        self.curve = Button(self.frame1, text='Criar Cruva', font=('Time', '11'), command=self.include_curve)
+        self.curve.grid(row=15, column=0, sticky=NW, padx=10, pady=3)
         
         Label(self, text='Objetos: ',  font=('Time', '13')).grid(row=1, column=0, sticky=NW)
         self.delete = Button(self, text='Deletar Objeto', font=('Time', '11'), command=self.delete_object)
@@ -135,6 +137,9 @@ class Window(Frame):
 
     def include_polygon(self):
         IncludePolygon(self.viewport, self.erros, self.display_file, self.table, self.coord_scn)
+
+    def include_curve(self):
+        IncludeCurve(self.viewport, self.erros, self.display_file, self.table, self.coord_scn)
 
     def delete_object(self):
         try:
