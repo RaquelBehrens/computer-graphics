@@ -2,7 +2,7 @@ import numpy as np
 from tkinter import *
 
 from constants import POINT_SIZE, VIEWPORT_HEIGHT, VIEWPORT_WIDTH
-from objects import (Line, Wireframe)
+from objects import (Line, Wireframe, Curve)
 from utils import adjacents
 
 class NormalizedWindow:
@@ -23,7 +23,7 @@ class NormalizedWindow:
         for i in range(len(new_points)):
             new_points[i] = [None] * 2
 
-        if not isinstance(object, Wireframe):
+        if not isinstance(object, Wireframe) and not isinstance(object, Curve):
             for index, point in enumerate(object.points):
                 points_matrix = [point[0], point[1], 1]
                 result_points = np.matmul(points_matrix, self.transformation_matrix())

@@ -1,6 +1,6 @@
 import numpy as np
 
-from constants import VIEWPORT_HEIGHT
+from constants import VIEWPORT_HEIGHT, BEZIER_EPSILON
 from .object import Object
 
 
@@ -13,51 +13,36 @@ class Curve(Object):  #This is a Polygon
         self.list_ids = []
         self.color = color
 
-        self.epsilon = 5
+        self.epsilon = BEZIER_EPSILON
         self.bezier_points = []
             
     def drawn(self, viewport, normalized_window, new_points=None):
-        x_aux = None
-        viewport_aux_y = None
-
-        first_x = None
-        first_viewport_y = None
-
-        self.bezier_points = self.bezier_algorythm(self.points)
-      
         if not new_points:
-            new_points = normalized_window.wireframe_clipping(self.bezier_points)
-        else: 
-            new_points = normalized_window.wireframe_clipping(new_points)
+            self.clipped = True
+            self.bezier_points = self.bezier_algorythm(self.points)
+        else:
+            self.clipped = False
+            self.bezier_points = self.bezier_algorythm(new_points)
 
             for i in range(len(self.list_ids)):
                 viewport.delete(self.list_ids[i])
             
             self.list_ids = []
+            
+        new_points = normalized_window.wireframe_clipping(self.bezier_points)
 
-        if new_points == []:
-            self.clipped = True
-        else:
-            self.clipped = False
-        
         if not self.clipped:
-            for i, point in enumerate(new_points):
-                x = point[0]
-                viewport_y = VIEWPORT_HEIGHT - point[1]
+            for i in range(len(new_points)):
+                if i < len(new_points) - 1:
+                    x1 = new_points[i][0]
+                    viewport_y1 = VIEWPORT_HEIGHT - new_points[i][1]
 
-                if i == 0 :
-                    x_aux = first_x = point[0]
-                    viewport_aux_y = first_viewport_y = VIEWPORT_HEIGHT - point[1]
-                else:
-                    id = viewport.create_line((x_aux, viewport_aux_y), (x, viewport_y), width=3, fill=self.color)
-                    x_aux = x
-                    viewport_aux_y = viewport_y
+                    x2 = new_points[i+1][0]
+                    viewport_y2 = VIEWPORT_HEIGHT - new_points[i+1][1]
+
+                    id = viewport.create_line((x1, viewport_y1), (x2, viewport_y2), width=3, fill=self.color)
                     self.list_ids.append(id)
 
-            if x_aux != None:
-                self.id = viewport.create_line((x_aux, viewport_aux_y), (first_x, first_viewport_y), width=3, fill=self.color)
-                self.list_ids.append(self.id)
- 
     def bezier_algorythm(self, points):
         bezier_matrix = np.array([[-1, 3, -3, 1], [3, -6, 3, 0], [-3, 3, 0, 0], [1, 0, 0, 0]])
         points_set = self.points_set(points)
