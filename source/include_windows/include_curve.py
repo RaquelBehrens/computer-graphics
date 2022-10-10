@@ -55,8 +55,10 @@ class IncludeCurve(IncludeWindow):
                 if objects.name == name:
                     already_used = True
 
+            closed = False
             if name != '' and not already_used:
                 if coordinates[0] == coordinates[-1]:
+                    closed = True
                     answer = askyesno(title='Opção de preenchimento', message='Você deseja criar um objeto com cor preenchida?')
                     if answer:
                         color_mode = 2
@@ -66,6 +68,7 @@ class IncludeCurve(IncludeWindow):
                     color_mode = 1
                 objeto = Curve(name, coordinates, self.color, color_mode)
                 objeto.drawn(self.viewport, self.coord_scn)
+                self.closed = closed
 
                 self.coord_scn.generate_scn(objeto)
 

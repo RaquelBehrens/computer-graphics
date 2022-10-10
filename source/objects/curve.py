@@ -13,6 +13,7 @@ class Curve(Object):  #This is a Polygon
         self.list_ids = []
         self.color = color
 
+        self.closed = None
         self.color_mode = color_mode
         self.fill_form = None
 
@@ -21,10 +22,8 @@ class Curve(Object):  #This is a Polygon
             
     def drawn(self, viewport, normalized_window, new_points=None):
         if not new_points:
-            self.clipped = True
             self.bezier_points = self.bezier_algorythm(self.points)
         else:
-            self.clipped = False
             self.bezier_points = self.bezier_algorythm(new_points)
 
             for i in range(len(self.list_ids)):
@@ -35,8 +34,13 @@ class Curve(Object):  #This is a Polygon
         if self.fill_form != None:
             viewport.delete(self.fill_form)
             self.fill_form = None
+
+        if new_points == []:
+            self.clipped = True
+        else:
+            self.clipped = False
             
-        new_points = normalized_window.wireframe_clipping(self.bezier_points)
+        new_points = normalized_window.wireframe_clipping(self.bezier_points, self.closed)
 
         if not self.clipped:
             for i in range(len(new_points)):

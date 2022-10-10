@@ -11,12 +11,17 @@ def rgb_to_hex(rgb):
         rgb[i] = int(rgb[i])
     return '%02x%02x%02x' % tuple(rgb)
 
-def adjacents(sequence):
+def adjacents(sequence, circular=False):
+    adjacents = []
+
     if not sequence:
         return None
 
     for i in range(len(sequence) - 1):
-        yield [sequence[i], sequence[i+1]]
+        adjacents.append([sequence[i], sequence[i+1]])
 
-    yield [sequence[-1], sequence[0]]
+    if circular:
+        adjacents.append([sequence[-1], sequence[0]])
+
+    return adjacents
 

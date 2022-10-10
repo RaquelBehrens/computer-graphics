@@ -245,19 +245,20 @@ class NormalizedWindow:
                 # Quando o objeto já está desenhado, caso esteja fora da window, "esconde" ele
                 self.viewport.itemconfigure(object.id, state='hidden')
 
-    def wireframe_clipping(self, points):
+    def wireframe_clipping(self, points, circular=True):
         clipped_points = points
-        clipped_points = self.clip_right_x(clipped_points)
-        clipped_points = self.clip_left_x(clipped_points)
-        clipped_points = self.clip_upper_y(clipped_points)
-        clipped_points = self.clip_bottom_y(clipped_points)
+        clipped_points = self.clip_right_x(clipped_points, circular)
+        clipped_points = self.clip_left_x(clipped_points, circular)
+        clipped_points = self.clip_upper_y(clipped_points, circular)
+        clipped_points = self.clip_bottom_y(clipped_points, circular)
         return clipped_points
     
-    def clip_left_x(self, points):
+    def clip_left_x(self, points, circular):
         new_points = []
         delta = [0, 0]
 
-        for p0, p1 in adjacents(points):
+        for p0, p1 in adjacents(points, circular):
+            new_points.append(p0)
             if p0[0] < self.x_min < p1[0]:
                 delta[0] = p1[0] - p0[0]
                 delta[1] = p1[1] - p0[1]
@@ -277,8 +278,11 @@ class NormalizedWindow:
                 x = self.x_min 
                 y = r * (x - p1[0]) + p1[1]
                 new_points.append([x, y])
-            
+
             new_points.append(p1)
+
+        if not circular and points:
+            new_points.append(points[-1])
 
         clipped = []
 
@@ -288,11 +292,12 @@ class NormalizedWindow:
 
         return clipped
 
-    def clip_right_x(self, points):
+    def clip_right_x(self, points, circular):
         new_points = []
         delta = [0, 0]
 
-        for p0, p1 in adjacents(points):
+        for p0, p1 in adjacents(points, circular):
+            new_points.append(p0)
             if p0[0] > self.x_max > p1[0]:
                 delta[0] = p1[0] - p0[0]
                 delta[1] = p1[1] - p0[1]
@@ -315,6 +320,9 @@ class NormalizedWindow:
             
             new_points.append(p1)
             
+        if not circular and points:
+            new_points.append(points[-1])
+
         clipped = []
 
         for point in new_points:
@@ -323,11 +331,12 @@ class NormalizedWindow:
 
         return clipped
 
-    def clip_bottom_y(self, points):
+    def clip_bottom_y(self, points, circular):
         new_points = []
         delta = [0, 0]
 
-        for p0, p1 in adjacents(points):
+        for p0, p1 in adjacents(points, circular):
+            new_points.append(p0)
             if p0[1] < self.y_min < p1[1]:
                 delta[0] = p1[0] - p0[0]
                 delta[1] = p1[1] - p0[1]
@@ -351,8 +360,11 @@ class NormalizedWindow:
                     y = self.y_min
                     x = p1[0] + (y - p1[1]) / r
                 new_points.append([x,y])
-            
+
             new_points.append(p1)
+            
+        if not circular and points:
+            new_points.append(points[-1])
 
         clipped = []
 
@@ -362,11 +374,12 @@ class NormalizedWindow:
 
         return clipped
 
-    def clip_upper_y(self, points):
+    def clip_upper_y(self, points, circular):
         new_points = []
         delta = [0, 0]
 
-        for p0, p1 in adjacents(points):
+        for p0, p1 in adjacents(points, circular):
+            new_points.append(p0)
             if p0[1] > self.y_max > p1[1]:
                 delta[0] = p1[0] - p0[0]
                 delta[1] = p1[1] - p0[1]
@@ -390,8 +403,11 @@ class NormalizedWindow:
                     y = self.y_max
                     x = p1[0] + (y - p1[1]) / r
                 new_points.append([x,y])
-            
+
             new_points.append(p1)
+            
+        if not circular and points:
+            new_points.append(points[-1])
 
         clipped = []
 
