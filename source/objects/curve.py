@@ -223,6 +223,6 @@ class Curve(Object):  #This is a Polygon
             points.append(point_index)
         
         points = " ".join(map(str,points))
-        points = f"l {points}\n"
+        points = f"curv {points}\n"
 
         return name, color, points

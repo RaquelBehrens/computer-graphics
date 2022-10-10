@@ -281,9 +281,6 @@ class NormalizedWindow:
 
             new_points.append(p1)
 
-        if not circular and points:
-            new_points.append(points[-1])
-
         clipped = []
 
         for point in new_points:
@@ -319,9 +316,6 @@ class NormalizedWindow:
                 new_points.append([x,y])
             
             new_points.append(p1)
-            
-        if not circular and points:
-            new_points.append(points[-1])
 
         clipped = []
 
@@ -363,9 +357,6 @@ class NormalizedWindow:
 
             new_points.append(p1)
             
-        if not circular and points:
-            new_points.append(points[-1])
-
         clipped = []
 
         for point in new_points:
@@ -405,9 +396,6 @@ class NormalizedWindow:
                 new_points.append([x,y])
 
             new_points.append(p1)
-            
-        if not circular and points:
-            new_points.append(points[-1])
 
         clipped = []
 
