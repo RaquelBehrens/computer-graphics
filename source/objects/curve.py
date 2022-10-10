@@ -5,13 +5,16 @@ from .object import Object
 
 
 class Curve(Object):  #This is a Polygon
-    def __init__(self, name, list_points, color, id=None):
+    def __init__(self, name, list_points, color, color_mode=1,id=None):
         super().__init__()
         self.name = name
         self.points = list_points #[[x1,y1], [x2,y2], [x3,y3]]
         self.id = id
         self.list_ids = []
         self.color = color
+
+        self.color_mode = color_mode
+        self.fill_form = None
 
         self.epsilon = BEZIER_EPSILON
         self.bezier_points = []
@@ -28,6 +31,10 @@ class Curve(Object):  #This is a Polygon
                 viewport.delete(self.list_ids[i])
             
             self.list_ids = []
+
+        if self.fill_form != None:
+            viewport.delete(self.fill_form)
+            self.fill_form = None
             
         new_points = normalized_window.wireframe_clipping(self.bezier_points)
 
@@ -40,8 +47,13 @@ class Curve(Object):  #This is a Polygon
                     x2 = new_points[i+1][0]
                     viewport_y2 = VIEWPORT_HEIGHT - new_points[i+1][1]
 
-                    id = viewport.create_line((x1, viewport_y1), (x2, viewport_y2), width=3, fill=self.color)
-                    self.list_ids.append(id)
+                    self.id = viewport.create_line((x1, viewport_y1), (x2, viewport_y2), width=3, fill=self.color)
+                    self.list_ids.append(self.id)
+
+        if self.color_mode == 2:
+            for point in new_points:    
+                point[1] = VIEWPORT_HEIGHT - point[1]
+            self.fill_form = viewport.create_polygon(new_points, fill=self.color)
 
     def bezier_algorythm(self, points):
         bezier_matrix = np.array([[-1, 3, -3, 1], [3, -6, 3, 0], [-3, 3, 0, 0], [1, 0, 0, 0]])

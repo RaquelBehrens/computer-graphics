@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter.messagebox import askyesno
 
 from constants import INCLUDE_WINDOW_WIDTH, INCLUDE_WINDOW_HEIGHT
 from .include_window import IncludeWindow
@@ -55,7 +56,15 @@ class IncludeCurve(IncludeWindow):
                     already_used = True
 
             if name != '' and not already_used:
-                objeto = Curve(name, coordinates, self.color)
+                if coordinates[0] == coordinates[-1]:
+                    answer = askyesno(title='Opção de preenchimento', message='Você deseja criar um objeto com cor preenchida?')
+                    if answer:
+                        color_mode = 2
+                    else:
+                        color_mode = 1
+                else:
+                    color_mode = 1
+                objeto = Curve(name, coordinates, self.color, color_mode)
                 objeto.drawn(self.viewport, self.coord_scn)
 
                 self.coord_scn.generate_scn(objeto)
