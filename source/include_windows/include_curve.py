@@ -49,38 +49,41 @@ class IncludeCurve(IncludeWindow):
     def create_object(self):
         try:
             coordinates = self.convert_to_list(self.entry_polygon.get())
-            name = self.nome.get()
-            already_used = False
-            for objects in self.display_file:
-                if objects.name == name:
-                    already_used = True
+            if coordinates != None:
+                name = self.nome.get()
+                already_used = False
+                for objects in self.display_file:
+                    if objects.name == name:
+                        already_used = True
 
-            closed = False
-            if name != '' and not already_used:
-                if coordinates[0] == coordinates[-1]:
-                    closed = True
-                    answer = askyesno(title='Opção de preenchimento', message='Você deseja criar um objeto com cor preenchida?')
-                    if answer:
-                        color_mode = 2
+                closed = False
+                if name != '' and not already_used:
+                    if coordinates[0] == coordinates[-1]:
+                        closed = True
+                        answer = askyesno(title='Opção de preenchimento', message='Você deseja criar um objeto com cor preenchida?')
+                        if answer:
+                            color_mode = 2
+                        else:
+                            color_mode = 1
                     else:
                         color_mode = 1
+                    objeto = Curve(name, coordinates, self.color, color_mode)
+                    objeto.drawn(self.viewport, self.coord_scn)
+                    self.closed = closed
+
+                    self.coord_scn.generate_scn(objeto)
+
+                    self.close_window()                
+                    self.display_file.append(objeto)
+                    self.include_object_in_table(objeto)
+                    self.erros['text'] = 'Objeto criado com sucesso'
                 else:
-                    color_mode = 1
-                objeto = Curve(name, coordinates, self.color, color_mode)
-                objeto.drawn(self.viewport, self.coord_scn)
-                self.closed = closed
-
-                self.coord_scn.generate_scn(objeto)
-
-                self.close_window()                
-                self.display_file.append(objeto)
-                self.include_object_in_table(objeto)
-                self.erros['text'] = 'Objeto criado com sucesso'
+                    if name == '':
+                        self.erros['text'] = 'Digite um nome'
+                    else:
+                        self.erros['text'] = 'Nome já utilizado'
             else:
-                if name == '':
-                    self.erros['text'] = 'Digite um nome'
-                else:
-                    self.erros['text'] = 'Nome já utilizado'
+                self.erros['text'] = 'Mínimo de 3 pontos'
 
         except ValueError:
             self.erros['text'] = 'Entradas inválidas'
