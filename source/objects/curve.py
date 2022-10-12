@@ -34,13 +34,13 @@ class Curve(Object):  #This is a Polygon
         if self.fill_form != None:
             viewport.delete(self.fill_form)
             self.fill_form = None
-
+            
+        new_points = normalized_window.wireframe_clipping(self.bezier_points, self.closed)
+        
         if new_points == []:
             self.clipped = True
         else:
             self.clipped = False
-            
-        new_points = normalized_window.wireframe_clipping(self.bezier_points, self.closed)
 
         if not self.clipped:
             for i in range(len(new_points)):
@@ -66,6 +66,8 @@ class Curve(Object):  #This is a Polygon
         new_points = []
 
         for bezier_points in points_set:
+            while len(bezier_points) != 4:
+                bezier_points.append([bezier_points[-1][0], bezier_points[-1][1]])
             for i in range(self.epsilon+1):
                 t = i / self.epsilon
                 t_list = np.array([t * t * t, t * t, t, 1])        
