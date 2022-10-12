@@ -257,29 +257,31 @@ class NormalizedWindow:
         new_points = []
         delta = [0, 0]
 
-        for p0, p1 in adjacents(points, circular):
-            new_points.append(p0)
-            if p0[0] < self.x_min < p1[0]:
-                delta[0] = p1[0] - p0[0]
-                delta[1] = p1[1] - p0[1]
-                if delta[0] == 0:
-                    continue
-                r =  delta[1] / delta[0]
-                x = self.x_min 
-                y = r * (x - p0[0]) + p0[1]
-                new_points.append([x, y])
+        if adjacents(points, circular) != None:
+            for p0, p1 in adjacents(points, circular):
+                if not circular:
+                    new_points.append(p0)
+                if p0[0] < self.x_min < p1[0]:
+                    delta[0] = p1[0] - p0[0]
+                    delta[1] = p1[1] - p0[1]
+                    if delta[0] == 0:
+                        continue
+                    r =  delta[1] / delta[0]
+                    x = self.x_min 
+                    y = r * (x - p0[0]) + p0[1]
+                    new_points.append([x, y])
 
-            elif p1[0] < self.x_min < p0[0]:
-                delta[0] = p0[0] - p1[0]
-                delta[1] = p0[1] - p1[1]
-                if delta[0] == 0:
-                    continue
-                r =  delta[1] / delta[0]
-                x = self.x_min 
-                y = r * (x - p1[0]) + p1[1]
-                new_points.append([x, y])
+                elif p1[0] < self.x_min < p0[0]:
+                    delta[0] = p0[0] - p1[0]
+                    delta[1] = p0[1] - p1[1]
+                    if delta[0] == 0:
+                        continue
+                    r =  delta[1] / delta[0]
+                    x = self.x_min 
+                    y = r * (x - p1[0]) + p1[1]
+                    new_points.append([x, y])
 
-            new_points.append(p1)
+                new_points.append(p1)
 
         clipped = []
 
@@ -293,29 +295,31 @@ class NormalizedWindow:
         new_points = []
         delta = [0, 0]
 
-        for p0, p1 in adjacents(points, circular):
-            new_points.append(p0)
-            if p0[0] > self.x_max > p1[0]:
-                delta[0] = p1[0] - p0[0]
-                delta[1] = p1[1] - p0[1]
-                if delta[0] == 0:
-                    continue
-                r =  delta[1] / delta[0]
-                x = self.x_max 
-                y = r * (x - p0[0]) + p0[1]
-                new_points.append([x,y])
+        if adjacents(points, circular) != None:
+            for p0, p1 in adjacents(points, circular):
+                if not circular:
+                    new_points.append(p0)
+                if p0[0] > self.x_max > p1[0]:
+                    delta[0] = p1[0] - p0[0]
+                    delta[1] = p1[1] - p0[1]
+                    if delta[0] == 0:
+                        continue
+                    r =  delta[1] / delta[0]
+                    x = self.x_max 
+                    y = r * (x - p0[0]) + p0[1]
+                    new_points.append([x,y])
 
-            elif p1[0] > self.x_max > p0[0]:
-                delta[0] = p0[0] - p1[0]
-                delta[1] = p0[1] - p1[1]
-                if delta[0] == 0:
-                    continue
-                r =  delta[1] / delta[0]
-                x = self.x_max 
-                y = r * (x - p1[0]) + p1[1]
-                new_points.append([x,y])
-            
-            new_points.append(p1)
+                elif p1[0] > self.x_max > p0[0]:
+                    delta[0] = p0[0] - p1[0]
+                    delta[1] = p0[1] - p1[1]
+                    if delta[0] == 0:
+                        continue
+                    r =  delta[1] / delta[0]
+                    x = self.x_max 
+                    y = r * (x - p1[0]) + p1[1]
+                    new_points.append([x,y])
+
+                new_points.append(p1)
 
         clipped = []
 
@@ -329,33 +333,35 @@ class NormalizedWindow:
         new_points = []
         delta = [0, 0]
 
-        for p0, p1 in adjacents(points, circular):
-            new_points.append(p0)
-            if p0[1] < self.y_min < p1[1]:
-                delta[0] = p1[0] - p0[0]
-                delta[1] = p1[1] - p0[1]
-                if delta[0] == 0:
-                    y = self.y_min
-                    x = p0[0] 
-                else:
-                    r =  delta[1] / delta[0]
-                    y = self.y_min
-                    x = p0[0] + (y - p0[1]) / r
-                new_points.append([x,y])
+        if adjacents(points, circular) != None:
+            for p0, p1 in adjacents(points, circular):
+                if not circular:
+                    new_points.append(p0)
+                if p0[1] < self.y_min < p1[1]:
+                    delta[0] = p1[0] - p0[0]
+                    delta[1] = p1[1] - p0[1]
+                    if delta[0] == 0:
+                        y = self.y_min
+                        x = p0[0] 
+                    else:
+                        r =  delta[1] / delta[0]
+                        y = self.y_min
+                        x = p0[0] + (y - p0[1]) / r
+                    new_points.append([x,y])
 
-            elif p1[1] < self.y_min < p0[1]:
-                delta[0] = p0[0] - p1[0]
-                delta[1] = p0[1] - p1[1]
-                if delta[0] == 0:
-                    y = self.y_min
-                    x = p1[0]
-                else: 
-                    r =  delta[1] / delta[0]
-                    y = self.y_min
-                    x = p1[0] + (y - p1[1]) / r
-                new_points.append([x,y])
+                elif p1[1] < self.y_min < p0[1]:
+                    delta[0] = p0[0] - p1[0]
+                    delta[1] = p0[1] - p1[1]
+                    if delta[0] == 0:
+                        y = self.y_min
+                        x = p1[0]
+                    else: 
+                        r =  delta[1] / delta[0]
+                        y = self.y_min
+                        x = p1[0] + (y - p1[1]) / r
+                    new_points.append([x,y])
 
-            new_points.append(p1)
+                new_points.append(p1)
             
         clipped = []
 
@@ -369,33 +375,35 @@ class NormalizedWindow:
         new_points = []
         delta = [0, 0]
 
-        for p0, p1 in adjacents(points, circular):
-            new_points.append(p0)
-            if p0[1] > self.y_max > p1[1]:
-                delta[0] = p1[0] - p0[0]
-                delta[1] = p1[1] - p0[1]
-                if delta[0] == 0:
-                    y = self.y_max
-                    x = p0[0]
-                else:
-                    r =  delta[1]/ delta[0]
-                    y = self.y_max
-                    x = p0[0] + (y - p0[1]) / r
-                new_points.append([x,y])
+        if adjacents(points, circular) != None:
+            for p0, p1 in adjacents(points, circular):
+                if not circular:
+                    new_points.append(p0)
+                if p0[1] > self.y_max > p1[1]:
+                    delta[0] = p1[0] - p0[0]
+                    delta[1] = p1[1] - p0[1]
+                    if delta[0] == 0:
+                        y = self.y_max
+                        x = p0[0]
+                    else:
+                        r =  delta[1]/ delta[0]
+                        y = self.y_max
+                        x = p0[0] + (y - p0[1]) / r
+                    new_points.append([x,y])
 
-            elif p1[1]> self.y_max > p0[1]:
-                delta[0] = p0[0] - p1[0]
-                delta[1] = p0[1] - p1[1]
-                if delta[0]== 0:
-                    y = self.y_max
-                    x = p1[0]
-                else: 
-                    r =  delta[1]/ delta[0]
-                    y = self.y_max
-                    x = p1[0] + (y - p1[1]) / r
-                new_points.append([x,y])
+                elif p1[1]> self.y_max > p0[1]:
+                    delta[0] = p0[0] - p1[0]
+                    delta[1] = p0[1] - p1[1]
+                    if delta[0]== 0:
+                        y = self.y_max
+                        x = p1[0]
+                    else: 
+                        r =  delta[1]/ delta[0]
+                        y = self.y_max
+                        x = p1[0] + (y - p1[1]) / r
+                    new_points.append([x,y])
 
-            new_points.append(p1)
+                new_points.append(p1)
 
         clipped = []
 
