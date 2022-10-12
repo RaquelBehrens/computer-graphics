@@ -60,9 +60,10 @@ class Wireframe(Object):  #This is a Polygon
                 self.list_ids.append(self.id)
 
             if self.color_mode == 2:
+                fill_points = []
                 for point in new_points:    
-                    point[1] = VIEWPORT_HEIGHT - point[1]
-                self.fill_form = viewport.create_polygon(new_points, fill=self.color)
+                    fill_points.append([point[0], VIEWPORT_HEIGHT - point[1]])
+                self.fill_form = viewport.create_polygon(fill_points, fill=self.color)
  
     def translate(self, viewport, translation_points, normalized_window):
         translation_points = translation_points.split()
