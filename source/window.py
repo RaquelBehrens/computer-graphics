@@ -170,7 +170,7 @@ class Window(Frame):
                         for id in object.list_ids:
                             self.viewport.delete(id)
                         if object.fill_form != None:    
-                            self.vsiewport.delete(object.fill_form)
+                            self.viewport.delete(object.fill_form)
                             object.fill_form = None
                     else:
                         self.viewport.delete(selected_item_id)
