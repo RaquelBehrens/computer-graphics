@@ -54,10 +54,11 @@ class Curve(Object):  #This is a Polygon
                     self.id = viewport.create_line((x1, viewport_y1), (x2, viewport_y2), width=3, fill=self.color)
                     self.list_ids.append(self.id)
 
-        if self.color_mode == 2:
-            for point in new_points:    
-                point[1] = VIEWPORT_HEIGHT - point[1]
-            self.fill_form = viewport.create_polygon(new_points, fill=self.color)
+            if self.color_mode == 2:
+                fill_points = []
+                for point in new_points:    
+                    fill_points.append([point[0], VIEWPORT_HEIGHT - point[1]])
+                self.fill_form = viewport.create_polygon(fill_points, fill=self.color)
 
     def bezier_algorythm(self, points):
         bezier_matrix = np.array([[-1, 3, -3, 1], [3, -6, 3, 0], [-3, 3, 0, 0], [1, 0, 0, 0]])
