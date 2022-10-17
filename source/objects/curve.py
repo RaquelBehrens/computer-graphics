@@ -5,13 +5,14 @@ from .object import Object
 
 
 class Curve(Object):  #This is a Polygon
-    def __init__(self, name, list_points, color, color_mode=1,id=None):
+    def __init__(self, name, list_points, color, color_mode=1, drawing_mode=1, id=None):
         super().__init__()
         self.name = name
         self.points = list_points #[[x1,y1], [x2,y2], [x3,y3]]
         self.id = id
         self.list_ids = []
         self.color = color
+        self.drawing_mode = drawing_mode
 
         self.closed = None
         self.color_mode = color_mode
@@ -21,10 +22,15 @@ class Curve(Object):  #This is a Polygon
         self.bezier_points = []
             
     def drawn(self, viewport, normalized_window, new_points=None):
-        if not new_points:
-            self.bezier_points = self.bezier_algorythm(self.points)
+        if self.drawing_mode == 1:
+            drawing_function = self.bezier_algorythm
         else:
-            self.bezier_points = self.bezier_algorythm(new_points)
+            drawing_function = self.b_splines_algorythm
+
+        if not new_points:
+            self.bezier_points = drawing_function(self.points)
+        else:
+            self.bezier_points = drawing_function(new_points)
 
             for i in range(len(self.list_ids)):
                 viewport.delete(self.list_ids[i])
@@ -62,7 +68,7 @@ class Curve(Object):  #This is a Polygon
 
     def bezier_algorythm(self, points):
         bezier_matrix = np.array([[-1, 3, -3, 1], [3, -6, 3, 0], [-3, 3, 0, 0], [1, 0, 0, 0]])
-        points_set = self.points_set(points)
+        points_set = self.bezier_points_set(points)
         new_points = []
 
         for bezier_points in points_set:
@@ -84,9 +90,41 @@ class Curve(Object):  #This is a Polygon
     
         return new_points
 
-    def points_set(self, points):
+    def bezier_points_set(self, points):
         for i in range(0, len(points) - 1, 3):
             yield points[i : (i + 4)]
+
+    def b_splines_algorythm(self, points):
+        b_splines_matrix = np.array([[-1/6, 1/2, -1/2, 1/6], [1/2, -1, 1/2, 0], [-1/2, 0, 1/2, 0], [1/6, 2/3, 1/6, 0]])
+        points_set = self.bezier_points_set(points)
+        new_points = []
+
+        for b_splines_points in points_set:
+            gx = []
+            gy = []
+            for point in b_splines_points:
+                gx.append(point[0])
+                gy.append(point[1])
+
+            E = self.delta_matrix(0.1)
+
+            Cx = b_splines_matrix @ gx @ E
+            Cy = b_splines_matrix @ gy @ E
+            
+        return new_points
+
+    def b_splines_point_set(self, points):
+        for i in range(len(points) - 1):
+            if i < len(points) - 4:
+                yield points[i : (i + 4)]
+            else:
+                break
+
+    def delta_matrix(self, d):
+        d2 = d * d
+        d3 = d * d * d
+        matrix = np.array([[0, 0, 0, 1], [d3, d2, d, 0], [6 * d3, 2 * d2, 0, 0], [6 * d3, 0, 0, 0]])
+        return matrix
 
     def translate(self, viewport, translation_points, normalized_window):
         translation_points = translation_points.split()

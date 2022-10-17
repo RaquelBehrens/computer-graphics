@@ -23,6 +23,8 @@ class IncludeCurve(IncludeWindow):
         self.frame4.grid()
         self.frame5 = Frame(self.main_window)
         self.frame5.grid()
+        self.frame6 = Frame(self.main_window)
+        self.frame6.grid()
         
         Label(self.frame0, text='Instruções:', font=("Times", "11"), height=0).grid(row=0, column=0, sticky=NW)
         Label(self.frame0, text='Cada ponto digitado adjacentemente, será adjacente no Canvas.', font=("Times", "11"), height=0).grid(row=1, column=0, sticky=NW)
@@ -41,15 +43,22 @@ class IncludeCurve(IncludeWindow):
         self.color_button = Button(self.frame4, text='Escolher cor', font=('Times', '11'), command=self.choose_color, bg=self.color)
         self.color_button.grid(row=0, column=3, padx=10)
 
-        self.cancelar = Button(self.frame5, font=("Times", "11"), text='Cancelar', command=self.close_window)
+        self.radio_variable = IntVar()
+        self.radio_variable.set(0)
+        Radiobutton(self.frame5, text='Usar Blending Functions', variable=self.radio_variable, value=1).grid(row=1, column=0, stick=W)
+        Radiobutton(self.frame5, text='Usar Forward Differences com B-Splines', variable=self.radio_variable, value=2).grid(row=2, column=0, stick=W)
+
+        self.cancelar = Button(self.frame6, font=("Times", "11"), text='Cancelar', command=self.close_window)
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
-        self.confirmar = Button(self.frame5, font=("Times", "11"), text='Confirmar', command=self.create_object)
+        self.confirmar = Button(self.frame6, font=("Times", "11"), text='Confirmar', command=self.create_object)
         self.confirmar.grid(row=0, column=1, pady=15, padx=18)
 
     def create_object(self):
         try:
             coordinates = self.convert_to_list(self.entry_polygon.get())
-            if coordinates != None:
+            if self.radio_variable.get() == 0:
+                self.erros['text'] = 'Selecione B-Splines ou Blending Functions'
+            elif coordinates != None:
                 name = self.nome.get()
                 already_used = False
                 for objects in self.display_file:
@@ -67,7 +76,7 @@ class IncludeCurve(IncludeWindow):
                             color_mode = 1
                     else:
                         color_mode = 1
-                    objeto = Curve(name, coordinates, self.color, color_mode)
+                    objeto = Curve(name, coordinates, self.color, color_mode, self.radio_variable.get())
                     objeto.drawn(self.viewport, self.coord_scn)
                     self.closed = closed
 
