@@ -92,7 +92,7 @@ class IncludeCurve(IncludeWindow):
                     else:
                         self.erros['text'] = 'Nome já utilizado'
             else:
-                self.erros['text'] = 'Mínimo de 3 pontos'
+                self.erros['text'] = 'Mínimo de pontos não atingido'
 
         except ValueError:
             self.erros['text'] = 'Entradas inválidas'
@@ -114,9 +114,17 @@ class IncludeCurve(IncludeWindow):
             except ValueError:
                 pass
 
-        if len(aux_coords) % 2 == 0 and len(aux_coords) >= 6:    
-            for i in range(0, len(aux_coords), 2):
-                coords.append([aux_coords[i], aux_coords[i+1]])
-            return coords
+        if self.radio_variable.get() == 2:
+            if len(aux_coords) % 2 == 0 and len(aux_coords) >= 8:    
+                for i in range(0, len(aux_coords), 2):
+                    coords.append([aux_coords[i], aux_coords[i+1]])
+                return coords
+            else:
+                self.erros['text'] = 'Entradas inválidas'
         else:
-            self.erros['text'] = 'Entradas inválidas'
+            if len(aux_coords) % 2 == 0 and len(aux_coords) >= 6:    
+                for i in range(0, len(aux_coords), 2):
+                    coords.append([aux_coords[i], aux_coords[i+1]])
+                return coords
+            else:
+                self.erros['text'] = 'Entradas inválidas'
