@@ -99,6 +99,7 @@ class Curve(Object):  #This is a Polygon
         points_set = self.bezier_points_set(points)
         delta = 0.1
         new_points = []
+        E = self.delta_matrix(delta)
 
         for b_splines_points in points_set:
             gx = []
@@ -107,11 +108,14 @@ class Curve(Object):  #This is a Polygon
                 gx.append(point[0])
                 gy.append(point[1])
 
-            E = self.delta_matrix(delta)
-
-            x, dx, dx2, dx3 = b_splines_matrix @ gx @ E
-            y, dy, dy2, dy3 = b_splines_matrix @ gy @ E
+            x, dx, dx2, dx3 = E @ b_splines_matrix @ gx
+            y, dy, dy2, dy3 = E @ b_splines_matrix @ gy
             n = 1/delta
+
+            result_points = self.fwd_diff(n, x, dx, dx2, dx3, y, dy, dy2, dy3)
+
+            for point in result_points:
+                new_points.append(point)
             
         return new_points
 
@@ -129,7 +133,29 @@ class Curve(Object):  #This is a Polygon
         return matrix
 
     def fwd_diff(self, n, x, dx, d2x, d3x, y, dy, d2y, d3y):
-        pass
+        i = 1
+        x_velho = x
+        y_velho = y
+        return_points = []
+        
+        while(i < n):
+            i += 1
+        
+            x += dx
+            dx += d2x
+            d2x += d3x
+            
+            y += dy
+            dy += d2y
+            d2y += d3y
+
+            return_points.append([x_velho, y_velho])
+            return_points.append([x, y])
+
+            x_velho = x
+            y_velho = y
+
+        return return_points
 
     def translate(self, viewport, translation_points, normalized_window):
         translation_points = translation_points.split()
