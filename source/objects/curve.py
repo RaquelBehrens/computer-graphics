@@ -97,6 +97,7 @@ class Curve(Object):  #This is a Polygon
     def b_splines_algorythm(self, points):
         b_splines_matrix = np.array([[-1/6, 1/2, -1/2, 1/6], [1/2, -1, 1/2, 0], [-1/2, 0, 1/2, 0], [1/6, 2/3, 1/6, 0]])
         points_set = self.bezier_points_set(points)
+        delta = 0.1
         new_points = []
 
         for b_splines_points in points_set:
@@ -106,10 +107,11 @@ class Curve(Object):  #This is a Polygon
                 gx.append(point[0])
                 gy.append(point[1])
 
-            E = self.delta_matrix(0.1)
+            E = self.delta_matrix(delta)
 
-            Cx = b_splines_matrix @ gx @ E
-            Cy = b_splines_matrix @ gy @ E
+            x, dx, dx2, dx3 = b_splines_matrix @ gx @ E
+            y, dy, dy2, dy3 = b_splines_matrix @ gy @ E
+            n = 1/delta
             
         return new_points
 
@@ -125,6 +127,9 @@ class Curve(Object):  #This is a Polygon
         d3 = d * d * d
         matrix = np.array([[0, 0, 0, 1], [d3, d2, d, 0], [6 * d3, 2 * d2, 0, 0], [6 * d3, 0, 0, 0]])
         return matrix
+
+    def fwd_diff(self, n, x, dx, d2x, d3x, y, dy, d2y, d3y):
+        pass
 
     def translate(self, viewport, translation_points, normalized_window):
         translation_points = translation_points.split()
