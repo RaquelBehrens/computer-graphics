@@ -67,15 +67,26 @@ class IncludeCurve(IncludeWindow):
 
                 closed = False
                 if name != '' and not already_used:
-                    if coordinates[0] == coordinates[-1]:
-                        closed = True
-                        answer = askyesno(title='Opção de preenchimento', message='Você deseja criar um objeto com cor preenchida?')
-                        if answer:
-                            color_mode = 2
+                    if self.radio_variable.get() == 2:
+                        if coordinates[0] == coordinates[-2] and coordinates[1] == coordinates[-1]:
+                            closed = True
+                            answer = askyesno(title='Opção de preenchimento', message='Você deseja criar um objeto com cor preenchida?')
+                            if answer:
+                                color_mode = 2
+                            else:
+                                color_mode = 1
                         else:
                             color_mode = 1
                     else:
-                        color_mode = 1
+                        if coordinates[0] == coordinates[-1]:
+                            closed = True
+                            answer = askyesno(title='Opção de preenchimento', message='Você deseja criar um objeto com cor preenchida?')
+                            if answer:
+                                color_mode = 2
+                            else:
+                                color_mode = 1
+                        else:
+                            color_mode = 1
                     objeto = Curve(name, coordinates, self.color, color_mode, self.radio_variable.get())
                     objeto.drawn(self.viewport, self.coord_scn)
                     self.closed = closed
