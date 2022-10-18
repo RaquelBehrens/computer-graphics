@@ -96,7 +96,7 @@ class Curve(Object):  #This is a Polygon
 
     def b_splines_algorythm(self, points):
         b_splines_matrix = np.array([[-1/6, 1/2, -1/2, 1/6], [1/2, -1, 1/2, 0], [-1/2, 0, 1/2, 0], [1/6, 2/3, 1/6, 0]])
-        points_set = self.bezier_points_set(points)
+        points_set = self.b_splines_point_set(points)
         delta = 0.1
         new_points = []
         E = self.delta_matrix(delta)
@@ -120,11 +120,8 @@ class Curve(Object):  #This is a Polygon
         return new_points
 
     def b_splines_point_set(self, points):
-        for i in range(len(points) - 1):
-            if i < len(points) - 4:
-                yield points[i : (i + 4)]
-            else:
-                break
+        for i in range(len(points) - 3):
+            yield points[i : (i + 4)]
 
     def delta_matrix(self, d):
         d2 = d * d
