@@ -131,9 +131,7 @@ class Curve(Object):  #This is a Polygon
 
     def fwd_diff(self, n, x, dx, d2x, d3x, y, dy, d2y, d3y):
         i = 1
-        x_velho = x
-        y_velho = y
-        return_points = []
+        return_points = [[x, y]]
         
         while(i < n):
             i += 1
@@ -146,11 +144,7 @@ class Curve(Object):  #This is a Polygon
             dy += d2y
             d2y += d3y
 
-            return_points.append([x_velho, y_velho])
             return_points.append([x, y])
-
-            x_velho = x
-            y_velho = y
 
         return return_points
 
