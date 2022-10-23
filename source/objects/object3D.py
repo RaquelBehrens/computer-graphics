@@ -10,13 +10,44 @@ class Object3D(Object):
         super().__init__()
         self.name = name
         self.points = list_points #[[x1,y1,z1], [x2,y2,z2], [x3,y3,z3]]
-        self.vectors = list_vectors
+        self.vectors = list_vectors #[[x1,y1,z1], [x2,y2,z2]], [[x2,y2,z2], [x3,y3,z3]], [[x3,y3,z3], [x1,y1,z1]]
         self.id = id
         self.list_ids = []
         self.color = color
             
-    def drawn(self, viewport, normalized_window, new_points=None):
-        pass
+    def drawn(self, viewport, normalized_window, new_vectors=None):
+        
+        #Nessa função precisa colocar a parte de Projeção Paralela Ortogonal
+
+        if not new_vectors:
+            for vector in self.vectors:
+                normalized_points = normalized_window.wireframe_clipping(vector)
+                new_vectors.append(normalized_points)
+        else: 
+            for vector in new_vectors:
+                normalized_points = normalized_window.wireframe_clipping(vector)
+                new_vectors.append(normalized_points)
+
+            for i in range(len(self.list_ids)):
+                viewport.delete(self.list_ids[i])
+            
+            self.list_ids = []
+
+        if new_vectors == []:
+            self.clipped = True
+        else:
+            self.clipped = False
+        
+        if not self.clipped:
+            for new_points in new_vectors:
+                x1 = new_points[0][0]
+                viewport_y1 = VIEWPORT_HEIGHT - new_points[0][1]
+
+                x2 = new_points[1][0]
+                viewport_y2 = VIEWPORT_HEIGHT - new_points[1][1]
+
+                id = viewport.create_line((x1, viewport_y1), (x2, viewport_y2), width=3, fill=self.color)
+                self.list_ids.append(id)
 
     def calculate_matrix_operation(self, axis, angle):
         if axis == 'x':
@@ -55,9 +86,15 @@ class Object3D(Object):
             result_points = np.matmul(points_matrix, rotation_matrix)
             result_points = np.matmul(result_points, translation_matrix)
             result_points = np.matmul(result_points, rotation_matrix_inverse)
+
+            for vector in self.vectors:
+                for vector_point in vector:
+                    if vector_point == point:
+                        vector_point = [result_points[0], result_points[1], result_points[2]]
+
             point[0] = result_points[0]
             point[1] = result_points[1]
-            point[3] = result_points[3]
+            point[2] = result_points[2]
 
         self.drawn(viewport, normalized_window)
         normalized_window.update_table(self)
@@ -88,6 +125,12 @@ class Object3D(Object):
             result_points = np.matmul(points_matrix, first_translation_matrix)
             result_points = np.matmul(result_points, scale_matrix)
             result_points = np.matmul(result_points, second_translation_matrix)
+
+            for vector in self.vectors:
+                for vector_point in vector:
+                    if vector_point == point:
+                        vector_point = [result_points[0], result_points[1], result_points[2]]
+
             point[0] = result_points[0]
             point[1] = result_points[1]
             point[2] = result_points[2]
@@ -104,6 +147,12 @@ class Object3D(Object):
         for point in self.points:
             points_matrix = [point[0], point[1], point[2], 1]
             result_points = np.matmul(points_matrix, rotation_matrix)
+
+            for vector in self.vectors:
+                for vector_point in vector:
+                    if vector_point == point:
+                        vector_point = [result_points[0], result_points[1], result_points[2]]
+
             point[0] = result_points[0]
             point[1] = result_points[1]
             point[2] = result_points[2]
@@ -132,6 +181,12 @@ class Object3D(Object):
             result_points = np.matmul(points_matrix, first_translation_matriz)
             result_points = np.matmul(result_points, rotation_matrix)
             result_points = np.matmul(result_points, second_translation_matriz)
+
+            for vector in self.vectors:
+                for vector_point in vector:
+                    if vector_point == point:
+                        vector_point = [result_points[0], result_points[1], result_points[2]]
+
             point[0] = result_points[0]
             point[1] = result_points[1]
             point[2] = result_points[2]
@@ -163,6 +218,12 @@ class Object3D(Object):
             result_points = np.matmul(points_matrix, first_translation_matriz)
             result_points = np.matmul(result_points, rotation_matrix)
             result_points = np.matmul(result_points, second_translation_matriz)
+
+            for vector in self.vectors:
+                for vector_point in vector:
+                    if vector_point == point:
+                        vector_point = [result_points[0], result_points[1], result_points[2]]
+
             point[0] = result_points[0]
             point[1] = result_points[1]
             point[2] = result_points[2]
@@ -329,6 +390,11 @@ class Object3D(Object):
             #result_points = np.matmul(result_points, undo_translation_matrix)
 
             result_points = np.matmul(points_matrix, final_matrix)
+
+            for vector in self.vectors:
+                for vector_point in vector:
+                    if vector_point == point:
+                        vector_point = [result_points[0], result_points[1], result_points[2]]
 
             point[0] = result_points[0]
             point[1] = result_points[1]
