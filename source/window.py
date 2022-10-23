@@ -95,7 +95,7 @@ class Window(Frame):
         self.object3D = Button(self.frame1, text='Criar Objeto 3D', font=('Time', '11'), command=self.include_object3D)
         self.object3D.grid(row=15, column=0, sticky=NW, padx=(127,0), pady=3)
         
-        Label(self, text='Objetos: ',  font=('Time', '13')).grid(row=1, column=0, sticky=NW)
+        Label(self, text='Operações: ',  font=('Time', '13')).grid(row=1, column=0, sticky=NW)
         self.delete = Button(self, text='Deletar Objeto', font=('Time', '11'), command=self.delete_object)
         self.delete.grid(row=3, column=0, sticky=NW, padx=0, pady=5)
         self.delete = Button(self, text='Deletar Tudo', font=('Time', '11'), command=self.delete_all_objects)
