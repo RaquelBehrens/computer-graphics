@@ -2,8 +2,15 @@ import numpy as np
 from tkinter import *
 from tkinter import ttk, messagebox
 
-from objects import (Point, Line, Wireframe, Curve)
-from include_windows import (IncludePoint, IncludeLine, IncludeTriangle, IncludeQuadrilateral, IncludePolygon, IncludeCurve)
+from objects import (Point, Line, Wireframe, Curve, Point3D, Object3D)
+from include_windows import (IncludePoint, 
+                             IncludeLine, 
+                             IncludeTriangle, 
+                             IncludeQuadrilateral, 
+                             IncludePolygon, 
+                             IncludeCurve,
+                             IncludePoint3D,
+                             IncludeObject3D)
 from transformation import Transformation
 from normalized_window import NormalizedWindow
 from descritor_obj import DescritorOBJ
@@ -82,7 +89,11 @@ class Window(Frame):
         self.polygon = Button(self.frame1, text='Criar Outro Polígono', font=('Time', '11'), command=self.include_polygon)
         self.polygon.grid(row=14, column=0, sticky=NW, padx=10, pady=3)
         self.curve = Button(self.frame1, text='Criar Curva', font=('Time', '11'), command=self.include_curve)
-        self.curve.grid(row=15, column=0, sticky=NW, padx=10, pady=3)
+        self.curve.grid(row=14, column=0, sticky=NW, padx=(162,0), pady=3)
+        self.point3D = Button(self.frame1, text='Criar Ponto 3D', font=('Time', '11'), command=self.include_point3D)
+        self.point3D.grid(row=15, column=0, sticky=NW, padx=10, pady=3)
+        self.object3D = Button(self.frame1, text='Criar Objeto 3D', font=('Time', '11'), command=self.include_object3D)
+        self.object3D.grid(row=15, column=0, sticky=NW, padx=(127,0), pady=3)
         
         Label(self, text='Objetos: ',  font=('Time', '13')).grid(row=1, column=0, sticky=NW)
         self.delete = Button(self, text='Deletar Objeto', font=('Time', '11'), command=self.delete_object)
@@ -140,6 +151,12 @@ class Window(Frame):
 
     def include_curve(self):
         IncludeCurve(self.viewport, self.erros, self.display_file, self.table, self.coord_scn)
+
+    def include_point3D(self):
+        IncludePoint3D(self.viewport, self.erros, self.display_file, self.table, self.coord_scn)
+
+    def include_object3D(self):
+        IncludeObject3D(self.viewport, self.erros, self.display_file, self.table, self.coord_scn)
 
     def delete_object(self):
         try:
