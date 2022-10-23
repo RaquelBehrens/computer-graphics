@@ -72,8 +72,8 @@ class NormalizedWindow:
                                     values=(object.get_name(), object.get_points(), 
                                     object.get_id()))
 
-    def point_clipping(self, object):
-        for point in object.points:
+    def point_clipping(self, object, new_points):
+        for point in new_points:
             if self.x_min <= point[0] <= self.x_max and self.y_min <= point[1] <= self.y_max:
                 object.clipped = False
             else:
