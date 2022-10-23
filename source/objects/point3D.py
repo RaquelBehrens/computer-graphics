@@ -12,6 +12,9 @@ class Point3D(Object):
         self.color = color
         
     def drawn(self, viewport, normalized_window):
+        
+        #Nessa função precisa colocar a parte de Projeção Paralela Ortogonal
+
         normalized_window.point_clipping(self)
         if not self.clipped:
             viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
