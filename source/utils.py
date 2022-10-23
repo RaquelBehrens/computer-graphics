@@ -1,3 +1,5 @@
+import numpy as np
+
 def hex_to_rgb(hex):
     rgb = []
     for i in (0, 2, 4):
@@ -24,4 +26,7 @@ def adjacents(sequence, circular=False):
         adjacents.append([sequence[-1], sequence[0]])
 
     return adjacents
+
+def angle_between(v1, v2):
+    return np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0))
 
