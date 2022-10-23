@@ -31,9 +31,9 @@ class IncludeObject3D(IncludeWindow):
         Label(self.frame1, text='(x1,y1), (x2,y2), ..., (xn,yn)', font=("Times", "11")).grid(row=1, column=1, pady=(0,20))
 
         Label(self.frame2, text='Vetores: ', font=("Times", "11")).grid(row=0, column=0, padx=(10,0), sticky=NW)
-        self.vectors = Entry(self.frame2, width=40, font=("Times", "11"))
+        self.vectors = Entry(self.frame2, width=45, font=("Times", "11"))
         self.vectors.grid(row=0, column=1, sticky=NW)
-        Label(self.frame2, text='[(x1,y1), (x2,y2)], ..., [(xn-1, yn-1), (xn,yn)]', font=("Times", "11")).grid(row=1, column=1, pady=(0,20))
+        Label(self.frame2, text='[(x1,y1,z1), (x2,y2,z2)], ..., [(xn-1,yn-1,zn-1), (xn,yn,zn)]', font=("Times", "11")).grid(row=1, column=1, pady=(0,20))
 
         self.color_button = Button(self.frame3, text='Escolher cor', font=('Times', '11'), command=self.choose_color, bg=self.color)
         self.color_button.grid(row=0, column=3, padx=10)
