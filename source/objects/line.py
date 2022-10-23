@@ -11,15 +11,22 @@ class Line(Object):
         self.points = points
         self.color = color
        
-    def drawn(self, viewport, normalized_window):
+    def drawn(self, viewport, normalized_window, new_points=None):
+        if new_points == None:
+            new_points = self.points
+
         if normalized_window.clipping_mode.get() == 1:
-            new_point = normalized_window.line_clipping_CS(self, self.points)
+            new_points = normalized_window.line_clipping_CS(self, new_points)
         else:
-            new_point = normalized_window.line_clipping_LB(self, self.points)
+            new_points = normalized_window.line_clipping_LB(self, new_points)
+
         if not self.clipped:
-            viewport_y1 = VIEWPORT_HEIGHT - new_point[0][1]
-            viewport_y2 = VIEWPORT_HEIGHT - new_point[1][1]
-            self.id = viewport.create_line((new_point[0][0], viewport_y1), (new_point[1][0], viewport_y2), width=3, fill=self.color)
+            viewport_y1 = VIEWPORT_HEIGHT - new_points[0][1]
+            viewport_y2 = VIEWPORT_HEIGHT - new_points[1][1]
+            if self.id != None:
+                viewport.coords(self.id, new_points[0][0], viewport_y1, new_points[1][0], viewport_y2)
+            else:
+                self.id = viewport.create_line((new_points[0][0], viewport_y1), (new_points[1][0], viewport_y2), width=3, fill=self.color)
 
     def translate(self, viewport, translation_points, normalized_window):
         translation_points = translation_points.split()

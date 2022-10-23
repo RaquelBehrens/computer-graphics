@@ -30,28 +30,8 @@ class NormalizedWindow:
                 new_points[index][0] = result_points[0]
                 new_points[index][1] = result_points[1]
 
-            if isinstance(object, Line):
-                if self.clipping_mode.get() == 1:
-                    new_points = self.line_clipping_CS(object, new_points)
-                else:
-                    new_points = self.line_clipping_LB(object, new_points)
-                if not object.clipped:
-                    viewport_y1 = VIEWPORT_HEIGHT - new_points[0][1]
-                    viewport_y2 = VIEWPORT_HEIGHT - new_points[1][1]
-                    if object.id != None:
-                        self.viewport.coords(object.id, new_points[0][0], viewport_y1, new_points[1][0], viewport_y2)
-                    else:
-                        object.id = self.viewport.create_line((new_points[0][0], viewport_y1), (new_points[1][0], viewport_y2), width=3, fill=object.color)
-                        self.update_table(object)
-            else:
-                self.point_clipping(object)
-                if not object.clipped:
-                    viewport_y1 = VIEWPORT_HEIGHT - new_points[0][1]
-                    if object.id != None:
-                        self.viewport.coords(object.id, new_points[0][0], viewport_y1, new_points[0][0], viewport_y1)
-                    else:
-                        object.id = self.viewport.create_oval(new_points[0][0], viewport_y1, new_points[0][0], viewport_y1, width=POINT_SIZE, outline=object.color)
-                        self.update_table(object)
+            object.drawn(self.viewport, self, new_points)
+            self.update_table(object)
         else:
             for i, point in enumerate(object.points):
                 points_matrix = [point[0], point[1], 1]

@@ -11,12 +11,16 @@ class Point(Object):
         self.name = name
         self.color = color
         
-    def drawn(self, viewport, normalized_window):
+    def drawn(self, viewport, normalized_window, new_points=None):
         normalized_window.point_clipping(self)
         if not self.clipped:
             viewport_y1 = VIEWPORT_HEIGHT - self.points[0][1]
-            self.id = viewport.create_oval(self.points[0][0], viewport_y1, self.points[0][0], viewport_y1, width=POINT_SIZE, outline=self.color)
 
+            if self.id != None:
+                viewport.coords(self.id, new_points[0][0], viewport_y1, new_points[0][0], viewport_y1)
+            else:
+                self.id = viewport.create_oval(new_points[0][0], viewport_y1, new_points[0][0], viewport_y1, width=POINT_SIZE, outline=self.color)
+                
     def translate(self, viewport, translation_points, normalized_window):
         translation_points = translation_points.split()
         
