@@ -1,3 +1,4 @@
+from msilib.schema import Error
 from tkinter import *
 
 from constants import INCLUDE_WINDOW_WIDTH, INCLUDE_WINDOW_HEIGHT
@@ -47,6 +48,7 @@ class IncludeObject3D(IncludeWindow):
         try:
             points = self.convert_to_list(self.points.get())
             vectors = self.convert_to_matrix(self.vectors.get())
+            self.check_vectors_in_points_list(points, vectors)
             name = self.nome.get()
             already_used = False
             for objects in self.display_file:
@@ -90,8 +92,8 @@ class IncludeObject3D(IncludeWindow):
                 pass
 
         if len(aux_coords) % 2 == 0 and len(aux_coords) >= 6:    
-            for i in range(0, len(aux_coords), 2):
-                coords.append([aux_coords[i], aux_coords[i+1]])
+            for i in range(0, len(aux_coords), 3):
+                coords.append([aux_coords[i], aux_coords[i+1], aux_coords[i+2]])
             return coords
         else:
             self.erros['text'] = 'Entradas inválidas'
@@ -121,3 +123,10 @@ class IncludeObject3D(IncludeWindow):
             return matrix
         else:
             self.erros['text'] = 'Entradas inválidas'
+
+    def check_vectors_in_points_list(self, points, vectors):
+        for i in range(len(vectors)):
+            for j in range(len(vectors[i])):
+                if vectors[i][j] not in points:
+                    self.erros['text'] = 'Ponto do vetor não está na lista de pontos'
+                    raise Error
