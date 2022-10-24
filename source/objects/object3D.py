@@ -15,10 +15,10 @@ class Object3D(Object):
         self.list_ids = []
         self.color = color
             
-    def drawn(self, viewport, normalized_window, new_vectors=None):
+    def drawn(self, viewport, normalized_window, new_vectors=[]):
         
         #Nessa função precisa colocar a parte de Projeção Paralela Ortogonal
-
+        '''
         if not new_vectors:
             for vector in self.vectors:
                 normalized_points = normalized_window.wireframe_clipping(vector)
@@ -48,6 +48,8 @@ class Object3D(Object):
 
                 id = viewport.create_line((x1, viewport_y1), (x2, viewport_y2), width=3, fill=self.color)
                 self.list_ids.append(id)
+        '''
+        pass
 
     def calculate_matrix_operation(self, axis, angle):
         if axis == 'x':
@@ -66,11 +68,12 @@ class Object3D(Object):
                     [0, 0, 1, 0],
                     [0, 0, 0, 1]]
  
-    def translate(self, viewport, translation_points, axis, normalized_window):
+    def translate(self, viewport, translation_points, normalized_window):
         translation_points = translation_points.split()
+        axis = translation_points[5]
         
         rotate_radian = -(np.radians(float(normalized_window.angle)))
-        rotation_matrix = self.calculate_matrix_operation(self, axis, rotate_radian)
+        rotation_matrix = self.calculate_matrix_operation(axis, rotate_radian)
         
         points_matrix = []
         translation_matrix = [[1, 0, 0, 0],
@@ -78,8 +81,8 @@ class Object3D(Object):
                               [0, 0, 1, 0],
                               [float(translation_points[0]), float(translation_points[1]), float(translation_points[2]), 1]]
         
-        rotation_matrix_inverse = -(np.radians(float(normalized_window.angle)))
-        rotation_matrix = self.calculate_matrix_operation(self, axis, rotate_radian)
+        rotate_radian = -(np.radians(float(normalized_window.angle)))
+        rotation_matrix_inverse = self.calculate_matrix_operation(axis, rotate_radian)
         
         for point in self.points:
             points_matrix = [point[0], point[1], point[2], 1]
@@ -99,25 +102,25 @@ class Object3D(Object):
         self.drawn(viewport, normalized_window)
         normalized_window.update_table(self)
     
-    def scale(self, viewport, translation_points, normalized_window):
+    def scale(self, viewport, scalation_points, normalized_window):
         if self.center == None:
             self.calculate_center()
 
-        translation_points = translation_points.split()
+        scalation_points = scalation_points.split()
         points_matrix = []
         first_translation_matrix = [[1, 0, 0, 0],
                                     [0, 1, 0, 0],
-                                    [0, 0, 1, 0]
+                                    [0, 0, 1, 0],
                                     [-(self.center[0]), -(self.center[1]), -(self.center[2]), 1]]
 
         second_translation_matrix = [[1, 0, 0, 0],
                                      [0, 1, 0, 0],
-                                     [0, 0, 1, 0]
+                                     [0, 0, 1, 0],
                                      [(self.center[0]), (self.center[1]), (self.center[2]), 1]]
 
-        scale_matrix = [[float(translation_points[0]), 0, 0, 0],
-                        [0, float(translation_points[1]), 0, 0],
-                        [0, 0, float(translation_points[2]), 0],
+        scale_matrix = [[float(scalation_points[0]), 0, 0, 0],
+                        [0, float(scalation_points[1]), 0, 0],
+                        [0, 0, float(scalation_points[2]), 0],
                         [0, 0, 0, 1]]
         
         for point in self.points:
@@ -138,11 +141,13 @@ class Object3D(Object):
         self.drawn(viewport, normalized_window)
         normalized_window.update_table(self)
 
-    def rotate_around_world(self, viewport, rotate_angle, axis, normalized_window):
-        rotate_radian = -(np.radians(float(rotate_angle)))
+    def rotate_around_world(self, viewport, enter_data, normalized_window):
+        enter_data = enter_data.split()
+        axis = enter_data[2]
+        rotate_radian = -(np.radians(float(enter_data[0])))
         points_matrix = []
 
-        rotation_matrix = self.calculate_matrix_operation(self, axis, rotate_radian)
+        rotation_matrix = self.calculate_matrix_operation(axis, rotate_radian)
 
         for point in self.points:
             points_matrix = [point[0], point[1], point[2], 1]
@@ -160,21 +165,24 @@ class Object3D(Object):
         self.drawn(viewport, normalized_window)
         normalized_window.update_table(self)
 
-    def rotate_around_object(self, viewport, rotate_angle, axis, normalized_window):
+    def rotate_around_object(self, viewport, enter_data, normalized_window):
         self.calculate_center()
-        rotate_radian = -(np.radians(float(rotate_angle)))
+        enter_data = enter_data.split()
+        axis = enter_data[2]
+        rotate_radian = -(np.radians(float(enter_data[0])))
+
         points_matrix = []
         first_translation_matriz = [[1, 0, 0, 0],
                                     [0, 1, 0, 0],
-                                    [0, 0, 1, 0]
+                                    [0, 0, 1, 0],
                                     [-(self.center[0]), -(self.center[1]), -(self.center[2]), 1]]
 
         second_translation_matriz = [[1, 0, 0, 0],
                                     [0, 1, 0, 0],
-                                    [0, 0, 1, 0]
+                                    [0, 0, 1, 0],
                                     [(self.center[0]), (self.center[1]), (self.center[2]), 1]]
 
-        rotation_matrix = self.calculate_matrix_operation(self, axis, rotate_radian)
+        rotation_matrix = self.calculate_matrix_operation(axis, rotate_radian)
         
         for point in self.points:
             points_matrix = [point[0], point[1], point[2], 1]
@@ -194,24 +202,25 @@ class Object3D(Object):
         self.drawn(viewport, normalized_window)
         normalized_window.update_table(self)
 
-    def rotate_around_point(self, viewport, rotate_points, axis, normalized_window):
+    def rotate_around_point(self, viewport, rotate_points, normalized_window):
         rotate_points = rotate_points.split()
         point_x = float(rotate_points[1])
         point_y = float(rotate_points[4])
         point_z = float(rotate_points[7])
         rotate_radian = -(np.radians(float(rotate_points[9])))
+        axis = rotate_points[11]
 
         first_translation_matriz = [[1, 0, 0, 0],
                                     [0, 1, 0, 0],
-                                    [0, 0, 1, 0]
+                                    [0, 0, 1, 0],
                                     [-(point_x), -(point_y), -(point_z), 1]]
 
         second_translation_matriz = [[1, 0, 0, 0],
                                     [0, 1, 0, 0],
-                                    [0, 0, 1, 0]
+                                    [0, 0, 1, 0],
                                     [(point_x), (point_y), (point_z), 1]]
 
-        rotation_matrix = self.calculate_matrix_operation(self, axis, rotate_radian)
+        rotation_matrix = self.calculate_matrix_operation(axis, rotate_radian)
 
         for point in self.points:
             points_matrix = [point[0], point[1], point[2], 1]
@@ -233,17 +242,18 @@ class Object3D(Object):
 
     def rotate_around_axis(self, viewport, rotate_points, normalized_window):
         rotate_points = rotate_points.split()
-        point_x = float(rotate_points[1])
-        point_y = float(rotate_points[4])
-        rotate_radian = -(np.radians(float(rotate_points[6])))
+        rotate_radian = -(np.radians(float(rotate_points[13])))
         
-        axis, axis_center = self.find_axis()
+        axis = [[float(rotate_points[1]),float(rotate_points[3]),float(rotate_points[5])],
+                             [float(rotate_points[7]),float(rotate_points[9]),float(rotate_points[11])]]
+        axis_center = self.find_axis_center(axis)
+
         translation_matrix = [[1, 0, 0, 0],
                               [0, 1, 0, 0],
                               [0, 0, 1, 0],
                               [-axis_center[0], -axis_center[1], -axis_center[0], 1]]
 
-        rotate_radian_x = (np.radians(float(angle_between(axis, [1, 0, 0]))))
+        rotate_radian_x = (np.radians(float(angle_between(axis, [[0,0,0],[1, 0, 0]]))))
         rotation_matrix_x = [[1, 0, 0, 0],
                              [0, (np.cos(rotate_radian_x)), (np.sin(rotate_radian_x)), 0],
                              [0, -(np.sin(rotate_radian_x)), (np.cos(rotate_radian_x)), 0],
@@ -403,12 +413,21 @@ class Object3D(Object):
         self.drawn(viewport, normalized_window)
         normalized_window.update_table(self)
 
-    def find_axis(self):
-        axis = [self.points[0], self.points[(len(self.points)+1)//2]]
+    def find_axis_center(self, axis):
         axis_center_x = (axis[0][0] + axis[1][0]) / 2
         axis_center_y = (axis[0][1] + axis[1][1]) / 2
         axis_center_z = (axis[0][2] + axis[1][2]) / 2
-        return axis, [axis_center_x, axis_center_y, axis_center_z]
+        return [axis_center_x, axis_center_y, axis_center_z]
+
+    def calculate_center(self):
+        center_x = 0
+        center_y = 0
+        center_z = 0
+        for point in self.points:
+            center_x += point[0]
+            center_y += point[1]
+            center_z += point[2]
+        self.center = [center_x/len(self.points), center_y/len(self.points), center_y/len(self.points)]
  
     def obj_string(self, list_of_points, list_of_colors):
         pass
