@@ -9,13 +9,15 @@ class NormalizedWindow:
     def __init__(self, viewport, main_table):
         self.viewport = viewport
         self.main_table = main_table
-        self.wc = [0, 0]
+        self.wc = [0, 0, 0]
         self.angle = 0
-        self.s = [1, 1]
+        self.s = [1, 1, 1]
         self.x_min = 10
         self.x_max = VIEWPORT_WIDTH-10
         self.y_min = 10
         self.y_max = VIEWPORT_HEIGHT-10
+        self.vrp = [0, 0, 0, 1]
+        self.vpn = None
         self.clipping_mode = None
 
     def generate_scn(self, object):
@@ -395,3 +397,18 @@ class NormalizedWindow:
                 clipped.append(point)
 
         return clipped
+    
+    def define_vpn(self, translate_matrix):
+        w1 = np.array([10, VIEWPORT_HEIGHT-10, 0, 1])
+        w1 = np.matmul(w1, translate_matrix)
+        w2 = np.array([VIEWPORT_WIDTH-10, VIEWPORT_HEIGHT-10, 0, 1])
+        w2 = np.matmul(w2, translate_matrix)
+
+        vector_a = self.vrp - w1
+        vector_b = w2 - self.vrp
+
+        result_x = vector_a[1]*vector_b[2] - vector_a[2]*vector_b[1]
+        result_y = vector_a[2]*vector_b[0] - vector_a[0]*vector_b[2]
+        result_z = vector_a[0]*vector_b[1] - vector_a[1]*vector_b[0]
+
+        return [result_x, result_y, result_z]
