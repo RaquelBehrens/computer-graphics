@@ -14,7 +14,7 @@ class Point3D(Object):
     def drawn(self, viewport, normalized_window, new_vectors=[]):
 
         #Nessa função precisa colocar a parte de Projeção Paralela Ortogonal
-        '''
+        
         if new_points == None:
             new_points = self.points
 
@@ -25,7 +25,6 @@ class Point3D(Object):
             self.id = viewport.create_oval(new_points[0][0], viewport_y1, new_points[0][0], viewport_y1, width=POINT_SIZE, outline=self.color)
         else:
             viewport.delete(self.id)
-        '''
 
     def calculate_matrix_operation(self, axis, angle):
         if axis == 'x':

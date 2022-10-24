@@ -1,5 +1,4 @@
 import numpy as np
-
 from constants import VIEWPORT_HEIGHT
 from .object import Object
 from utils import angle_between
@@ -18,7 +17,7 @@ class Object3D(Object):
     def drawn(self, viewport, normalized_window, new_vectors=[]):
         
         #Nessa função precisa colocar a parte de Projeção Paralela Ortogonal
-        '''
+        
         if not new_vectors:
             for vector in self.vectors:
                 normalized_points = normalized_window.wireframe_clipping(vector)
@@ -48,8 +47,6 @@ class Object3D(Object):
 
                 id = viewport.create_line((x1, viewport_y1), (x2, viewport_y2), width=3, fill=self.color)
                 self.list_ids.append(id)
-        '''
-        pass
 
     def calculate_matrix_operation(self, axis, angle):
         if axis == 'x':
@@ -245,7 +242,7 @@ class Object3D(Object):
         rotate_radian = -(np.radians(float(rotate_points[13])))
         
         axis = [[float(rotate_points[1]),float(rotate_points[3]),float(rotate_points[5])],
-                             [float(rotate_points[7]),float(rotate_points[9]),float(rotate_points[11])]]
+                [float(rotate_points[7]),float(rotate_points[9]),float(rotate_points[11])]]
         axis_center = self.find_axis_center(axis)
 
         translation_matrix = [[1, 0, 0, 0],
@@ -253,7 +250,7 @@ class Object3D(Object):
                               [0, 0, 1, 0],
                               [-axis_center[0], -axis_center[1], -axis_center[0], 1]]
 
-        rotate_radian_x = (np.radians(float(angle_between(axis, [[0,0,0],[1, 0, 0]]))))
+        rotate_radian_x = angle_between(axis, [[0,0,0],[1, 0, 0]])
         rotation_matrix_x = [[1, 0, 0, 0],
                              [0, (np.cos(rotate_radian_x)), (np.sin(rotate_radian_x)), 0],
                              [0, -(np.sin(rotate_radian_x)), (np.cos(rotate_radian_x)), 0],
@@ -269,7 +266,7 @@ class Object3D(Object):
         #              1
         #             ]]
 
-        rotate_radian_z = (np.radians(float(angle_between(axis, [0, 0, 1]))))
+        rotate_radian_z = (np.radians(float(angle_between(axis, [[0,0,0],[0, 0, 1]]))))
         rotation_matrix_z = [[(np.cos(rotate_radian_z)), (np.sin(rotate_radian_z)), 0, 0],
                              [-(np.sin(rotate_radian_z)), (np.cos(rotate_radian_z)), 0, 0],
                              [0, 0, 1, 0],

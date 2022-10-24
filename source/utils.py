@@ -1,4 +1,5 @@
 import numpy as np
+import vg
 
 def hex_to_rgb(hex):
     rgb = []
@@ -28,5 +29,12 @@ def adjacents(sequence, circular=False):
     return adjacents
 
 def angle_between(v1, v2):
-    return np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0))
+    v1_origin = np.array(v1[0])
+    v1_end = np.array(v1[1])
+    v2_origin = np.array(v2[0])
+    v2_end = np.array(v2[1])
 
+    u = v1_end - v1_origin
+    v = v2_end - v2_origin
+
+    return vg.angle(u,v,units='rad')
