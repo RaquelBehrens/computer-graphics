@@ -20,10 +20,9 @@ class Object3D(Object):
                 normalized_points = normalized_window.wireframe_clipping(vector)
                 new_vectors.append(normalized_points)
         else:
-            old_vector = new_vectors.copy()
-            for vector in old_vector:
+            for i, vector in enumerate(new_vectors):
                 normalized_points = normalized_window.wireframe_clipping(vector)
-                new_vectors.append(normalized_points)
+                new_vectors[i] = normalized_points
 
             for i in range(len(self.list_ids)):
                 viewport.delete(self.list_ids[i])
