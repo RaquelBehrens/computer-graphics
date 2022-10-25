@@ -81,6 +81,18 @@ class Window(Frame):
         self.right_rotation.grid(row=10, column=0, sticky=NW, padx=30, pady=0)
         self.left_rotation = Button(self.frame1, text='  ↺  ', font=('Time', '11'), command=self.rotate_right)
         self.left_rotation.grid(row=10, column=0, columnspan=2, pady=0)
+        
+        Label(self.frame2, text='Rotação eixo x: ', font=('Time', '13')).grid(row=1, column=1, sticky=NE)
+        self.right_rotation_x = Button(self.frame2, text='  ↻  ', font=('Time', '11'), command=self.rotate_x_left)
+        self.right_rotation_x.grid(row=1, column=1, stick=N, padx=40, pady=40)
+        self.left_rotation_x = Button(self.frame2, text='  ↺  ', font=('Time', '11'), command=self.rotate_x_right)
+        self.left_rotation_x.grid(row=1, column=1, stick=NE, pady=40)
+
+        Label(self.frame2, text='Rotação eixo y: ', font=('Time', '13')).grid(row=1, column=1, sticky=NE, pady=80)
+        self.right_rotation = Button(self.frame2, text='  ↻  ', font=('Time', '11'), command=self.rotate_y_left)
+        self.right_rotation.grid(row=1, column=1, stick=N, padx=40, pady=120)
+        self.left_rotation = Button(self.frame2, text='  ↺  ', font=('Time', '11'), command=self.rotate_y_right)
+        self.left_rotation.grid(row=1, column=1, stick=NE, pady=120)
 
         Label(self.frame1, text='Objetos: ', font=('Time', '13')).grid(row=11, column=0, sticky=NW, pady=10)
         self.point = Button(self.frame1, text='Criar Ponto', font=('Time', '11'), command=self.include_point)
@@ -237,7 +249,7 @@ class Window(Frame):
             self.coord_scn.generate_scn(object)
 
     def move_up(self):
-        rotate_radian = (np.radians(float(self.coord_scn.angle)))
+        rotate_radian = (np.radians(float(self.coord_scn.angle_z)))
         sin = np.sin(rotate_radian)
         cos = np.cos(rotate_radian)
 
@@ -248,7 +260,7 @@ class Window(Frame):
             self.coord_scn.generate_scn(object)
 
     def move_left(self):
-        rotate_radian = (np.radians(float(self.coord_scn.angle)))
+        rotate_radian = (np.radians(float(self.coord_scn.angle_z)))
         sin = np.sin(rotate_radian)
         cos = np.cos(rotate_radian)
 
@@ -259,7 +271,7 @@ class Window(Frame):
             self.coord_scn.generate_scn(object)
     
     def move_right(self):
-        rotate_radian = (np.radians(float(self.coord_scn.angle)))
+        rotate_radian = (np.radians(float(self.coord_scn.angle_z)))
         sin = np.sin(rotate_radian)
         cos = np.cos(rotate_radian)
 
@@ -270,7 +282,7 @@ class Window(Frame):
             self.coord_scn.generate_scn(object)
 
     def move_down(self):
-        rotate_radian = (np.radians(float(self.coord_scn.angle)))
+        rotate_radian = (np.radians(float(self.coord_scn.angle_z)))
         sin = np.sin(rotate_radian)
         cos = np.cos(rotate_radian)
 
@@ -293,13 +305,38 @@ class Window(Frame):
             self.coord_scn.generate_scn(object)
 
     def rotate_right(self):
-        self.coord_scn.angle -= 10
+        self.coord_scn.angle_z -= 10
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
 
     def rotate_left(self):
-        self.coord_scn.angle += 10
+        self.coord_scn.angle_z += 10
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
+            
+
+    def rotate_x_right(self):
+        self.coord_scn.angle_x -= 10
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
+
+    def rotate_x_left(self):
+        self.coord_scn.angle_x += 10
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
+
+    def rotate_y_right(self):
+        self.coord_scn.angle_y -= 10
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
+
+    def rotate_y_left(self):
+        self.coord_scn.angle_y += 10
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
@@ -307,7 +344,10 @@ class Window(Frame):
     def retore_window(self):
         self.coord_scn.wc[0] = 0
         self.coord_scn.wc[1] = 0
-        self.coord_scn.angle = 0
+        self.coord_scn.wc[2] = 0
+        self.coord_scn.angle_x = 0
+        self.coord_scn.angle_y = 0
+        self.coord_scn.angle_z = 0
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
