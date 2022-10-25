@@ -37,8 +37,8 @@ class NormalizedWindow:
                     new_vector[i] = [None] * 2
                     
                 for i, point in enumerate(projected_points):
-                    points_matrix = [point[0], point[1], 1]
-                    result_points = np.matmul(points_matrix, self.transformation_matrix())
+                    points_matrix = [point[0], point[1], point[2], 1]
+                    result_points = np.matmul(points_matrix, self.transformation_matrix_3d())
                     new_vector[i][0] = result_points[0]
                     new_vector[i][1] = result_points[1]
                 
@@ -68,6 +68,27 @@ class NormalizedWindow:
         scale_matrix = [[self.s[0], 0, 0],
                         [0, self.s[1], 0],
                         [0, 0, 1]]
+
+        result_matrix = np.matmul(translation_matrix, rotate_matrix)
+        result_matrix = np.matmul(result_matrix, scale_matrix)
+
+        return result_matrix
+    
+    def transformation_matrix_3d(self):
+        rotate_radian = -(np.radians(float(self.angle)))
+
+        translation_matrix = [[1, 0, 0, 0],
+                              [0, 1, 0, 0],
+                              [0, 0, 1, 0],
+                              [-(self.wc[0]), -(self.wc[1]), -(self.wc[2]), 1]]
+        rotate_matrix = [[(np.cos(rotate_radian)), 0, -(np.sin(rotate_radian)), 0],
+                         [0, 1, 0, 0],
+                         [(np.sin(rotate_radian)), 0, (np.cos(rotate_radian)), 0],
+                         [0, 0, 0, 1]]
+        scale_matrix = [[self.s[0], 0, 0, 0],
+                        [0, self.s[1], 0, 0],
+                        [0, 0, self.s[2], 0],
+                        [0, 0, 0, 1]]
 
         result_matrix = np.matmul(translation_matrix, rotate_matrix)
         result_matrix = np.matmul(result_matrix, scale_matrix)
