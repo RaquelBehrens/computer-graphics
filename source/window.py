@@ -65,6 +65,11 @@ class Window(Frame):
         self.down = Button(self.frame1, text='Baixo', font=('Time', '11'), command=self.move_down)
         self.down.grid(row=6, column=0, sticky=NW, padx=70)
 
+        self.forward = Button(self.frame1, text='Frente', font=('Time', '11'), command=self.move_forward)
+        self.forward.grid(row=5, column=0, sticky=NW, padx=(190,0), pady=(3,0))
+        self.backwards = Button(self.frame1, text='Trás', font=('Time', '11'), command=self.move_backwards)
+        self.backwards.grid(row=6, column=0, sticky=NW, padx=(190,0))
+
         Label(self.frame1, text='Zoom: ', font=('Time', '13')).grid(row=7, column=0, sticky=NW, pady=10)
         self.more_zoom = Button(self.frame1, text='  +  ', font=('Time', '11'), command=self.zoom_in)
         self.more_zoom.grid(row=8, column=0, sticky=NW, padx=30, pady=0)
@@ -275,6 +280,18 @@ class Window(Frame):
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
 
+    def move_forward(self):
+        self.coord_scn.wc[2] -= 10
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
+
+    def move_backwards(self):
+        self.coord_scn.wc[2] += 10
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
+
     def rotate_right(self):
         self.coord_scn.angle -= 10
 
@@ -296,7 +313,7 @@ class Window(Frame):
             self.coord_scn.generate_scn(object)
 
     def generate_obj_file(self):
-        descritor_obj = DescritorOBJ(self.viewport, self.display_file)
+        descritor_obj = DescritorOBJ(self.viewport, self.coord_scn, self.display_file)
         descritor_obj.create_OBJ_file()
 
     def read_obj_file(self):

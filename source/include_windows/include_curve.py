@@ -88,7 +88,6 @@ class IncludeCurve(IncludeWindow):
                         else:
                             color_mode = 1
                     objeto = Curve(name, coordinates, self.color, color_mode, self.radio_variable.get())
-                    objeto.drawn(self.viewport, self.coord_scn)
                     self.closed = closed
 
                     self.coord_scn.generate_scn(objeto)

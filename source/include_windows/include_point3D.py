@@ -62,8 +62,7 @@ class IncludePoint3D(IncludeWindow):
 
             if name != '' and not already_used:
                 objeto = Point3D(name, [[x1, y1, z1]], self.color)
-                objeto.drawn(self.viewport, self.coord_scn)
-
+                
                 self.coord_scn.generate_scn(objeto)
                 
                 self.close_window()                

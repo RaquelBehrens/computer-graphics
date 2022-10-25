@@ -4,6 +4,7 @@ from tkinter import *
 from constants import POINT_SIZE, VIEWPORT_HEIGHT, VIEWPORT_WIDTH
 from objects import (Line, Wireframe, Curve, Point3D, Object3D)
 from utils import adjacents
+from projection import projection
 
 class NormalizedWindow:
     def __init__(self, viewport, main_table):
@@ -25,19 +26,27 @@ class NormalizedWindow:
         for i in range(len(new_points)):
             new_points[i] = [None] * 2
 
-        if not isinstance(object, Object3D) and not isinstance(object, Point3D):
-            for index, point in enumerate(object.points):
-                points_matrix = [point[0], point[1], 1]
-                result_points = np.matmul(points_matrix, self.transformation_matrix())
-                new_points[index][0] = result_points[0]
-                new_points[index][1] = result_points[1]
+        if isinstance(object, Object3D) or isinstance(object, Point3D):
+            new_vectors = []
+            for vector in object.vectors:
+                projected_points = projection(vector, object, self)
 
-            object.drawn(self.viewport, self, new_points)
+                new_vector = []
+                new_vector = [None] * 2
+                for i in range(len(new_vector)):
+                    new_vector[i] = [None] * 2
+                    
+                for i, point in enumerate(projected_points):
+                    points_matrix = [point[0], point[1], 1]
+                    result_points = np.matmul(points_matrix, self.transformation_matrix())
+                    new_vector[i][0] = result_points[0]
+                    new_vector[i][1] = result_points[1]
+                
+                new_vectors.append(new_vector)
+
+            object.drawn(self.viewport, self, new_vectors)
             self.update_table(object)
         else:
-            
-            #Nessa função precisa colocar a parte de Projeção Paralela Ortogonal
-
             for i, point in enumerate(object.points):
                 points_matrix = [point[0], point[1], 1]
                 result_points = np.matmul(points_matrix, self.transformation_matrix())

@@ -12,9 +12,6 @@ class Point3D(Object):
         self.color = color
         
     def drawn(self, viewport, normalized_window, new_vectors=[]):
-
-        #Nessa função precisa colocar a parte de Projeção Paralela Ortogonal
-        
         if new_points == None:
             new_points = self.points
 

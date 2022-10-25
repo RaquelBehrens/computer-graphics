@@ -78,7 +78,6 @@ class IncludePolygon(IncludeWindow):
                 else:
                     if self.radio_variable.get() != 0:
                         objeto = Wireframe(name, coordinates, self.color, self.radio_variable.get())
-                        objeto.drawn(self.viewport, self.coord_scn)
 
                         self.coord_scn.generate_scn(objeto)
 

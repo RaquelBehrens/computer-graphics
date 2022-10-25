@@ -15,11 +15,7 @@ class Object3D(Object):
         self.color = color
             
     def drawn(self, viewport, normalized_window, new_vectors=[]):
-        
-        #Nessa função precisa colocar a parte de Projeção Paralela Ortogonal
-        
         if not new_vectors:
-            new_vectors = []
             for vector in self.vectors:
                 normalized_points = normalized_window.wireframe_clipping(vector)
                 new_vectors.append(normalized_points)
@@ -426,44 +422,6 @@ class Object3D(Object):
             center_y += point[1]
             center_z += point[2]
         self.center = [center_x/len(self.points), center_y/len(self.points), center_y/len(self.points)]
-        
-    def projection(self, points, normalized_window):
-        self.calculate_center()
-        vrp = normalized_window.vrp
-        translation_matrix = [[1, 0, 0, 0],
-                              [0, 1, 0, 0],
-                              [0, 0, 1, 0],
-                              [-(float(vrp[0])), -(float(vrp[1])), -(float(vrp[2])), 1]]
-
-        #print('translation_matrix: ', translation_matrix)
-        
-        vpn = normalized_window.define_vpn(translation_matrix)
-        #print('vnp: ', vpn)
-        tan_x = vpn[1] / vpn[2]
-        tan_y = vpn[0] / vpn[2]
-        vpn_angle_x = np.arctan(tan_x)
-        vpn_angle_y = np.arctan(tan_y)
-
-        #print('angles: ', vpn_angle_x, vpn_angle_y)
-
-        rot_x = self.calculate_matrix_operation('x', vpn_angle_x)
-        rot_y = self.calculate_matrix_operation('y', vpn_angle_y)
-
-        transform_matrix = np.matmul(translation_matrix, rot_x)
-        transform_matrix = np.matmul(transform_matrix, rot_y)
-
-        #print('final matrix: ', transform_matrix)
-
-        for point in points:
-            points_matrix = [point[0], point[1], point[2], 1]
-
-            result_points = np.matmul(points_matrix, transform_matrix)
-
-            point[0] = result_points[0]
-            point[1] = result_points[1]
-            point[2] = result_points[2]
-
-        return points
  
     def obj_string(self, list_of_points, list_of_colors):
         pass

@@ -2,8 +2,9 @@ from tkinter import messagebox
 from utils import hex_to_rgb
 
 class DescritorOBJ():
-    def __init__(self, viewport, display_file):
+    def __init__(self, viewport, coord_scn, display_file):
         self.display_file = display_file
+        self.coord_scn = coord_scn
         self.viewport = viewport
         self.list_of_colors = {}
         self.list_of_objects = []
@@ -27,8 +28,8 @@ class DescritorOBJ():
         self.wavefront_file.write("mtllib sample.mtl\n")
         self.wavefront_file.write("o window\n")
 
-        x0 = self.viewport.winfo_screenwidth()/2
-        y0 = self.viewport.winfo_screenheight()/2
+        x0 = self.coord_scn.wc[0]
+        y0 = self.coord_scn.wc[1]
         self.wavefront_file.write(f"w {x0} {y0}\n")
 
         for object in self.list_of_objects:
@@ -80,8 +81,6 @@ class DescritorOBJ():
                 lines = f.readlines()
                 for i, line in enumerate(lines):
                     line_words_list = line.strip("\n").split(" ")
-                    
-                    
 
                     if line_words_list[0] == 'v':
                         v_dict[i+1] = [line_words_list[1], line_words_list[2], line_words_list[3]]

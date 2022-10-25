@@ -79,8 +79,6 @@ class IncludeLine(IncludeWindow):
                     objeto = Line(name, [[x1, y1], [x2, y2]], self.color)
                     self.lines_list.append(objeto)
 
-                objeto.drawn(self.viewport, self.coord_scn)
-
                 self.coord_scn.generate_scn(objeto)
                 
                 self.close_window()                
