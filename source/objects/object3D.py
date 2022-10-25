@@ -19,8 +19,9 @@ class Object3D(Object):
             for vector in self.vectors:
                 normalized_points = normalized_window.wireframe_clipping(vector)
                 new_vectors.append(normalized_points)
-        else: 
-            for vector in new_vectors:
+        else:
+            old_vector = new_vectors.copy()
+            for vector in old_vector:
                 normalized_points = normalized_window.wireframe_clipping(vector)
                 new_vectors.append(normalized_points)
 
