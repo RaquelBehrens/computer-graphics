@@ -11,7 +11,9 @@ class NormalizedWindow:
         self.viewport = viewport
         self.main_table = main_table
         self.wc = [0, 0, 0]
-        self.angle = 0
+        self.angle_x = 0
+        self.angle_y = 0
+        self.angle_z = 0
         self.s = [1, 1, 1]
         self.x_min = 10
         self.x_max = VIEWPORT_WIDTH-10
@@ -57,7 +59,7 @@ class NormalizedWindow:
             self.update_table(object)
 
     def transformation_matrix(self):
-        rotate_radian = -(np.radians(float(self.angle)))
+        rotate_radian = -(np.radians(float(self.angle_z)))
 
         translation_matrix = [[1, 0, 0],
                               [0, 1, 0],
@@ -75,22 +77,34 @@ class NormalizedWindow:
         return result_matrix
     
     def transformation_matrix_3d(self):
-        rotate_radian = -(np.radians(float(self.angle)))
+        rotate_radian_x = -(np.radians(float(self.angle_x)))
+        rotate_radian_y = -(np.radians(float(self.angle_y))) 
+        rotate_radian_z = -(np.radians(float(self.angle_z)))
 
         translation_matrix = [[1, 0, 0, 0],
                               [0, 1, 0, 0],
                               [0, 0, 1, 0],
                               [-(self.wc[0]), -(self.wc[1]), -(self.wc[2]), 1]]
-        rotate_matrix = [[(np.cos(rotate_radian)), 0, -(np.sin(rotate_radian)), 0],
-                         [0, 1, 0, 0],
-                         [(np.sin(rotate_radian)), 0, (np.cos(rotate_radian)), 0],
-                         [0, 0, 0, 1]]
+        rotate_matrix_x = [[1, 0, 0, 0],
+                           [0, (np.cos(rotate_radian_x)), (np.sin(rotate_radian_x)), 0],
+                           [0, -(np.sin(rotate_radian_x)), (np.cos(rotate_radian_x)), 0],
+                           [0, 0, 0, 1]]
+        rotate_matrix_y = [[(np.cos(rotate_radian_y)), 0, -(np.sin(rotate_radian_y)), 0],
+                           [0, 1, 0, 0],
+                           [(np.sin(rotate_radian_y)), 0, (np.cos(rotate_radian_y)), 0],
+                           [0, 0, 0, 1]]
+        rotate_matrix_z = [[(np.cos(rotate_radian_z)), (np.sin(rotate_radian_z)), 0, 0],
+                           [-(np.sin(rotate_radian_z)), (np.cos(rotate_radian_z)), 0, 0],
+                           [0, 0, 1, 0],
+                           [0, 0, 0, 1]]
         scale_matrix = [[self.s[0], 0, 0, 0],
                         [0, self.s[1], 0, 0],
                         [0, 0, self.s[2], 0],
                         [0, 0, 0, 1]]
 
-        result_matrix = np.matmul(translation_matrix, rotate_matrix)
+        result_matrix = np.matmul(translation_matrix, rotate_matrix_x)
+        result_matrix = np.matmul(result_matrix, rotate_matrix_y)
+        result_matrix = np.matmul(result_matrix, rotate_matrix_z)
         result_matrix = np.matmul(result_matrix, scale_matrix)
 
         return result_matrix
