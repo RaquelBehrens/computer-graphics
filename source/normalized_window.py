@@ -399,13 +399,15 @@ class NormalizedWindow:
         return clipped
     
     def define_vpn(self, translate_matrix):
-        w1 = np.array([10, VIEWPORT_HEIGHT-10, 0, 1])
+        w1 = np.array([0, VIEWPORT_HEIGHT, 0, 1])
         w1 = np.matmul(w1, translate_matrix)
-        w2 = np.array([VIEWPORT_WIDTH-10, VIEWPORT_HEIGHT-10, 0, 1])
+        w2 = np.array([VIEWPORT_WIDTH, VIEWPORT_HEIGHT, 0, 1])
         w2 = np.matmul(w2, translate_matrix)
+        
+        vrp = np.matmul(self.vrp, translate_matrix)
 
-        vector_a = self.vrp - w1
-        vector_b = w2 - self.vrp
+        vector_a = vrp - w1
+        vector_b = w2 - vrp
 
         result_x = vector_a[1]*vector_b[2] - vector_a[2]*vector_b[1]
         result_y = vector_a[2]*vector_b[0] - vector_a[0]*vector_b[2]
