@@ -200,7 +200,7 @@ class Window(Frame):
                     if isinstance(object, Line):
                         self.lines_list.remove(object)
                         self.viewport.delete(selected_item_id)
-                    elif isinstance(object, Wireframe) or isinstance(object, Curve):
+                    elif isinstance(object, Wireframe) or isinstance(object, Curve) or isinstance(object, Object3D):
                         for id in object.list_ids:
                             self.viewport.delete(id)
                         if object.fill_form != None:    

@@ -20,9 +20,9 @@ class Object3D(Object):
                 normalized_points = normalized_window.wireframe_clipping(vector)
                 new_vectors.append(normalized_points)
         else:
-            for i, vector in enumerate(new_vectors):
+            for vector in new_vectors:
                 normalized_points = normalized_window.wireframe_clipping(vector)
-                new_vectors[i] = normalized_points
+                vector = normalized_points
 
             for i in range(len(self.list_ids)):
                 viewport.delete(self.list_ids[i])
@@ -44,6 +44,8 @@ class Object3D(Object):
 
                 id = viewport.create_line((x1, viewport_y1), (x2, viewport_y2), width=3, fill=self.color)
                 self.list_ids.append(id)
+
+        self.id = self.list_ids[-1]
 
     def calculate_matrix_operation(self, axis, angle):
         if axis == 'x':
