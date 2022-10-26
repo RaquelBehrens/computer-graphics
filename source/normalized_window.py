@@ -28,7 +28,7 @@ class NormalizedWindow:
         for i in range(len(new_points)):
             new_points[i] = [None] * 2
 
-        if isinstance(object, Object3D) or isinstance(object, Point3D):
+        if isinstance(object, Object3D):
             new_vectors = []
             for vector in object.vectors:
                 projected_points = projection(vector, object, self)

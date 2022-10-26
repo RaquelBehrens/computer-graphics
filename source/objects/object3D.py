@@ -18,7 +18,8 @@ class Object3D(Object):
         if not new_vectors:
             for vector in self.vectors:
                 normalized_points = normalized_window.wireframe_clipping(vector)
-                new_vectors.append(normalized_points)
+                if normalized_points != []:
+                    new_vectors.append(normalized_points)
         else:
             for vector in new_vectors:
                 normalized_points = normalized_window.wireframe_clipping(vector)
@@ -67,8 +68,13 @@ class Object3D(Object):
     def translate(self, viewport, translation_points, normalized_window):
         translation_points = translation_points.split()
         axis = translation_points[5]
-        
-        rotate_radian = -(np.radians(float(normalized_window.angle)))
+        if axis == 'x':
+            rotate_radian = -(np.radians(float(normalized_window.angle_x)))
+        elif axis == 'y':
+            rotate_radian = -(np.radians(float(normalized_window.angle_y)))
+        else:
+            rotate_radian = -(np.radians(float(normalized_window.angle_z)))
+
         rotation_matrix = self.calculate_matrix_operation(axis, rotate_radian)
         
         points_matrix = []
@@ -77,19 +83,19 @@ class Object3D(Object):
                               [0, 0, 1, 0],
                               [float(translation_points[0]), float(translation_points[1]), float(translation_points[2]), 1]]
         
-        rotate_radian = -(np.radians(float(normalized_window.angle)))
+        rotate_radian = -rotate_radian
         rotation_matrix_inverse = self.calculate_matrix_operation(axis, rotate_radian)
-        
+
         for point in self.points:
             points_matrix = [point[0], point[1], point[2], 1]
             result_points = np.matmul(points_matrix, rotation_matrix)
             result_points = np.matmul(result_points, translation_matrix)
             result_points = np.matmul(result_points, rotation_matrix_inverse)
 
-            for vector in self.vectors:
-                for vector_point in vector:
-                    if vector_point == point:
-                        vector_point = [result_points[0], result_points[1], result_points[2]]
+            for i in range(len(self.vectors)):
+                for j in range(len(self.vectors[i])):
+                    if (self.vectors[i][j] == point):
+                        self.vectors[i][j] = [result_points[0], result_points[1], result_points[2]]
 
             point[0] = result_points[0]
             point[1] = result_points[1]
