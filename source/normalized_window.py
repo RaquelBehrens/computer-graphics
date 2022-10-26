@@ -274,12 +274,26 @@ class NormalizedWindow:
                 # Quando o objeto já está desenhado, caso esteja fora da window, "esconde" ele
                 self.viewport.itemconfigure(object.id, state='hidden')
 
-    def wireframe_clipping(self, points, circular=True):
-        clipped_points = points
+    def wireframe_clipping(self, points, circular=True, vector=False):
+        if vector:
+            aux_points = []
+            for new_vector in points:
+                aux_points.append(new_vector[0])
+                aux_points.append(new_vector[1])
+            clipped_points = aux_points
+        else:
+            clipped_points = points
+
         clipped_points = self.clip_right_x(clipped_points, circular)
         clipped_points = self.clip_left_x(clipped_points, circular)
         clipped_points = self.clip_upper_y(clipped_points, circular)
         clipped_points = self.clip_bottom_y(clipped_points, circular)
+        
+        if vector:
+            return_points = []
+            for i in range(0, len(clipped_points)-1, 2):
+                return_points.append([[clipped_points[i][0],clipped_points[i][1]],[clipped_points[i+1][0],clipped_points[i+1][1]]])
+            return return_points
         return clipped_points
     
     def clip_left_x(self, points, circular):
