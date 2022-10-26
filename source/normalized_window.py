@@ -84,7 +84,7 @@ class NormalizedWindow:
         translation_matrix = [[1, 0, 0, 0],
                               [0, 1, 0, 0],
                               [0, 0, 1, 0],
-                              [-(self.wc[0]), -(self.wc[1]), -(self.wc[2]), 1]]
+                              [-(self.vrp[0]), -(self.vrp[1]), -(self.vrp[2]), 1]]
         rotate_matrix_x = [[1, 0, 0, 0],
                            [0, (np.cos(rotate_radian_x)), (np.sin(rotate_radian_x)), 0],
                            [0, -(np.sin(rotate_radian_x)), (np.cos(rotate_radian_x)), 0],
