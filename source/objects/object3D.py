@@ -16,14 +16,12 @@ class Object3D(Object):
             
     def drawn(self, viewport, normalized_window, new_vectors=[]):
         if not new_vectors:
-            for vector in self.vectors:
-                normalized_points = normalized_window.wireframe_clipping(vector)
-                if normalized_points != []:
-                    new_vectors.append(normalized_points)
+            normalized_points = normalized_window.wireframe_clipping(self.vectors, vector=True)
+            if normalized_points != []:
+                new_vectors = normalized_points
         else:
-            for vector in new_vectors:
-                normalized_points = normalized_window.wireframe_clipping(vector)
-                vector = normalized_points
+            normalized_points = normalized_window.wireframe_clipping(new_vectors, vector=True)
+            new_vectors = normalized_points
 
             for i in range(len(self.list_ids)):
                 viewport.delete(self.list_ids[i])
@@ -46,7 +44,7 @@ class Object3D(Object):
                 id = viewport.create_line((x1, viewport_y1), (x2, viewport_y2), width=3, fill=self.color)
                 self.list_ids.append(id)
 
-        self.id = self.list_ids[-1]
+            self.id = self.list_ids[-1]
 
     def calculate_matrix_operation(self, axis, angle):
         if axis == 'x':
