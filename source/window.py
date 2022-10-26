@@ -65,18 +65,13 @@ class Window(Frame):
         self.down = Button(self.frame1, text='Baixo', font=('Time', '11'), command=self.move_down)
         self.down.grid(row=6, column=0, sticky=NW, padx=70)
 
-        self.forward = Button(self.frame1, text='Frente', font=('Time', '11'), command=self.move_forward)
-        self.forward.grid(row=5, column=0, sticky=NW, padx=(190,0), pady=(3,0))
-        self.backwards = Button(self.frame1, text='Trás', font=('Time', '11'), command=self.move_backwards)
-        self.backwards.grid(row=6, column=0, sticky=NW, padx=(190,0))
-
         Label(self.frame1, text='Zoom: ', font=('Time', '13')).grid(row=7, column=0, sticky=NW, pady=10)
         self.more_zoom = Button(self.frame1, text='  +  ', font=('Time', '11'), command=self.zoom_in)
         self.more_zoom.grid(row=8, column=0, sticky=NW, padx=30, pady=0)
         self.less_zoom = Button(self.frame1, text='  -  ', font=('Time', '11'), command=self.zoom_out)
         self.less_zoom.grid(row=8, column=0, columnspan=2, pady=0)
         
-        Label(self.frame1, text='Rotação: ', font=('Time', '13')).grid(row=9, column=0, sticky=NW, pady=10)
+        Label(self.frame1, text='Rotação eixo z: ', font=('Time', '13')).grid(row=9, column=0, sticky=NW, pady=10)
         self.right_rotation = Button(self.frame1, text='  ↻  ', font=('Time', '11'), command=self.rotate_left)
         self.right_rotation.grid(row=10, column=0, sticky=NW, padx=30, pady=0)
         self.left_rotation = Button(self.frame1, text='  ↺  ', font=('Time', '11'), command=self.rotate_right)
@@ -328,18 +323,6 @@ class Window(Frame):
         self.coord_scn.vrp[0] += 10*(sin)*(cos_y)
         self.coord_scn.vrp[1] -= (10*(sin)*(sin_x)*(sin_y) + 10*(cos)*(cos_x))
         self.coord_scn.vrp[2] += (10*(sin)*(cos_x)*(sin_y) - 10*(cos)*(sin_x))
-
-        for object in self.display_file:
-            self.coord_scn.generate_scn(object)
-
-    def move_forward(self):
-        self.coord_scn.wc[2] -= 10
-
-        for object in self.display_file:
-            self.coord_scn.generate_scn(object)
-
-    def move_backwards(self):
-        self.coord_scn.wc[2] += 10
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
