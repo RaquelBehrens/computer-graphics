@@ -261,6 +261,8 @@ class Window(Frame):
         self.coord_scn.vrp[1] += (10*(sin)*(sin_x)*(sin_y) + 10*(cos)*(cos_x))
         self.coord_scn.vrp[2] -= (10*(sin)*(cos_x)*(sin_y) - 10*(cos)*(sin_x)) 
 
+        #[self.coord_scn.vrp[0], self.coord_scn.vrp[1], self.coord_scn.vrp[2]] = self.translation_of_window([self.coord_scn.vrp[0], self.coord_scn.vrp[1], self.coord_scn.vrp[2]], [0, 10, 0])
+
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
 
@@ -377,6 +379,62 @@ class Window(Frame):
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
+
+    def translation_of_window(self, point, translation_points):
+        x_rotated_angle = -self.coord_scn.angle_x
+        rotation_matrix_x = [[1, 0, 0, 0],
+                             [0, (np.cos(x_rotated_angle)), (np.sin(x_rotated_angle)), 0],
+                             [0, -(np.sin(x_rotated_angle)), (np.cos(x_rotated_angle)), 0],
+                             [0, 0, 0, 1]]
+        
+        y_rotated_angle = -self.coord_scn.angle_y
+        rotation_matrix_y = [[(np.cos(y_rotated_angle)), 0, -(np.sin(y_rotated_angle)), 0],
+                             [0, 1, 0, 0],
+                             [(np.sin(y_rotated_angle)), 0, (np.cos(y_rotated_angle)), 0],
+                             [0, 0, 0, 1]]
+
+        z_rotated_angle = -self.coord_scn.angle_z
+        rotation_matrix_z = [[(np.cos(z_rotated_angle)), (np.sin(z_rotated_angle)), 0, 0],
+                             [-(np.sin(z_rotated_angle)), (np.cos(z_rotated_angle)), 0, 0],
+                             [0, 0, 1, 0],
+                             [0, 0, 0, 1]]
+                
+        points_matrix = []
+        translation_matrix = [[1, 0, 0, 0],
+                              [0, 1, 0, 0],
+                              [0, 0, 1, 0],
+                              [float(translation_points[0]), float(translation_points[1]), float(translation_points[2]), 1]]
+        
+        x_rotated_angle_inverse = -x_rotated_angle
+        rotation_matrix_x_inverse = [[1, 0, 0, 0],
+                                     [0, (np.cos(x_rotated_angle_inverse)), (np.sin(x_rotated_angle_inverse)), 0],
+                                     [0, -(np.sin(x_rotated_angle_inverse)), (np.cos(x_rotated_angle_inverse)), 0],
+                                     [0, 0, 0, 1]]
+
+        y_rotated_angle_inverse = -y_rotated_angle
+        rotation_matrix_y_inverse = [[(np.cos(y_rotated_angle_inverse)), 0, -(np.sin(y_rotated_angle_inverse)), 0],
+                                     [0, 1, 0, 0],
+                                     [(np.sin(y_rotated_angle_inverse)), 0, (np.cos(y_rotated_angle_inverse)), 0],
+                                     [0, 0, 0, 1]]
+
+        z_rotated_angle_inverse = -z_rotated_angle
+        rotation_matrix_z_inverse = [[(np.cos(z_rotated_angle_inverse)), (np.sin(z_rotated_angle_inverse)), 0, 0],
+                                     [-(np.sin(z_rotated_angle_inverse)), (np.cos(z_rotated_angle_inverse)), 0, 0],
+                                     [0, 0, 1, 0],
+                                     [0, 0, 0, 1]]
+
+        points_matrix = [point[0], point[1], point[2], 1]
+        result_points = np.matmul(points_matrix, rotation_matrix_x)
+        #result_points = np.matmul(result_points, rotation_matrix_y)
+        #result_points = np.matmul(result_points, rotation_matrix_z)
+        
+        result_points = np.matmul(result_points, translation_matrix)
+
+        result_points = np.matmul(result_points, rotation_matrix_x_inverse)
+        #result_points = np.matmul(result_points, rotation_matrix_y_inverse)
+        #result_points = np.matmul(result_points, rotation_matrix_z_inverse)
+
+        return [result_points[0], result_points[1], result_points[2]]
 
     def generate_obj_file(self):
         descritor_obj = DescritorOBJ(self.viewport, self.coord_scn, self.display_file)
