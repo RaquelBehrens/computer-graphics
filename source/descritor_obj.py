@@ -1,6 +1,7 @@
 from tkinter import messagebox
 from objects import (Point, Line, Wireframe, Curve, Point3D, Object3D)
 from utils import hex_to_rgb
+from tkinter import simpledialog
 
 class DescritorOBJ():
     def __init__(self, viewport, coord_scn, display_file):
@@ -93,14 +94,17 @@ class DescritorOBJ():
         vertices_atuais = []
         cor_atual = ''
 
+        nome_arquivo_obj = simpledialog.askstring("Input", "Digite o nome do arquivo .obj")
+        v_index = 1
         try:
-            with open('wavefront.obj') as f:
+            with open(f'{nome_arquivo_obj}.obj') as f:
                 lines = f.readlines()
                 for i, line in enumerate(lines):
                     line_words_list = line.strip("\n").split(" ")
 
                     if line_words_list[0] == 'v':
-                        v_dict[i+1] = [line_words_list[1], line_words_list[2], line_words_list[3]]
+                        v_dict[v_index] = [line_words_list[1], line_words_list[2], line_words_list[3]]
+                        v_index += 1
 
                     elif line_words_list[0] == 'mtllib':
                         color_dict = self.get_color_dict(line_words_list[1])
@@ -126,6 +130,10 @@ class DescritorOBJ():
 
                     elif line_words_list[0] == 'f':
                         vertices_atuais = [v_dict.get(int(line_words_list[1].split('/')[0])), v_dict.get(int(line_words_list[2].split('/')[0])), v_dict.get(int(line_words_list[3].split('/')[0]))]
+                        for i in range(len(vertices_atuais)):
+                            for j in range(len(vertices_atuais[i])):
+                                vertices_atuais[i][j] = float(vertices_atuais[i][j])
+                        
                         objetos.append(['poligono', objeto_atual, cor_atual, vertices_atuais])
 
                     elif line_words_list[0] == 'g':

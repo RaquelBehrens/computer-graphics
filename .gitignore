@@ -1,4 +1,4 @@
 __pycache__/
 
-wavefront.obj
-sample.mtl
+*.obj
+*.mtl

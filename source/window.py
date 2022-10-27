@@ -442,21 +442,25 @@ class Window(Frame):
 
     def read_obj_file(self):
         try:
-            descritor_obj = DescritorOBJ(self.viewport, self.display_file)
+            descritor_obj = DescritorOBJ(self.viewport, self.coord_scn, self.display_file)
             objetos = descritor_obj.read_OBJ_file()
 
             poligonos_adicionados = {}
-
+            lista_objetos = []
+            
             for objeto in objetos:
                 tipo, nome, cor, vertices = objeto
+                for i in range(len(cor)):
+                    cor[i] = float(cor[i])
+
                 cor = f'#{rgb_to_hex(cor)}'
-                lista_objetos = []
 
                 for vertice in vertices:
                     for i in range(len(vertice)):
                         vertice[i] = float(vertice[i])
 
-                    vertice.pop()
+                    if not (tipo=='poligono'):
+                        vertice.pop()
 
                 if tipo == 'ponto':
                     objeto = Point(nome, vertices, cor)
@@ -478,6 +482,7 @@ class Window(Frame):
                         for i in range(len(vertices)-1):
                             arestas.append([vertices[i], vertices[i+1]])
                         objeto = Object3D(nome, vertices, arestas, cor)
+                        poligonos_adicionados[nome] = objeto
                         lista_objetos.append(objeto)
                     else:
                         arestas = []
@@ -486,11 +491,11 @@ class Window(Frame):
                         poligonos_adicionados[nome].points = poligonos_adicionados[nome].points + vertices
                         poligonos_adicionados[nome].vectors = poligonos_adicionados[nome].vectors + arestas
 
-                for objeto in lista_objetos:
-                    objeto.drawn(self.viewport)
-                    self.coord_scn.generate_scn(objeto)
-                    self.display_file.append(objeto)
-                    self.include_object_in_table(objeto)
+            for objeto in lista_objetos:
+                objeto.drawn(self.viewport, self.coord_scn)
+                self.coord_scn.generate_scn(objeto)
+                self.display_file.append(objeto)
+                self.include_object_in_table(objeto)
 
             for object in self.display_file:
                 self.coord_scn.generate_scn(object)
