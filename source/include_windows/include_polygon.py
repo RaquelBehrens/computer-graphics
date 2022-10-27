@@ -111,7 +111,8 @@ class IncludePolygon(IncludeWindow):
                 float(lista[i])
                 aux.append(lista[i])
             except ValueError:
-                pass
+                if lista[i] == '-':
+                    aux.append(lista[i])
 
         if len(aux_coords) % 2 == 0 and len(aux_coords) >= 6:    
             for i in range(0, len(aux_coords), 2):
