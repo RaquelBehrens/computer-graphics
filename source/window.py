@@ -254,12 +254,12 @@ class Window(Frame):
         sin_y = np.sin(rotate_radian_y)
         cos_y = np.cos(rotate_radian_y)
 
-        self.coord_scn.wc[0] += 10*(sin)
-        self.coord_scn.wc[1] += 10*(cos)
+        self.coord_scn.wc[0] += (10*(sin))*(1/self.coord_scn.s[1])
+        self.coord_scn.wc[1] += (10*(cos))*(1/self.coord_scn.s[1])
 
-        self.coord_scn.vrp[0] -= 10*(sin)*(cos_y)
-        self.coord_scn.vrp[1] += (10*(sin)*(sin_x)*(sin_y) + 10*(cos)*(cos_x))
-        self.coord_scn.vrp[2] -= (10*(sin)*(cos_x)*(sin_y) - 10*(cos)*(sin_x)) 
+        self.coord_scn.vrp[0] -= (10*(sin)*(cos_y))*(1/self.coord_scn.s[1])
+        self.coord_scn.vrp[1] += (10*((sin)*(sin_x)*(sin_y) + (cos*cos_x)))*(1/self.coord_scn.s[1])
+        self.coord_scn.vrp[2] -= (10*((sin)*(cos_x)*(sin_y) - (cos*sin_x)))*(1/self.coord_scn.s[1])
 
         #[self.coord_scn.vrp[0], self.coord_scn.vrp[1], self.coord_scn.vrp[2]] = self.translation_of_window([self.coord_scn.vrp[0], self.coord_scn.vrp[1], self.coord_scn.vrp[2]], [0, 10, 0])
 
@@ -277,12 +277,12 @@ class Window(Frame):
         sin_y = np.sin(rotate_radian_y)
         cos_y = np.cos(rotate_radian_y)
 
-        self.coord_scn.wc[0] -= 10*(cos)
-        self.coord_scn.wc[1] += 10*(sin)
+        self.coord_scn.wc[0] -= (10*(cos))*(1/self.coord_scn.s[0])
+        self.coord_scn.wc[1] += (10*(sin))*(1/self.coord_scn.s[0])
 
-        self.coord_scn.vrp[0] -= 10*(cos)*(cos_y)
-        self.coord_scn.vrp[1] += (10*(cos)*(sin_x)*(sin_y) - 10*(sin)*(cos_x))
-        self.coord_scn.vrp[2] += (10*(cos)*(cos_x)*(sin_y) + 10*(sin)*(sin_x)) 
+        self.coord_scn.vrp[0] -= (10*(cos)*(cos_y))*(1/self.coord_scn.s[0])
+        self.coord_scn.vrp[1] += (10*((cos)*(sin_x)*(sin_y) - (sin*cos_x)))*(1/self.coord_scn.s[0])
+        self.coord_scn.vrp[2] += (10*((cos)*(cos_x)*(sin_y) + (sin*sin_x)))*(1/self.coord_scn.s[0])
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
@@ -298,12 +298,12 @@ class Window(Frame):
         sin_y = np.sin(rotate_radian_y)
         cos_y = np.cos(rotate_radian_y)
 
-        self.coord_scn.wc[0] += 10*(cos)
-        self.coord_scn.wc[1] -= 10*(sin)
+        self.coord_scn.wc[0] += (10*(cos))*(1/self.coord_scn.s[0])
+        self.coord_scn.wc[1] -= (10*(sin))*(1/self.coord_scn.s[0])
 
-        self.coord_scn.vrp[0] += 10*(cos)*(cos_y)
-        self.coord_scn.vrp[1] -= (10*(cos)*(sin_x)*(sin_y) - 10*(sin)*(cos_x))
-        self.coord_scn.vrp[2] -= (10*(cos)*(cos_x)*(sin_y) + 10*(sin)*(sin_x))
+        self.coord_scn.vrp[0] += (10*(cos)*(cos_y))*(1/self.coord_scn.s[0])
+        self.coord_scn.vrp[1] -= (10*((cos)*(sin_x)*(sin_y) - (sin*cos_x)))*(1/self.coord_scn.s[0])
+        self.coord_scn.vrp[2] -= (10*((cos)*(cos_x)*(sin_y) + (sin*sin_x)))*(1/self.coord_scn.s[0])
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
@@ -319,12 +319,12 @@ class Window(Frame):
         sin_y = np.sin(rotate_radian_y)
         cos_y = np.cos(rotate_radian_y)
 
-        self.coord_scn.wc[0] -= 10*(sin)
-        self.coord_scn.wc[1] -= 10*(cos)
+        self.coord_scn.wc[0] -= (10*(sin))*(1/self.coord_scn.s[1])
+        self.coord_scn.wc[1] -= (10*(cos))*(1/self.coord_scn.s[1])
 
-        self.coord_scn.vrp[0] += 10*(sin)*(cos_y)
-        self.coord_scn.vrp[1] -= (10*(sin)*(sin_x)*(sin_y) + 10*(cos)*(cos_x))
-        self.coord_scn.vrp[2] += (10*(sin)*(cos_x)*(sin_y) - 10*(cos)*(sin_x))
+        self.coord_scn.vrp[0] += (10*(sin)*(cos_y))*(1/self.coord_scn.s[1])
+        self.coord_scn.vrp[1] -= (10*((sin)*(sin_x)*(sin_y) + (cos*cos_x)))*(1/self.coord_scn.s[1])
+        self.coord_scn.vrp[2] += (10*((sin)*(cos_x)*(sin_y) - (cos*sin_x)))*(1/self.coord_scn.s[1])
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
@@ -373,6 +373,9 @@ class Window(Frame):
         self.coord_scn.vrp[0] = 0
         self.coord_scn.vrp[1] = 0
         self.coord_scn.vrp[2] = 0
+        self.coord_scn.s[0] = 1
+        self.coord_scn.s[1] = 1
+        self.coord_scn.s[2] = 1
         self.coord_scn.angle_x = 0
         self.coord_scn.angle_y = 0
         self.coord_scn.angle_z = 0
