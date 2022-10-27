@@ -71,11 +71,23 @@ class Window(Frame):
         self.less_zoom = Button(self.frame1, text='  -  ', font=('Time', '11'), command=self.zoom_out)
         self.less_zoom.grid(row=8, column=0, columnspan=2, pady=0)
         
-        Label(self.frame1, text='Rotação: ', font=('Time', '13')).grid(row=9, column=0, sticky=NW, pady=10)
+        Label(self.frame1, text='Rotação eixo z: ', font=('Time', '13')).grid(row=9, column=0, sticky=NW, pady=10)
         self.right_rotation = Button(self.frame1, text='  ↻  ', font=('Time', '11'), command=self.rotate_left)
         self.right_rotation.grid(row=10, column=0, sticky=NW, padx=30, pady=0)
         self.left_rotation = Button(self.frame1, text='  ↺  ', font=('Time', '11'), command=self.rotate_right)
         self.left_rotation.grid(row=10, column=0, columnspan=2, pady=0)
+        
+        Label(self.frame2, text='Rotação eixo x: ', font=('Time', '13')).grid(row=1, column=1, sticky=NE)
+        self.right_rotation_x = Button(self.frame2, text='  ↻  ', font=('Time', '11'), command=self.rotate_x_left)
+        self.right_rotation_x.grid(row=1, column=1, stick=N, padx=40, pady=40)
+        self.left_rotation_x = Button(self.frame2, text='  ↺  ', font=('Time', '11'), command=self.rotate_x_right)
+        self.left_rotation_x.grid(row=1, column=1, stick=NE, pady=40)
+
+        Label(self.frame2, text='Rotação eixo y: ', font=('Time', '13')).grid(row=1, column=1, sticky=NE, pady=80)
+        self.right_rotation = Button(self.frame2, text='  ↻  ', font=('Time', '11'), command=self.rotate_y_left)
+        self.right_rotation.grid(row=1, column=1, stick=N, padx=40, pady=120)
+        self.left_rotation = Button(self.frame2, text='  ↺  ', font=('Time', '11'), command=self.rotate_y_right)
+        self.left_rotation.grid(row=1, column=1, stick=NE, pady=120)
 
         Label(self.frame1, text='Objetos: ', font=('Time', '13')).grid(row=11, column=0, sticky=NW, pady=10)
         self.point = Button(self.frame1, text='Criar Ponto', font=('Time', '11'), command=self.include_point)
@@ -183,7 +195,7 @@ class Window(Frame):
                     if isinstance(object, Line):
                         self.lines_list.remove(object)
                         self.viewport.delete(selected_item_id)
-                    elif isinstance(object, Wireframe) or isinstance(object, Curve):
+                    elif isinstance(object, Wireframe) or isinstance(object, Curve) or isinstance(object, Object3D):
                         for id in object.list_ids:
                             self.viewport.delete(id)
                         if object.fill_form != None:    
@@ -232,57 +244,124 @@ class Window(Frame):
             self.coord_scn.generate_scn(object)
 
     def move_up(self):
-        rotate_radian = (np.radians(float(self.coord_scn.angle)))
+        rotate_radian = (np.radians(float(self.coord_scn.angle_z)))
+        rotate_radian_x = (np.radians(float(self.coord_scn.angle_x)))
+        rotate_radian_y = (np.radians(float(self.coord_scn.angle_y)))
         sin = np.sin(rotate_radian)
         cos = np.cos(rotate_radian)
+        sin_x = np.sin(rotate_radian_x)
+        cos_x = np.cos(rotate_radian_x)
+        sin_y = np.sin(rotate_radian_y)
+        cos_y = np.cos(rotate_radian_y)
 
         self.coord_scn.wc[0] += 10*(sin)
         self.coord_scn.wc[1] += 10*(cos)
+
+        self.coord_scn.vrp[0] -= 10*(sin)*(cos_y)
+        self.coord_scn.vrp[1] += (10*(sin)*(sin_x)*(sin_y) + 10*(cos)*(cos_x))
+        self.coord_scn.vrp[2] -= (10*(sin)*(cos_x)*(sin_y) - 10*(cos)*(sin_x)) 
+
+        #[self.coord_scn.vrp[0], self.coord_scn.vrp[1], self.coord_scn.vrp[2]] = self.translation_of_window([self.coord_scn.vrp[0], self.coord_scn.vrp[1], self.coord_scn.vrp[2]], [0, 10, 0])
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
 
     def move_left(self):
-        rotate_radian = (np.radians(float(self.coord_scn.angle)))
+        rotate_radian = (np.radians(float(self.coord_scn.angle_z)))
+        rotate_radian_x = (np.radians(float(self.coord_scn.angle_x)))
+        rotate_radian_y = (np.radians(float(self.coord_scn.angle_y)))
         sin = np.sin(rotate_radian)
         cos = np.cos(rotate_radian)
+        sin_x = np.sin(rotate_radian_x)
+        cos_x = np.cos(rotate_radian_x)
+        sin_y = np.sin(rotate_radian_y)
+        cos_y = np.cos(rotate_radian_y)
 
         self.coord_scn.wc[0] -= 10*(cos)
         self.coord_scn.wc[1] += 10*(sin)
+
+        self.coord_scn.vrp[0] -= 10*(cos)*(cos_y)
+        self.coord_scn.vrp[1] += (10*(cos)*(sin_x)*(sin_y) - 10*(sin)*(cos_x))
+        self.coord_scn.vrp[2] += (10*(cos)*(cos_x)*(sin_y) + 10*(sin)*(sin_x)) 
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
     
     def move_right(self):
-        rotate_radian = (np.radians(float(self.coord_scn.angle)))
+        rotate_radian = (np.radians(float(self.coord_scn.angle_z)))
+        rotate_radian_x = (np.radians(float(self.coord_scn.angle_x)))
+        rotate_radian_y = (np.radians(float(self.coord_scn.angle_y)))
         sin = np.sin(rotate_radian)
         cos = np.cos(rotate_radian)
+        sin_x = np.sin(rotate_radian_x)
+        cos_x = np.cos(rotate_radian_x)
+        sin_y = np.sin(rotate_radian_y)
+        cos_y = np.cos(rotate_radian_y)
 
         self.coord_scn.wc[0] += 10*(cos)
         self.coord_scn.wc[1] -= 10*(sin)
+
+        self.coord_scn.vrp[0] += 10*(cos)*(cos_y)
+        self.coord_scn.vrp[1] -= (10*(cos)*(sin_x)*(sin_y) - 10*(sin)*(cos_x))
+        self.coord_scn.vrp[2] -= (10*(cos)*(cos_x)*(sin_y) + 10*(sin)*(sin_x))
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
 
     def move_down(self):
-        rotate_radian = (np.radians(float(self.coord_scn.angle)))
+        rotate_radian = (np.radians(float(self.coord_scn.angle_z)))
+        rotate_radian_x = (np.radians(float(self.coord_scn.angle_x)))
+        rotate_radian_y = (np.radians(float(self.coord_scn.angle_y)))
         sin = np.sin(rotate_radian)
         cos = np.cos(rotate_radian)
+        sin_x = np.sin(rotate_radian_x)
+        cos_x = np.cos(rotate_radian_x)
+        sin_y = np.sin(rotate_radian_y)
+        cos_y = np.cos(rotate_radian_y)
 
         self.coord_scn.wc[0] -= 10*(sin)
         self.coord_scn.wc[1] -= 10*(cos)
+
+        self.coord_scn.vrp[0] += 10*(sin)*(cos_y)
+        self.coord_scn.vrp[1] -= (10*(sin)*(sin_x)*(sin_y) + 10*(cos)*(cos_x))
+        self.coord_scn.vrp[2] += (10*(sin)*(cos_x)*(sin_y) - 10*(cos)*(sin_x))
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
 
     def rotate_right(self):
-        self.coord_scn.angle -= 10
+        self.coord_scn.angle_z -= 10
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
 
     def rotate_left(self):
-        self.coord_scn.angle += 10
+        self.coord_scn.angle_z += 10
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
+            
+
+    def rotate_x_right(self):
+        self.coord_scn.angle_x -= 10
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
+
+    def rotate_x_left(self):
+        self.coord_scn.angle_x += 10
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
+
+    def rotate_y_right(self):
+        self.coord_scn.angle_y -= 10
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
+
+    def rotate_y_left(self):
+        self.coord_scn.angle_y += 10
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
@@ -290,19 +369,83 @@ class Window(Frame):
     def retore_window(self):
         self.coord_scn.wc[0] = 0
         self.coord_scn.wc[1] = 0
-        self.coord_scn.angle = 0
+        self.coord_scn.wc[2] = 0
+        self.coord_scn.vrp[0] = 0
+        self.coord_scn.vrp[1] = 0
+        self.coord_scn.vrp[2] = 0
+        self.coord_scn.angle_x = 0
+        self.coord_scn.angle_y = 0
+        self.coord_scn.angle_z = 0
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
 
+    def translation_of_window(self, point, translation_points):
+        x_rotated_angle = -self.coord_scn.angle_x
+        rotation_matrix_x = [[1, 0, 0, 0],
+                             [0, (np.cos(x_rotated_angle)), (np.sin(x_rotated_angle)), 0],
+                             [0, -(np.sin(x_rotated_angle)), (np.cos(x_rotated_angle)), 0],
+                             [0, 0, 0, 1]]
+        
+        y_rotated_angle = -self.coord_scn.angle_y
+        rotation_matrix_y = [[(np.cos(y_rotated_angle)), 0, -(np.sin(y_rotated_angle)), 0],
+                             [0, 1, 0, 0],
+                             [(np.sin(y_rotated_angle)), 0, (np.cos(y_rotated_angle)), 0],
+                             [0, 0, 0, 1]]
+
+        z_rotated_angle = -self.coord_scn.angle_z
+        rotation_matrix_z = [[(np.cos(z_rotated_angle)), (np.sin(z_rotated_angle)), 0, 0],
+                             [-(np.sin(z_rotated_angle)), (np.cos(z_rotated_angle)), 0, 0],
+                             [0, 0, 1, 0],
+                             [0, 0, 0, 1]]
+                
+        points_matrix = []
+        translation_matrix = [[1, 0, 0, 0],
+                              [0, 1, 0, 0],
+                              [0, 0, 1, 0],
+                              [float(translation_points[0]), float(translation_points[1]), float(translation_points[2]), 1]]
+        
+        x_rotated_angle_inverse = -x_rotated_angle
+        rotation_matrix_x_inverse = [[1, 0, 0, 0],
+                                     [0, (np.cos(x_rotated_angle_inverse)), (np.sin(x_rotated_angle_inverse)), 0],
+                                     [0, -(np.sin(x_rotated_angle_inverse)), (np.cos(x_rotated_angle_inverse)), 0],
+                                     [0, 0, 0, 1]]
+
+        y_rotated_angle_inverse = -y_rotated_angle
+        rotation_matrix_y_inverse = [[(np.cos(y_rotated_angle_inverse)), 0, -(np.sin(y_rotated_angle_inverse)), 0],
+                                     [0, 1, 0, 0],
+                                     [(np.sin(y_rotated_angle_inverse)), 0, (np.cos(y_rotated_angle_inverse)), 0],
+                                     [0, 0, 0, 1]]
+
+        z_rotated_angle_inverse = -z_rotated_angle
+        rotation_matrix_z_inverse = [[(np.cos(z_rotated_angle_inverse)), (np.sin(z_rotated_angle_inverse)), 0, 0],
+                                     [-(np.sin(z_rotated_angle_inverse)), (np.cos(z_rotated_angle_inverse)), 0, 0],
+                                     [0, 0, 1, 0],
+                                     [0, 0, 0, 1]]
+
+        points_matrix = [point[0], point[1], point[2], 1]
+        result_points = np.matmul(points_matrix, rotation_matrix_x)
+        #result_points = np.matmul(result_points, rotation_matrix_y)
+        #result_points = np.matmul(result_points, rotation_matrix_z)
+        
+        result_points = np.matmul(result_points, translation_matrix)
+
+        result_points = np.matmul(result_points, rotation_matrix_x_inverse)
+        #result_points = np.matmul(result_points, rotation_matrix_y_inverse)
+        #result_points = np.matmul(result_points, rotation_matrix_z_inverse)
+
+        return [result_points[0], result_points[1], result_points[2]]
+
     def generate_obj_file(self):
-        descritor_obj = DescritorOBJ(self.viewport, self.display_file)
+        descritor_obj = DescritorOBJ(self.viewport, self.coord_scn, self.display_file)
         descritor_obj.create_OBJ_file()
 
     def read_obj_file(self):
         try:
             descritor_obj = DescritorOBJ(self.viewport, self.display_file)
             objetos = descritor_obj.read_OBJ_file()
+
+            poligonos_adicionados = {}
 
             for objeto in objetos:
                 tipo, nome, cor, vertices = objeto
@@ -329,9 +472,19 @@ class Window(Frame):
                             else:
                                 objeto = Line(nome, [vertices[i], vertices[i+1]], cor)
                             lista_objetos.append(objeto) 
-                if tipo == 'triangulo':
-                    objeto = Wireframe(nome, vertices, cor)
-                    lista_objetos.append(objeto)
+                if tipo == 'poligono':
+                    if nome not in poligonos_adicionados.keys():
+                        arestas = []
+                        for i in range(len(vertices)-1):
+                            arestas.append([vertices[i], vertices[i+1]])
+                        objeto = Object3D(nome, vertices, arestas, cor)
+                        lista_objetos.append(objeto)
+                    else:
+                        arestas = []
+                        for i in range(len(vertices)-1):
+                            arestas.append([vertices[i], vertices[i+1]])
+                        poligonos_adicionados[nome].points = poligonos_adicionados[nome].points + vertices
+                        poligonos_adicionados[nome].vectors = poligonos_adicionados[nome].vectors + arestas
 
                 for objeto in lista_objetos:
                     objeto.drawn(self.viewport)

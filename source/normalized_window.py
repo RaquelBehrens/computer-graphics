@@ -4,13 +4,16 @@ from tkinter import *
 from constants import POINT_SIZE, VIEWPORT_HEIGHT, VIEWPORT_WIDTH
 from objects import (Line, Wireframe, Curve, Point3D, Object3D)
 from utils import adjacents
+from projection import projection
 
 class NormalizedWindow:
     def __init__(self, viewport, main_table):
         self.viewport = viewport
         self.main_table = main_table
         self.wc = [0, 0, 0]
-        self.angle = 0
+        self.angle_x = 0
+        self.angle_y = 0
+        self.angle_z = 0
         self.s = [1, 1, 1]
         self.x_min = 10
         self.x_max = VIEWPORT_WIDTH-10
@@ -25,19 +28,27 @@ class NormalizedWindow:
         for i in range(len(new_points)):
             new_points[i] = [None] * 2
 
-        if not isinstance(object, Object3D) and not isinstance(object, Point3D):
-            for index, point in enumerate(object.points):
-                points_matrix = [point[0], point[1], 1]
-                result_points = np.matmul(points_matrix, self.transformation_matrix())
-                new_points[index][0] = result_points[0]
-                new_points[index][1] = result_points[1]
+        if isinstance(object, Object3D):
+            new_vectors = []
+            for vector in object.vectors:
+                projected_points = projection(vector, object, self)
 
-            object.drawn(self.viewport, self, new_points)
+                new_vector = []
+                new_vector = [None] * 2
+                for i in range(len(new_vector)):
+                    new_vector[i] = [None] * 2
+                    
+                for i, point in enumerate(projected_points):
+                    points_matrix = [point[0], point[1], point[2], 1]
+                    result_points = np.matmul(points_matrix, self.transformation_matrix_3d())
+                    new_vector[i][0] = result_points[0]
+                    new_vector[i][1] = result_points[1]
+                
+                new_vectors.append(new_vector)
+
+            object.drawn(self.viewport, self, new_vectors)
             self.update_table(object)
         else:
-            
-            #Nessa função precisa colocar a parte de Projeção Paralela Ortogonal
-
             for i, point in enumerate(object.points):
                 points_matrix = [point[0], point[1], 1]
                 result_points = np.matmul(points_matrix, self.transformation_matrix())
@@ -48,7 +59,7 @@ class NormalizedWindow:
             self.update_table(object)
 
     def transformation_matrix(self):
-        rotate_radian = -(np.radians(float(self.angle)))
+        rotate_radian = -(np.radians(float(self.angle_z)))
 
         translation_matrix = [[1, 0, 0],
                               [0, 1, 0],
@@ -61,6 +72,39 @@ class NormalizedWindow:
                         [0, 0, 1]]
 
         result_matrix = np.matmul(translation_matrix, rotate_matrix)
+        result_matrix = np.matmul(result_matrix, scale_matrix)
+
+        return result_matrix
+    
+    def transformation_matrix_3d(self):
+        rotate_radian_x = -(np.radians(float(self.angle_x)))
+        rotate_radian_y = -(np.radians(float(self.angle_y))) 
+        rotate_radian_z = -(np.radians(float(self.angle_z)))
+
+        translation_matrix = [[1, 0, 0, 0],
+                              [0, 1, 0, 0],
+                              [0, 0, 1, 0],
+                              [-(self.vrp[0]), -(self.vrp[1]), -(self.vrp[2]), 1]]
+        rotate_matrix_x = [[1, 0, 0, 0],
+                           [0, (np.cos(rotate_radian_x)), (np.sin(rotate_radian_x)), 0],
+                           [0, -(np.sin(rotate_radian_x)), (np.cos(rotate_radian_x)), 0],
+                           [0, 0, 0, 1]]
+        rotate_matrix_y = [[(np.cos(rotate_radian_y)), 0, -(np.sin(rotate_radian_y)), 0],
+                           [0, 1, 0, 0],
+                           [(np.sin(rotate_radian_y)), 0, (np.cos(rotate_radian_y)), 0],
+                           [0, 0, 0, 1]]
+        rotate_matrix_z = [[(np.cos(rotate_radian_z)), (np.sin(rotate_radian_z)), 0, 0],
+                           [-(np.sin(rotate_radian_z)), (np.cos(rotate_radian_z)), 0, 0],
+                           [0, 0, 1, 0],
+                           [0, 0, 0, 1]]
+        scale_matrix = [[self.s[0], 0, 0, 0],
+                        [0, self.s[1], 0, 0],
+                        [0, 0, self.s[2], 0],
+                        [0, 0, 0, 1]]
+
+        result_matrix = np.matmul(translation_matrix, rotate_matrix_x)
+        result_matrix = np.matmul(result_matrix, rotate_matrix_y)
+        result_matrix = np.matmul(result_matrix, rotate_matrix_z)
         result_matrix = np.matmul(result_matrix, scale_matrix)
 
         return result_matrix
@@ -230,12 +274,26 @@ class NormalizedWindow:
                 # Quando o objeto já está desenhado, caso esteja fora da window, "esconde" ele
                 self.viewport.itemconfigure(object.id, state='hidden')
 
-    def wireframe_clipping(self, points, circular=True):
-        clipped_points = points
+    def wireframe_clipping(self, points, circular=True, vector=False):
+        if vector:
+            aux_points = []
+            for new_vector in points:
+                aux_points.append(new_vector[0])
+                aux_points.append(new_vector[1])
+            clipped_points = aux_points
+        else:
+            clipped_points = points
+
         clipped_points = self.clip_right_x(clipped_points, circular)
         clipped_points = self.clip_left_x(clipped_points, circular)
         clipped_points = self.clip_upper_y(clipped_points, circular)
         clipped_points = self.clip_bottom_y(clipped_points, circular)
+        
+        if vector:
+            return_points = []
+            for i in range(0, len(clipped_points)-1, 2):
+                return_points.append([[clipped_points[i][0],clipped_points[i][1]],[clipped_points[i+1][0],clipped_points[i+1][1]]])
+            return return_points
         return clipped_points
     
     def clip_left_x(self, points, circular):
