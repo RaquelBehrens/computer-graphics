@@ -1,4 +1,5 @@
 from tkinter import messagebox
+from objects import (Point, Line, Wireframe, Curve, Point3D, Object3D)
 from utils import hex_to_rgb
 
 class DescritorOBJ():
@@ -30,7 +31,8 @@ class DescritorOBJ():
 
         x0 = self.coord_scn.wc[0]
         y0 = self.coord_scn.wc[1]
-        self.wavefront_file.write(f"w {x0} {y0}\n")
+        z0 = self.coord_scn.wc[2]
+        self.wavefront_file.write(f"w {x0} {y0} {z0}\n")
 
         for object in self.list_of_objects:
             self.wavefront_file.write(object)
@@ -39,20 +41,34 @@ class DescritorOBJ():
         counter = 1
         
         for object in self.display_file:
-            points = object.get_points()
-            for point in points:
-                if point not in self.list_of_points.values():
-                    self.list_of_points[str(counter)] = point
-                    self.list_of_vertexes.append(f"v {point[0]} {point[1]} 0.0\n")
-                    counter += 1
-            self.add_color_to_sample(object)
-         
+            if isinstance(object, Point3D) or isinstance(object, Object3D):
+                points = object.get_points()
+                for point in points:
+                    if point not in self.list_of_points.values():
+                        self.list_of_points[str(counter)] = point
+                        self.list_of_vertexes.append(f"v {point[0]} {point[1]} {point[1]}\n")
+                        counter += 1
+                self.add_color_to_sample(object)
+            else:
+                points = object.get_points()
+                for point in points:
+                    if point not in self.list_of_points.values():
+                        self.list_of_points[str(counter)] = point
+                        self.list_of_vertexes.append(f"v {point[0]} {point[1]} 0.0\n")
+                        counter += 1
+                self.add_color_to_sample(object)
+            
         for object in self.display_file:
             name, color, points = object.obj_string(self.list_of_points, self.list_of_colors)
 
             self.list_of_objects.append(name)
             self.list_of_objects.append(color)
-            self.list_of_objects.append(points)
+            
+            if isinstance(object, Object3D):
+                for point in points:
+                    self.list_of_objects.append(point)
+            else:
+                self.list_of_objects.append(points)
 
     def add_color_to_sample(self, object):
         color = object.get_color()
@@ -76,6 +92,7 @@ class DescritorOBJ():
         objeto_atual = ''
         vertices_atuais = []
         cor_atual = ''
+
         try:
             with open('wavefront.obj') as f:
                 lines = f.readlines()
@@ -108,9 +125,12 @@ class DescritorOBJ():
                         objetos.append(['linha', objeto_atual, cor_atual, vertices_atuais])
 
                     elif line_words_list[0] == 'f':
-                        vertices_atuais = [v_dict.get(int(line_words_list[1])), v_dict.get(int(line_words_list[2])), v_dict.get(int(line_words_list[3]))]
-                        objetos.append(['triangulo', objeto_atual, cor_atual, vertices_atuais])
-                                    
+                        vertices_atuais = [v_dict.get(int(line_words_list[1].split('/')[0])), v_dict.get(int(line_words_list[2].split('/')[0])), v_dict.get(int(line_words_list[3].split('/')[0]))]
+                        objetos.append(['poligono', objeto_atual, cor_atual, vertices_atuais])
+
+                    elif line_words_list[0] == 'g':
+                        objeto_atual = line_words_list[1]
+            
             return objetos
         except Exception as e:
             messagebox.showerror('Erro', e)

@@ -199,4 +199,17 @@ class Point3D(Object):
         self.center = [center_x/len(self.points), center_y/len(self.points), center_y/len(self.points)]
 
     def obj_string(self, list_of_points, list_of_colors):
-        pass
+        points = []
+
+        name = f"o {self.name}\n"
+        color = f"usemtl {list_of_colors.get(self.color)}\n"
+
+        for point in self.points:
+            point_index = list(list_of_points.keys())[list(list_of_points.values()).index(point)]
+            points.append(point_index)
+
+        points = " ".join(map(str,points))
+        points = f"p {points}\n"
+
+        return name, color, points
+

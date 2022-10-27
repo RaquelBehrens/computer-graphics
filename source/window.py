@@ -445,6 +445,8 @@ class Window(Frame):
             descritor_obj = DescritorOBJ(self.viewport, self.display_file)
             objetos = descritor_obj.read_OBJ_file()
 
+            poligonos_adicionados = {}
+
             for objeto in objetos:
                 tipo, nome, cor, vertices = objeto
                 cor = f'#{rgb_to_hex(cor)}'
@@ -470,9 +472,19 @@ class Window(Frame):
                             else:
                                 objeto = Line(nome, [vertices[i], vertices[i+1]], cor)
                             lista_objetos.append(objeto) 
-                if tipo == 'triangulo':
-                    objeto = Wireframe(nome, vertices, cor)
-                    lista_objetos.append(objeto)
+                if tipo == 'poligono':
+                    if nome not in poligonos_adicionados.keys():
+                        arestas = []
+                        for i in range(len(vertices)-1):
+                            arestas.append([vertices[i], vertices[i+1]])
+                        objeto = Object3D(nome, vertices, arestas, cor)
+                        lista_objetos.append(objeto)
+                    else:
+                        arestas = []
+                        for i in range(len(vertices)-1):
+                            arestas.append([vertices[i], vertices[i+1]])
+                        poligonos_adicionados[nome].points = poligonos_adicionados[nome].points + vertices
+                        poligonos_adicionados[nome].vectors = poligonos_adicionados[nome].vectors + arestas
 
                 for objeto in lista_objetos:
                     objeto.drawn(self.viewport)
