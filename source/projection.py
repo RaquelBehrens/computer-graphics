@@ -42,3 +42,39 @@ def projection(points, object, normalized_window):
         new_points.append(new_point)
     
     return new_points
+
+def perspective_projection(points, object, normalized_window):
+    cop = np.array(normalized_window.vrp)-VIEWPORT_DEPTH
+    translation_matrix = [[1, 0, 0, 0],
+                          [0, 1, 0, 0],
+                          [0, 0, 1, 0],
+                          [-(float(cop[0])), -(float(cop[1])), -(float(cop[2])), 1]]
+
+    vpn = normalized_window.define_vpn(translation_matrix)
+    tan_x = vpn[1] / vpn[2]
+    tan_y = vpn[0] / vpn[2]
+    vpn_angle_x = np.arctan(tan_x)
+    vpn_angle_y = np.arctan(tan_y)
+
+    rot_x = object.calculate_matrix_operation('x', vpn_angle_x)
+    rot_y = object.calculate_matrix_operation('y', vpn_angle_y)
+
+    transform_matrix = np.matmul(translation_matrix, rot_x)
+    transform_matrix = np.matmul(transform_matrix, rot_y)
+
+    new_points = []
+
+    for point in points:
+        new_point = []
+        points_matrix = [point[0], point[1], point[2], 1]
+
+        result_points = np.matmul(points_matrix, transform_matrix)
+        dist_points = np.matmul(normalized_window.vrp, transform_matrix)
+
+        x_point = (result_points[0] * dist_points[2]) / result_points[2]
+        y_point = (result_points[1] * dist_points[2]) / result_points[2]
+        new_point = [x_point, y_point, result_points[2]]
+
+        new_points.append(new_point)
+
+    return new_points
