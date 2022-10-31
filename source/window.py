@@ -64,6 +64,11 @@ class Window(Frame):
         self.right.grid(row=5, column=0, columnspan=5, padx=100, pady=3)
         self.down = Button(self.frame1, text='Baixo', font=('Time', '11'), command=self.move_down)
         self.down.grid(row=6, column=0, sticky=NW, padx=70)
+        
+        self.forward = Button(self.frame1, text='Frente', font=('Time', '11'), command=self.move_forward)
+        self.forward.grid(row=5, column=0, sticky=NW, padx=(190,0), pady=(3,0))
+        self.backwards = Button(self.frame1, text='Trás', font=('Time', '11'), command=self.move_backwards)
+        self.backwards.grid(row=6, column=0, sticky=NW, padx=(190,0))
 
         Label(self.frame1, text='Zoom: ', font=('Time', '13')).grid(row=7, column=0, sticky=NW, pady=10)
         self.more_zoom = Button(self.frame1, text='  +  ', font=('Time', '11'), command=self.zoom_in)
@@ -232,6 +237,7 @@ class Window(Frame):
     def zoom_in(self):
         self.coord_scn.s[0] *= 1.1
         self.coord_scn.s[1] *= 1.1
+        self.coord_scn.s[2] *= 1.1
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
@@ -239,6 +245,7 @@ class Window(Frame):
     def zoom_out(self):
         self.coord_scn.s[0] *= 0.9
         self.coord_scn.s[1] *= 0.9
+        self.coord_scn.s[2] *= 0.9
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
@@ -329,6 +336,20 @@ class Window(Frame):
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
 
+    def move_forward(self):
+        # Ainda precisa ajeitar!
+        self.coord_scn.vrp[2] += 10
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)
+
+    def move_backwards(self):
+        # Ainda precisa ajeitar!
+        self.coord_scn.vrp[2] -= 10
+
+        for object in self.display_file:
+            self.coord_scn.generate_scn(object)  
+            
     def rotate_right(self):
         self.coord_scn.angle_z -= 10
 
