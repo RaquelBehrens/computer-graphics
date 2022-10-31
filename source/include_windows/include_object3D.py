@@ -9,7 +9,7 @@ class IncludeObject3D(IncludeWindow):
     def __init__(self, viewport, erros, display_file, table, coord_scn):
         super().__init__(viewport, erros, display_file, table, coord_scn)
         self.main_window.title("Incluir Objeto 3D")
-        self.main_window.geometry(f"{INCLUDE_WINDOW_WIDTH+100}x{INCLUDE_WINDOW_HEIGHT-10}")
+        self.main_window.geometry(f"{INCLUDE_WINDOW_WIDTH+100}x{INCLUDE_WINDOW_HEIGHT+15}")
 
         self.frame0 = Frame(self.main_window)
         self.frame0.grid()
@@ -21,6 +21,8 @@ class IncludeObject3D(IncludeWindow):
         self.frame3.grid()
         self.frame4 = Frame(self.main_window)
         self.frame4.grid()
+        self.frame5 = Frame(self.main_window)
+        self.frame5.grid()
         
         Label(self.frame0, text='Nome: ', font=("Times", "11"), height=2).grid(row=0, column=0, padx=(42,0), sticky=NW)
         self.nome = Entry(self.frame0, width=30, font=("Times", "11"))
@@ -38,37 +40,46 @@ class IncludeObject3D(IncludeWindow):
 
         self.color_button = Button(self.frame3, text='Escolher cor', font=('Times', '11'), command=self.choose_color, bg=self.color)
         self.color_button.grid(row=0, column=3, padx=10)
+        
+        self.radio_variable = IntVar()
+        self.radio_variable.set(0)
 
-        self.cancelar = Button(self.frame4, font=("Times", "11"), text='Cancelar', command=self.close_window)
+        Radiobutton(self.frame4, text='Projeção Paralela', variable=self.radio_variable, value=1).grid(row=0, column=0, sticky=NW)
+        Radiobutton(self.frame4, text='Projeção em Perspectiva', variable=self.radio_variable, value=2).grid(row=1, column=0, sticky=NW)
+
+        self.cancelar = Button(self.frame5, font=("Times", "11"), text='Cancelar', command=self.close_window)
         self.cancelar.grid(row=0, column=0, pady=15, padx=18)
-        self.confirmar = Button(self.frame4, font=("Times", "11"), text='Confirmar', command=self.create_object)
+        self.confirmar = Button(self.frame5, font=("Times", "11"), text='Confirmar', command=self.create_object)
         self.confirmar.grid(row=0, column=1, pady=15, padx=18)
 
     def create_object(self):
         try:
-            points = self.convert_to_list(self.points.get())
-            vectors = self.convert_to_matrix(self.vectors.get())
-            self.check_vectors_in_points_list(points, vectors)
-            name = self.nome.get()
-            already_used = False
-            for objects in self.display_file:
-                if objects.name == name:
-                    already_used = True
+            if self.radio_variable.get() != 0:
+                points = self.convert_to_list(self.points.get())
+                vectors = self.convert_to_matrix(self.vectors.get())
+                self.check_vectors_in_points_list(points, vectors)
+                name = self.nome.get()
+                already_used = False
+                for objects in self.display_file:
+                    if objects.name == name:
+                        already_used = True
 
-            if name != '' and not already_used:
-                objeto = Object3D(name, points, vectors, self.color)
+                if name != '' and not already_used:
+                    objeto = Object3D(name, points, vectors, self.color, projection=self.radio_variable.get())
 
-                self.coord_scn.generate_scn(objeto)
+                    self.coord_scn.generate_scn(objeto)
 
-                self.close_window()                
-                self.display_file.append(objeto)
-                self.include_object_in_table(objeto)
-                self.erros['text'] = 'Objeto criado com sucesso'
-            else:
-                if name == '':
-                    self.erros['text'] = 'Digite um nome'
+                    self.close_window()                
+                    self.display_file.append(objeto)
+                    self.include_object_in_table(objeto)
+                    self.erros['text'] = 'Objeto criado com sucesso'
                 else:
-                    self.erros['text'] = 'Nome já utilizado'
+                    if name == '':
+                        self.erros['text'] = 'Digite um nome'
+                    else:
+                        self.erros['text'] = 'Nome já utilizado'
+            else:
+                self.erros['text'] = 'Escolha uma projeção'
 
         except ValueError:
             self.erros['text'] = 'Entradas inválidas'
