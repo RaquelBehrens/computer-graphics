@@ -31,7 +31,10 @@ class NormalizedWindow:
         if isinstance(object, Object3D):
             new_vectors = []
             for vector in object.vectors:
-                projected_points = projection(vector, object, self)
+                if object.projection == 1:
+                    projected_points = projection(vector, object, self)
+                else:
+                    projected_points = perspective_projection(vector, object, self)
 
                 new_vector = []
                 new_vector = [None] * 2
