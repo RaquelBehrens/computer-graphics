@@ -5,7 +5,7 @@ from utils import angle_between
 
 
 class Object3D(Object):
-    def __init__(self, name, list_points, list_vectors, color, id=None):
+    def __init__(self, name, list_points, list_vectors, color, id=None, projection=None):
         super().__init__()
         self.name = name
         self.points = list_points #[[x1,y1,z1], [x2,y2,z2], [x3,y3,z3]]
@@ -13,6 +13,7 @@ class Object3D(Object):
         self.id = id
         self.list_ids = []
         self.color = color
+        self.projection = projection
             
     def drawn(self, viewport, normalized_window, new_vectors=[]):
         if not new_vectors:
