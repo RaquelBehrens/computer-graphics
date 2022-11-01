@@ -337,15 +337,39 @@ class Window(Frame):
             self.coord_scn.generate_scn(object)
 
     def move_forward(self):
-        # Ainda precisa ajeitar!
-        self.coord_scn.vrp[2] += 10
+        # rotate_radian = (np.radians(float(self.coord_scn.angle_z)))
+        # rotate_radian_x = (np.radians(float(self.coord_scn.angle_x)))
+        # rotate_radian_y = (np.radians(float(self.coord_scn.angle_y)))
+        # sin = np.sin(rotate_radian)
+        # cos = np.cos(rotate_radian)
+        # sin_x = np.sin(rotate_radian_x)
+        # cos_x = np.cos(rotate_radian_x)
+        # sin_y = np.sin(rotate_radian_y)
+        # cos_y = np.cos(rotate_radian_y)
+
+        # self.coord_scn.vrp[0] -= (10*(sin_y))*((1/self.coord_scn.s[2]))
+        # self.coord_scn.vrp[1] += (10*(sin_x)*(cos_y))*(1/self.coord_scn.s[2])
+        # self.coord_scn.vrp[2] -= (10*(cos_y)*(cos_x))*(1/self.coord_scn.s[2])
+        self.coord_scn.vrp[2] -= (10)*(1/self.coord_scn.s[2])
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)
 
     def move_backwards(self):
-        # Ainda precisa ajeitar!
-        self.coord_scn.vrp[2] -= 10
+        # rotate_radian = (np.radians(float(self.coord_scn.angle_z)))
+        # rotate_radian_x = (np.radians(float(self.coord_scn.angle_x)))
+        # rotate_radian_y = (np.radians(float(self.coord_scn.angle_y)))
+        # sin = np.sin(rotate_radian)
+        # cos = np.cos(rotate_radian)
+        # sin_x = np.sin(rotate_radian_x)
+        # cos_x = np.cos(rotate_radian_x)
+        # sin_y = np.sin(rotate_radian_y)
+        # cos_y = np.cos(rotate_radian_y)
+
+        # self.coord_scn.vrp[0] += (10*(sin_y))*(1/self.coord_scn.s[2])
+        # self.coord_scn.vrp[1] -= (10*(sin_x)*(cos_y))*(1/self.coord_scn.s[2])
+        # self.coord_scn.vrp[2] += (10*(cos_y)*(cos_x))*(1/self.coord_scn.s[2])
+        self.coord_scn.vrp[2] += (10)*(1/self.coord_scn.s[2])
 
         for object in self.display_file:
             self.coord_scn.generate_scn(object)  
