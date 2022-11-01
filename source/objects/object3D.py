@@ -14,6 +14,7 @@ class Object3D(Object):
         self.list_ids = []
         self.color = color
         self.projection = projection
+        self.fill_form = None
             
     def drawn(self, viewport, normalized_window, new_vectors=[]):
         if not new_vectors:
