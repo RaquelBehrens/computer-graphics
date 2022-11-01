@@ -495,7 +495,13 @@ class Window(Frame):
 
             poligonos_adicionados = {}
             lista_objetos = []
-            
+
+            projecao = messagebox.askquestion(title='Tipo de projeção', message='Deseja utilizar Projeção Paralela? Se escolher "Não", o programa utilizará Projeção em Perspectiva.')
+            if projecao == 'yes':
+                projecao = 1
+            else:
+                projecao = 2
+
             for objeto in objetos:
                 tipo, nome, cor, vertices = objeto
                 for i in range(len(cor)):
@@ -529,7 +535,7 @@ class Window(Frame):
                         arestas = []
                         for i in range(len(vertices)-1):
                             arestas.append([vertices[i], vertices[i+1]])
-                        objeto = Object3D(nome, vertices, arestas, cor)
+                        objeto = Object3D(nome, vertices, arestas, cor, projection=projecao)
                         poligonos_adicionados[nome] = objeto
                         lista_objetos.append(objeto)
                     else:
