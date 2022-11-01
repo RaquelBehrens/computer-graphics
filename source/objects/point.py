@@ -26,7 +26,7 @@ class Point(Object):
     def translate(self, viewport, translation_points, normalized_window):
         translation_points = translation_points.split()
         
-        rotate_radian = -(np.radians(float(normalized_window.angle)))
+        rotate_radian = -(np.radians(float(normalized_window.angle_z)))
         rotation_matrix = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
                            [np.sin(rotate_radian), np.cos(rotate_radian), 0],
                            [0, 0, 1]]
@@ -36,7 +36,7 @@ class Point(Object):
                               [0, 1, 0],
                               [float(translation_points[0]), float(translation_points[1]), 1]]
         
-        rotate_radian = (np.radians(float(normalized_window.angle)))
+        rotate_radian = (np.radians(float(normalized_window.angle_z)))
         rotation_matrix_inverse = [[np.cos(rotate_radian), -(np.sin(rotate_radian)), 0],
                                    [np.sin(rotate_radian), np.cos(rotate_radian), 0],
                                    [0, 0, 1]]
