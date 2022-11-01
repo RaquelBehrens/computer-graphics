@@ -4,7 +4,7 @@ from tkinter import *
 from constants import POINT_SIZE, VIEWPORT_HEIGHT, VIEWPORT_WIDTH
 from objects import (Line, Wireframe, Curve, Point3D, Object3D)
 from utils import adjacents
-from projection import projection
+from projection import projection, perspective_projection
 
 class NormalizedWindow:
     def __init__(self, viewport, main_table):
@@ -21,6 +21,7 @@ class NormalizedWindow:
         self.y_max = VIEWPORT_HEIGHT-10
         self.vrp = [0, 0, 0, 1]
         self.vpn = None
+        self.cop = [0, 0, 0, 1]
         self.clipping_mode = None
 
     def generate_scn(self, object):
