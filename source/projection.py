@@ -72,8 +72,8 @@ def perspective_projection(points, object, normalized_window):
 
         result_points = np.matmul(points_matrix, transform_matrix)
 
-        x_point = (result_points[0] * dist_points) / result_points[2]
-        y_point = (result_points[1] * dist_points) / result_points[2]
+        x_point = (result_points[0] * dist_points) / (result_points[2]+VIEWPORT_DEPTH)
+        y_point = (result_points[1] * dist_points) / (result_points[2]+VIEWPORT_DEPTH)
         new_point = [x_point, y_point, result_points[2]]
 
         new_points.append(new_point)
