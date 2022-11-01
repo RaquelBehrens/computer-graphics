@@ -1,4 +1,5 @@
 import numpy as np
+from constants import VIEWPORT_DEPTH
 
 def projection(points, object, normalized_window):
     x_center = normalized_window.wc[0]
@@ -44,7 +45,7 @@ def projection(points, object, normalized_window):
     return new_points
 
 def perspective_projection(points, object, normalized_window):
-    cop = np.array(normalized_window.vrp)-VIEWPORT_DEPTH
+    cop = normalized_window.cop
     translation_matrix = [[1, 0, 0, 0],
                           [0, 1, 0, 0],
                           [0, 0, 1, 0],
@@ -63,16 +64,16 @@ def perspective_projection(points, object, normalized_window):
     transform_matrix = np.matmul(transform_matrix, rot_y)
 
     new_points = []
+    dist_points = VIEWPORT_DEPTH
 
     for point in points:
         new_point = []
         points_matrix = [point[0], point[1], point[2], 1]
 
         result_points = np.matmul(points_matrix, transform_matrix)
-        dist_points = np.matmul(normalized_window.vrp, transform_matrix)
 
-        x_point = (result_points[0] * dist_points[2]) / result_points[2]
-        y_point = (result_points[1] * dist_points[2]) / result_points[2]
+        x_point = (result_points[0] * dist_points) / result_points[2]
+        y_point = (result_points[1] * dist_points) / result_points[2]
         new_point = [x_point, y_point, result_points[2]]
 
         new_points.append(new_point)
