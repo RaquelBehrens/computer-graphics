@@ -92,14 +92,18 @@ class Object3D(Object):
             result_points = np.matmul(result_points, translation_matrix)
             result_points = np.matmul(result_points, rotation_matrix_inverse)
 
-            for i in range(len(self.vectors)):
-                for j in range(len(self.vectors[i])):
-                    if (self.vectors[i][j] == point):
-                        self.vectors[i][j] = [result_points[0], result_points[1], result_points[2]]
-
             point[0] = result_points[0]
             point[1] = result_points[1]
             point[2] = result_points[2]
+
+        for i in range(len(self.vectors)):
+            for j in range(len(self.vectors[i])):
+                points_matrix = [self.vectors[i][j][0], self.vectors[i][j][1], self.vectors[i][j][2], 1]
+                result_points = np.matmul(points_matrix, rotation_matrix)
+                result_points = np.matmul(result_points, translation_matrix)
+                result_points = np.matmul(result_points, rotation_matrix_inverse)
+                
+                self.vectors[i][j] = [result_points[0], result_points[1], result_points[2]]            
 
         normalized_window.generate_scn(self)
     
@@ -130,14 +134,18 @@ class Object3D(Object):
             result_points = np.matmul(result_points, scale_matrix)
             result_points = np.matmul(result_points, second_translation_matrix)
 
-            for i in range(len(self.vectors)):
-                for j in range(len(self.vectors[i])):
-                    if (self.vectors[i][j] == point):
-                        self.vectors[i][j] = [result_points[0], result_points[1], result_points[2]]
-
             point[0] = result_points[0]
             point[1] = result_points[1]
             point[2] = result_points[2]
+
+        for i in range(len(self.vectors)):
+            for j in range(len(self.vectors[i])):
+                points_matrix = [self.vectors[i][j][0], self.vectors[i][j][1], self.vectors[i][j][2], 1]
+                result_points = np.matmul(points_matrix, first_translation_matrix)
+                result_points = np.matmul(result_points, scale_matrix)
+                result_points = np.matmul(result_points, second_translation_matrix)
+                
+                self.vectors[i][j] = [result_points[0], result_points[1], result_points[2]]     
 
         normalized_window.generate_scn(self)
 
@@ -153,14 +161,16 @@ class Object3D(Object):
             points_matrix = [point[0], point[1], point[2], 1]
             result_points = np.matmul(points_matrix, rotation_matrix)
 
-            for i in range(len(self.vectors)):
-                for j in range(len(self.vectors[i])):
-                    if (self.vectors[i][j] == point):
-                        self.vectors[i][j] = [result_points[0], result_points[1], result_points[2]]
-
             point[0] = result_points[0]
             point[1] = result_points[1]
             point[2] = result_points[2]
+
+        for i in range(len(self.vectors)):
+            for j in range(len(self.vectors[i])):
+                points_matrix = [self.vectors[i][j][0], self.vectors[i][j][1], self.vectors[i][j][2], 1]
+                result_points = np.matmul(points_matrix, rotation_matrix)
+                
+                self.vectors[i][j] = [result_points[0], result_points[1], result_points[2]] 
 
         normalized_window.generate_scn(self)
 
@@ -189,14 +199,18 @@ class Object3D(Object):
             result_points = np.matmul(result_points, rotation_matrix)
             result_points = np.matmul(result_points, second_translation_matriz)
 
-            for i in range(len(self.vectors)):
-                for j in range(len(self.vectors[i])):
-                    if (self.vectors[i][j] == point):
-                        self.vectors[i][j] = [result_points[0], result_points[1], result_points[2]]
-
             point[0] = result_points[0]
             point[1] = result_points[1]
             point[2] = result_points[2]
+
+        for i in range(len(self.vectors)):
+            for j in range(len(self.vectors[i])):
+                points_matrix = [self.vectors[i][j][0], self.vectors[i][j][1], self.vectors[i][j][2], 1]
+                result_points = np.matmul(points_matrix, first_translation_matriz)
+                result_points = np.matmul(result_points, rotation_matrix)
+                result_points = np.matmul(result_points, second_translation_matriz)
+                
+                self.vectors[i][j] = [result_points[0], result_points[1], result_points[2]] 
 
         normalized_window.generate_scn(self)
 
@@ -226,14 +240,18 @@ class Object3D(Object):
             result_points = np.matmul(result_points, rotation_matrix)
             result_points = np.matmul(result_points, second_translation_matriz)
 
-            for i in range(len(self.vectors)):
-                for j in range(len(self.vectors[i])):
-                    if (self.vectors[i][j] == point):
-                        self.vectors[i][j] = [result_points[0], result_points[1], result_points[2]]
-
             point[0] = result_points[0]
             point[1] = result_points[1]
             point[2] = result_points[2]
+
+        for i in range(len(self.vectors)):
+            for j in range(len(self.vectors[i])):
+                points_matrix = [self.vectors[i][j][0], self.vectors[i][j][1], self.vectors[i][j][2], 1]
+                result_points = np.matmul(points_matrix, first_translation_matriz)
+                result_points = np.matmul(result_points, rotation_matrix)
+                result_points = np.matmul(result_points, second_translation_matriz)
+                
+                self.vectors[i][j] = [result_points[0], result_points[1], result_points[2]] 
 
         normalized_window.generate_scn(self)
 
