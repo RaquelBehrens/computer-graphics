@@ -71,8 +71,7 @@ class Point3D(Object):
             point[1] = result_points[1]
             point[2] = result_points[2]
 
-        self.drawn(viewport, normalized_window)
-        normalized_window.update_table(self)
+        normalized_window.generate_scn(self)
 
     def scale(self, viewport, scalation_points, normalized_window):
         if self.center == None:
@@ -104,8 +103,7 @@ class Point3D(Object):
             point[1] = result_points[1]
             point[2] = result_points[2]
 
-        self.drawn(viewport, normalized_window)
-        normalized_window.update_table(self)
+        normalized_window.generate_scn(self)
 
     def rotate_around_world(self, viewport, enter_data, normalized_window):
         enter_data = enter_data.split()
@@ -122,8 +120,7 @@ class Point3D(Object):
             point[1] = result_points[1]
             point[2] = result_points[2]
 
-        self.drawn(viewport, normalized_window)
-        normalized_window.update_table(self)
+        normalized_window.generate_scn(self)
 
     def rotate_around_object(self, viewport, enter_data, normalized_window):
         self.calculate_center()
@@ -153,8 +150,7 @@ class Point3D(Object):
             point[1] = result_points[1]
             point[2] = result_points[2]
 
-        self.drawn(viewport, normalized_window)
-        normalized_window.update_table(self)
+        normalized_window.generate_scn(self)
 
     def rotate_around_point(self, viewport, rotate_points, normalized_window):
         rotate_points = rotate_points.split()
@@ -185,8 +181,7 @@ class Point3D(Object):
             point[1] = result_points[1]
             point[2] = result_points[2]
 
-        self.drawn(viewport, normalized_window)
-        normalized_window.update_table(self)
+        normalized_window.generate_scn(self)
 
     def calculate_center(self):
         center_x = 0

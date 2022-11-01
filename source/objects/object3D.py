@@ -101,8 +101,7 @@ class Object3D(Object):
             point[1] = result_points[1]
             point[2] = result_points[2]
 
-        self.drawn(viewport, normalized_window)
-        normalized_window.update_table(self)
+        normalized_window.generate_scn(self)
     
     def scale(self, viewport, scalation_points, normalized_window):
         if self.center == None:
@@ -131,17 +130,16 @@ class Object3D(Object):
             result_points = np.matmul(result_points, scale_matrix)
             result_points = np.matmul(result_points, second_translation_matrix)
 
-            for vector in self.vectors:
-                for vector_point in vector:
-                    if vector_point == point:
-                        vector_point = [result_points[0], result_points[1], result_points[2]]
+            for i in range(len(self.vectors)):
+                for j in range(len(self.vectors[i])):
+                    if (self.vectors[i][j] == point):
+                        self.vectors[i][j] = [result_points[0], result_points[1], result_points[2]]
 
             point[0] = result_points[0]
             point[1] = result_points[1]
             point[2] = result_points[2]
 
-        self.drawn(viewport, normalized_window)
-        normalized_window.update_table(self)
+        normalized_window.generate_scn(self)
 
     def rotate_around_world(self, viewport, enter_data, normalized_window):
         enter_data = enter_data.split()
@@ -155,17 +153,16 @@ class Object3D(Object):
             points_matrix = [point[0], point[1], point[2], 1]
             result_points = np.matmul(points_matrix, rotation_matrix)
 
-            for vector in self.vectors:
-                for vector_point in vector:
-                    if vector_point == point:
-                        vector_point = [result_points[0], result_points[1], result_points[2]]
+            for i in range(len(self.vectors)):
+                for j in range(len(self.vectors[i])):
+                    if (self.vectors[i][j] == point):
+                        self.vectors[i][j] = [result_points[0], result_points[1], result_points[2]]
 
             point[0] = result_points[0]
             point[1] = result_points[1]
             point[2] = result_points[2]
 
-        self.drawn(viewport, normalized_window)
-        normalized_window.update_table(self)
+        normalized_window.generate_scn(self)
 
     def rotate_around_object(self, viewport, enter_data, normalized_window):
         self.calculate_center()
@@ -192,17 +189,16 @@ class Object3D(Object):
             result_points = np.matmul(result_points, rotation_matrix)
             result_points = np.matmul(result_points, second_translation_matriz)
 
-            for vector in self.vectors:
-                for vector_point in vector:
-                    if vector_point == point:
-                        vector_point = [result_points[0], result_points[1], result_points[2]]
+            for i in range(len(self.vectors)):
+                for j in range(len(self.vectors[i])):
+                    if (self.vectors[i][j] == point):
+                        self.vectors[i][j] = [result_points[0], result_points[1], result_points[2]]
 
             point[0] = result_points[0]
             point[1] = result_points[1]
             point[2] = result_points[2]
 
-        self.drawn(viewport, normalized_window)
-        normalized_window.update_table(self)
+        normalized_window.generate_scn(self)
 
     def rotate_around_point(self, viewport, rotate_points, normalized_window):
         rotate_points = rotate_points.split()
@@ -230,17 +226,16 @@ class Object3D(Object):
             result_points = np.matmul(result_points, rotation_matrix)
             result_points = np.matmul(result_points, second_translation_matriz)
 
-            for vector in self.vectors:
-                for vector_point in vector:
-                    if vector_point == point:
-                        vector_point = [result_points[0], result_points[1], result_points[2]]
+            for i in range(len(self.vectors)):
+                for j in range(len(self.vectors[i])):
+                    if (self.vectors[i][j] == point):
+                        self.vectors[i][j] = [result_points[0], result_points[1], result_points[2]]
 
             point[0] = result_points[0]
             point[1] = result_points[1]
             point[2] = result_points[2]
 
-        self.drawn(viewport, normalized_window)
-        normalized_window.update_table(self)
+        normalized_window.generate_scn(self)
 
     def rotate_around_axis(self, viewport, rotate_points, normalized_window):
         rotate_points = rotate_points.split()
@@ -393,27 +388,26 @@ class Object3D(Object):
         for point in self.points:
             points_matrix = [point[0], point[1], point[2], 1]
 
-            #result_points = np.matmul(points_matrix, translation_matrix)
-            #result_points = np.matmul(result_points, rotation_matrix_x)
-            #result_points = np.matmul(result_points, rotation_matrix_z)
-            #result_points = np.matmul(result_points, rotation_matrix_y)
-            #result_points = np.matmul(result_points, undo_rotation_matrix_z)
-            #result_points = np.matmul(result_points, undo_rotation_matrix_x)
-            #result_points = np.matmul(result_points, undo_translation_matrix)
+            result_points = np.matmul(points_matrix, translation_matrix)
+            result_points = np.matmul(result_points, rotation_matrix_x)
+            result_points = np.matmul(result_points, rotation_matrix_z)
+            result_points = np.matmul(result_points, rotation_matrix_y)
+            result_points = np.matmul(result_points, undo_rotation_matrix_z)
+            result_points = np.matmul(result_points, undo_rotation_matrix_x)
+            result_points = np.matmul(result_points, undo_translation_matrix)
 
-            result_points = np.matmul(points_matrix, final_matrix)
+            #result_points = np.matmul(points_matrix, final_matrix)
 
-            for vector in self.vectors:
-                for vector_point in vector:
-                    if vector_point == point:
-                        vector_point = [result_points[0], result_points[1], result_points[2]]
+            for i in range(len(self.vectors)):
+                for j in range(len(self.vectors[i])):
+                    if (self.vectors[i][j] == point):
+                        self.vectors[i][j] = [result_points[0], result_points[1], result_points[2]]
 
             point[0] = result_points[0]
             point[1] = result_points[1]
             point[2] = result_points[2]
 
-        self.drawn(viewport, normalized_window)
-        normalized_window.update_table(self)
+        normalized_window.generate_scn(self)
 
     def find_axis_center(self, axis):
         axis_center_x = (axis[0][0] + axis[1][0]) / 2
