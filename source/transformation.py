@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 
-from objects import (Object3D, Point3D)
+from objects import (Object3D, Point3D, Surface3D)
 
 
 class Transformation():
@@ -39,7 +39,7 @@ class Transformation():
         self.tab_escalation()
         self.tab_rotation()
 
-        if isinstance(self.object, Object3D) or isinstance(self.object, Point3D):
+        if isinstance(self.object, Object3D) or isinstance(self.object, Point3D) or isinstance(self.object, Surface3D):
             self.around_axis_radio = IntVar()
             self.around_axis_radio.set(0)
 
@@ -77,7 +77,7 @@ class Transformation():
         self.vetor_y_translation = Entry(self.frame_trans2, width=3, font=("Times", "11"))
         self.vetor_y_translation.grid(row=1, column=3)
 
-        if isinstance(self.object, Point3D) or isinstance(self.object, Object3D):
+        if isinstance(self.object, Point3D) or isinstance(self.object, Object3D) or isinstance(self.object, Surface3D):
             Label(self.frame_trans2, text=' z: ', font=("Times", "11"), height=2).grid(row=1, column=4, sticky=NW)
             self.vetor_z_translation = Entry(self.frame_trans2, width=3, font=("Times", "11"))
             self.vetor_z_translation.grid(row=1, column=5)
@@ -97,7 +97,7 @@ class Transformation():
         self.vetor_y_escalation = Entry(self.frame_esc2, width=3, font=("Times", "11"))
         self.vetor_y_escalation.grid(row=1, column=3)
 
-        if isinstance(self.object, Object3D) or isinstance(self.object, Point3D):
+        if isinstance(self.object, Object3D) or isinstance(self.object, Point3D) or isinstance(self.object, Surface3D):
             Label(self.frame_esc2, text=' z: ', font=("Times", "11"), height=2).grid(row=1, column=4, sticky=NW)
             self.vetor_z_escalation = Entry(self.frame_esc2, width=3, font=("Times", "11"))
             self.vetor_z_escalation.grid(row=1, column=5)
@@ -129,7 +129,7 @@ class Transformation():
             self.rotation_z = Entry(self.frame_rot, width=3, font=("Times", "10"))
             self.rotation_z.grid(row=2, column=6, stick=SE)
 
-        if isinstance(self.object, Object3D):
+        if isinstance(self.object, Object3D) or isinstance(self.object, Surface3D):
             Radiobutton(self.frame_rot, text='Eixo', variable=self.radio_variable, value=4).grid(row=3, column=0, stick=W)
             self.axis = Entry(self.frame_rot, width=10, font=("Times", "11"))
             self.axis.grid(row=3, column=0, sticky=NW, pady=0, padx=(50,0))
@@ -190,7 +190,7 @@ class Transformation():
 
     def add_transformation(self):
         try:
-                if isinstance(self.object, Object3D) or isinstance(self.object, Point3D):
+                if isinstance(self.object, Object3D) or isinstance(self.object, Point3D) or isinstance(self.object, Surface3D):
                     around_axis_radio = self.around_axis_radio.get()
 
                     if around_axis_radio == 0:
@@ -227,7 +227,7 @@ class Transformation():
                             rotation_z = float(self.rotation_z.get())
                             self.table.insert('', 0, values=(5, 'Rotação em torno do ponto', ('x:', rotation_x, ',', 'y:', rotation_y, ',', 'z:', rotation_z, ',', angle, '°,eixo:', around_axis)))
                         elif self.radio_variable.get() == 4:
-                            if isinstance(self.object, Object3D) == False:
+                            if isinstance(self.object, Object3D) == False or isinstance(self.object, Surface3D) == False:
                                 raise Error
                             else:
                                 axis = self.convert_to_list(self.axis.get())
