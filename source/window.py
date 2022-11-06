@@ -10,7 +10,8 @@ from include_windows import (IncludePoint,
                              IncludePolygon, 
                              IncludeCurve,
                              IncludePoint3D,
-                             IncludeObject3D)
+                             IncludeObject3D,
+                             IncludeSurface3D)
 from transformation import Transformation
 from normalized_window import NormalizedWindow
 from descritor_obj import DescritorOBJ
@@ -111,6 +112,8 @@ class Window(Frame):
         self.point3D.grid(row=15, column=0, sticky=NW, padx=10, pady=3)
         self.object3D = Button(self.frame1, text='Criar Objeto 3D', font=('Time', '11'), command=self.include_object3D)
         self.object3D.grid(row=15, column=0, sticky=NW, padx=(127,0), pady=3)
+        self.surface3D = Button(self.frame1, text='Criar Superfície 3D', font=('Time', '11'), command=self.include_surface3D)
+        self.surface3D.grid(row=16, column=0, sticky=NW, padx=10, pady=3)
         
         Label(self, text='Operações: ',  font=('Time', '13')).grid(row=1, column=0, pady=(10,0), sticky=NW)
         self.delete = Button(self, text='Deletar Objeto', font=('Time', '11'), command=self.delete_object)
@@ -174,6 +177,9 @@ class Window(Frame):
 
     def include_object3D(self):
         IncludeObject3D(self.viewport, self.erros, self.display_file, self.table, self.coord_scn)
+        
+    def include_surface3D(self):
+        IncludeSurface3D(self.viewport, self.erros, self.display_file, self.table, self.coord_scn)
 
     def delete_object(self):
         try:
