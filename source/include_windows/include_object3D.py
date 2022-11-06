@@ -31,7 +31,7 @@ class IncludeObject3D(IncludeWindow):
         Label(self.frame1, text='Coordenadas: ', font=("Times", "11")).grid(row=0, column=0, sticky=NW)
         self.points = Entry(self.frame1, width=30, font=("Times", "11"))
         self.points.grid(row=0, column=1, sticky=NW)
-        Label(self.frame1, text='(x1,y1), (x2,y2), ..., (xn,yn)', font=("Times", "11")).grid(row=1, column=1, pady=(0,20))
+        Label(self.frame1, text='(x1,y1,z1), (x2,y2,z2), ..., (xn,yn,zn)', font=("Times", "11")).grid(row=1, column=1, pady=(0,20))
 
         Label(self.frame2, text='Vetores: ', font=("Times", "11")).grid(row=0, column=0, padx=(10,0), sticky=NW)
         self.vectors = Entry(self.frame2, width=45, font=("Times", "11"))
