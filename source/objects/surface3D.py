@@ -25,7 +25,7 @@ class Surface3D(Object):
             if normalized_points != []:
                 new_vectors = normalized_points
         else:
-            normalized_points = normalized_window.wireframe_clipping(self.vectors, vector=True)
+            normalized_points = normalized_window.wireframe_clipping(new_vectors, vector=True)
             new_vectors = normalized_points
 
             for i in range(len(self.list_ids)):
@@ -77,35 +77,6 @@ class Surface3D(Object):
             for i in range(self.epsilon+1):
                 t = i / self.epsilon
                 s = 1
-                t_list = np.array([t * t * t, t * t, t, 1])
-                s_list = np.array([s * s * s, s * s, s, 1])     
-                px = [[None, None, None, None],
-                      [None, None, None, None],
-                      [None, None, None, None],
-                      [None, None, None, None]]
-                py = [[None, None, None, None],
-                      [None, None, None, None],
-                      [None, None, None, None],
-                      [None, None, None, None]]
-                pz = [[None, None, None, None],
-                      [None, None, None, None],
-                      [None, None, None, None],
-                      [None, None, None, None]]
-
-                for i in range(len(bezier_matrix_points)):
-                    for j in range(len(bezier_matrix_points[i])):
-                        px[i][j] = bezier_matrix_points[i][j][0]
-                        py[i][j] = bezier_matrix_points[i][j][1]
-                        pz[i][j] = bezier_matrix_points[i][j][2]
-
-                x = s_list @ bezier_matrix @ px @ bezier_matrix @ np.transpose(t_list)
-                y = s_list @ bezier_matrix @ py @ bezier_matrix @ np.transpose(t_list)
-                z = s_list @ bezier_matrix @ pz @ bezier_matrix @ np.transpose(t_list)
-                new_points.append([x,y,z])
-
-            for i in range(self.epsilon+1):
-                t = 1
-                s = i / self.epsilon
                 t_list = np.array([t * t * t, t * t, t, 1])
                 s_list = np.array([s * s * s, s * s, s, 1])     
                 px = [[None, None, None, None],
