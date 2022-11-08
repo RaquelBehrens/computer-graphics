@@ -1,4 +1,5 @@
 from tkinter import *
+from msilib.schema import Error
 
 from constants import INCLUDE_WINDOW_WIDTH, INCLUDE_WINDOW_HEIGHT
 from .include_window import IncludeWindow
@@ -80,8 +81,28 @@ class IncludeSurface3D(IncludeWindow):
 
         aux = []
         aux_coords = []
+        final_list = []
         for i in range(len(lista)):
             try:
+                if lista[i] == ';' or i == len(lista)-1:
+                    number = "".join(aux)
+                    aux_coords.append(float(number))
+                    aux.clear()
+
+                    if len(aux_coords) % 3 == 0:
+                        for i in range(0, len(aux_coords), 3):
+                            final_list.append([aux_coords[i], aux_coords[i+1], aux_coords[i+2]]) 
+                    else:
+                        raise Error 
+
+                    coords.append(final_list)  
+                    
+                    if len(final_list) % 4 != 0:
+                        raise Error
+
+                    aux_coords = []
+                    final_list = []
+                
                 if lista[i] == ',' or i == len(lista)-1:
                     number = "".join(aux)
                     aux_coords.append(float(number))
@@ -92,9 +113,7 @@ class IncludeSurface3D(IncludeWindow):
                 if lista[i] == '-':
                     aux.append(lista[i])
 
-        if len(aux_coords) % 3 == 0 and len(aux_coords) >= 16:
-            for i in range(0, len(aux_coords), 3):
-                coords.append([aux_coords[i], aux_coords[i+1], aux_coords[i+2]])
+        if len(coords) % 4 == 0:
             return coords
         else:
             self.erros['text'] = 'Entradas inválidas'
