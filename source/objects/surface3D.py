@@ -66,10 +66,7 @@ class Surface3D(Object):
 
         points_set = self.bezier_points_set(points)
 
-<<<<<<< HEAD
-=======
         for set in points_set:
->>>>>>> mudando_bezier_3d
             for k in range(self.epsilon+1):
                 t = k / self.epsilon
                 s = 1
@@ -102,11 +99,7 @@ class Surface3D(Object):
             new_lines.append(new_points)
             new_points = []
 
-<<<<<<< HEAD
-        return new_points
-=======
         return new_lines
->>>>>>> mudando_bezier_3d
 
     def bezier_points_set(self, points):
         for i in range(0, len(points) - 1, 3):
