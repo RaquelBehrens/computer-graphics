@@ -74,8 +74,8 @@ class Surface3D(Object):
                 bezier_points.append([bezier_points[-1][0], bezier_points[-1][1]])
             bezier_matrix_points = self.generate_matrix(bezier_points)
 
-            for i in range(self.epsilon+1):
-                t = i / self.epsilon
+            for k in range(self.epsilon+1):
+                t = k / self.epsilon
                 s = 1
                 t_list = np.array([t * t * t, t * t, t, 1])
                 s_list = np.array([s * s * s, s * s, s, 1])     
