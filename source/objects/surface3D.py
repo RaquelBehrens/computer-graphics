@@ -15,6 +15,7 @@ class Surface3D(Object):
         self.closed = None
         self.projection = projection
         self.vectors = []
+        self.fill_form = None
 
         self.epsilon = BEZIER_EPSILON
         self.bezier_points = []
