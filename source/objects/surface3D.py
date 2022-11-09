@@ -14,6 +14,7 @@ class Surface3D(Object):
         self.color = color
         self.closed = None
         self.projection = projection
+        self.vectors = []
 
         self.epsilon = BEZIER_EPSILON
         self.bezier_points = []
@@ -27,10 +28,8 @@ class Surface3D(Object):
         else:
             normalized_points = normalized_window.wireframe_clipping(new_vectors, vector=True)
             new_vectors = normalized_points
-
             for i in range(len(self.list_ids)):
                 viewport.delete(self.list_ids[i])
-            
             self.list_ids = []
 
         if new_vectors == []:
@@ -51,73 +50,67 @@ class Surface3D(Object):
 
             self.id = self.list_ids[-1]
 
-    def define_vectors(self, new_points=None):
-        if not new_points:
-            self.bezier_points = self.bezier_algorythm(self.points)
-        else:
-            self.bezier_points = self.bezier_algorythm(new_points)
-
-        self.vectors = []
+    def define_vectors(self):
+        self.bezier_points = self.bezier_algorythm(self.points)
         for i in range(len(self.bezier_points)):
-            if i != len(self.bezier_points)-1:
-                self.vectors.append([self.bezier_points[i], self.bezier_points[i+1]])
-            else:
-                self.vectors.append([self.bezier_points[i], self.bezier_points[0]])
+            for j in range(len(self.bezier_points[i])):
+                if j != len(self.bezier_points[i])-1:
+                    self.vectors.append([self.bezier_points[i][j], self.bezier_points[i][j+1]])
+                else:
+                    self.vectors.append([self.bezier_points[i][j], self.bezier_points[i][0]])
 
     def bezier_algorythm(self, points):
         bezier_matrix = np.array([[-1, 3, -3, 1], [3, -6, 3, 0], [-3, 3, 0, 0], [1, 0, 0, 0]])
-        points_set = self.bezier_points_set(points)
         new_points = []
+        new_lines = []
 
-        for bezier_points in points_set:
-            while len(bezier_points) != 16:
-                bezier_points.append([bezier_points[-1][0], bezier_points[-1][1]])
-            bezier_matrix_points = self.generate_matrix(bezier_points)
+        points_set = self.bezier_points_set(points)
 
+<<<<<<< HEAD
+=======
+        for set in points_set:
+>>>>>>> mudando_bezier_3d
             for k in range(self.epsilon+1):
                 t = k / self.epsilon
                 s = 1
                 t_list = np.array([t * t * t, t * t, t, 1])
                 s_list = np.array([s * s * s, s * s, s, 1])     
                 px = [[None, None, None, None],
-                      [None, None, None, None],
-                      [None, None, None, None],
-                      [None, None, None, None]]
+                        [None, None, None, None],
+                        [None, None, None, None],
+                        [None, None, None, None]]
                 py = [[None, None, None, None],
-                      [None, None, None, None],
-                      [None, None, None, None],
-                      [None, None, None, None]]
+                        [None, None, None, None],
+                        [None, None, None, None],
+                        [None, None, None, None]]
                 pz = [[None, None, None, None],
-                      [None, None, None, None],
-                      [None, None, None, None],
-                      [None, None, None, None]]
+                        [None, None, None, None],
+                        [None, None, None, None],
+                        [None, None, None, None]]
 
-                for i in range(len(bezier_matrix_points)):
-                    for j in range(len(bezier_matrix_points[i])):
-                        px[i][j] = bezier_matrix_points[i][j][0]
-                        py[i][j] = bezier_matrix_points[i][j][1]
-                        pz[i][j] = bezier_matrix_points[i][j][2]
+                for i in range(len(set)):
+                    for j in range(len(set[i])):
+                        px[i][j] = set[i][j][0]
+                        py[i][j] = set[i][j][1]
+                        pz[i][j] = set[i][j][2]
 
                 x = s_list @ bezier_matrix @ px @ bezier_matrix @ np.transpose(t_list)
                 y = s_list @ bezier_matrix @ py @ bezier_matrix @ np.transpose(t_list)
                 z = s_list @ bezier_matrix @ pz @ bezier_matrix @ np.transpose(t_list)
                 new_points.append([x,y,z])
+    
+            new_lines.append(new_points)
+            new_points = []
 
+<<<<<<< HEAD
         return new_points
+=======
+        return new_lines
+>>>>>>> mudando_bezier_3d
 
     def bezier_points_set(self, points):
-        for i in range(0, len(points) - 1, 15):
-            yield points[i : (i + 16)]
-
-    def generate_matrix(self, points):
-        G = [None]*4
-        for i in range(4):
-            G[i] = [None]*4
-        
-        for i, point in enumerate(points):
-            G[i//4][i%4] = point
-
-        return G
+        for i in range(0, len(points) - 1, 3):
+            yield points[i : (i + 4)]
 
     def calculate_matrix_operation(self, axis, angle):
             if axis == 'x':
