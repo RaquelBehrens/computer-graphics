@@ -9,7 +9,7 @@ class IncludeSurface3D(IncludeWindow):
     def __init__(self, viewport, erros, display_file, table, coord_scn):
         super().__init__(viewport, erros, display_file, table, coord_scn)
         self.main_window.title("Incluir Superfície 3D")
-        self.main_window.geometry(f"{INCLUDE_WINDOW_WIDTH+100}x{INCLUDE_WINDOW_HEIGHT+15}")
+        self.main_window.geometry(f"{INCLUDE_WINDOW_WIDTH+100}x{INCLUDE_WINDOW_HEIGHT+200}")
 
         self.frame0 = Frame(self.main_window)
         self.frame0.grid()
@@ -29,7 +29,12 @@ class IncludeSurface3D(IncludeWindow):
         Label(self.frame1, text='Coordenadas: ', font=("Times", "11")).grid(row=0, column=0, sticky=NW)
         self.points = Entry(self.frame1, width=30, font=("Times", "11"))
         self.points.grid(row=0, column=1, sticky=NW)
-        Label(self.frame1, text='(x1,y1,z1), (x2,y2,z2), ..., (xn,yn,zn)', font=("Times", "11")).grid(row=1, column=1, pady=(0,20))
+        Label(self.frame1, text='Colocar sempre 16 vértices em 16,', font=("Times", "11")).grid(row=1, column=1, pady=(0,20))
+        Label(self.frame1, text='e separar por ponto e vírgula de 4 em 4:', font=("Times", "11")).grid(row=2, column=1, pady=(0,20))
+        Label(self.frame1, text='(x1,y1,z1), (x2,y2,z2), ..., (xn,yn,zn);', font=("Times", "11")).grid(row=3, column=1, pady=(0,20))
+        Label(self.frame1, text='(x1,y1,z1), (x2,y2,z2), ..., (xn,yn,zn);', font=("Times", "11")).grid(row=4, column=1, pady=(0,20))
+        Label(self.frame1, text='(x1,y1,z1), (x2,y2,z2), ..., (xn,yn,zn);', font=("Times", "11")).grid(row=5, column=1, pady=(0,20))
+        Label(self.frame1, text='(x1,y1,z1), (x2,y2,z2), ..., (xn,yn,zn)', font=("Times", "11")).grid(row=6, column=1, pady=(0,20))
 
         self.color_button = Button(self.frame2, text='Escolher cor', font=('Times', '11'), command=self.choose_color, bg=self.color)
         self.color_button.grid(row=0, column=3, padx=10)
@@ -90,8 +95,8 @@ class IncludeSurface3D(IncludeWindow):
                     aux.clear()
 
                     if len(aux_coords) % 3 == 0:
-                        for i in range(0, len(aux_coords), 3):
-                            final_list.append([aux_coords[i], aux_coords[i+1], aux_coords[i+2]]) 
+                        for j in range(0, len(aux_coords), 3):
+                            final_list.append([aux_coords[j], aux_coords[j+1], aux_coords[j+2]]) 
                     else:
                         raise Error 
 
