@@ -67,35 +67,36 @@ class Surface3D(Object):
         points_set = self.bezier_points_set(points)
 
         for set in points_set:
-            for k in range(self.epsilon+1):
-                t = k / self.epsilon
-                s = 1
-                t_list = np.array([t * t * t, t * t, t, 1])
-                s_list = np.array([s * s * s, s * s, s, 1])     
-                px = [[None, None, None, None],
-                        [None, None, None, None],
-                        [None, None, None, None],
-                        [None, None, None, None]]
-                py = [[None, None, None, None],
-                        [None, None, None, None],
-                        [None, None, None, None],
-                        [None, None, None, None]]
-                pz = [[None, None, None, None],
-                        [None, None, None, None],
-                        [None, None, None, None],
-                        [None, None, None, None]]
+            for l in range(self.epsilon+1):
+                for k in range(self.epsilon+1):
+                    t = l / self.epsilon
+                    s = k / self.epsilon
+                    t_list = np.array([t * t * t, t * t, t, 1])
+                    s_list = np.array([s * s * s, s * s, s, 1])     
+                    px = [[None, None, None, None],
+                            [None, None, None, None],
+                            [None, None, None, None],
+                            [None, None, None, None]]
+                    py = [[None, None, None, None],
+                            [None, None, None, None],
+                            [None, None, None, None],
+                            [None, None, None, None]]
+                    pz = [[None, None, None, None],
+                            [None, None, None, None],
+                            [None, None, None, None],
+                            [None, None, None, None]]
 
-                for i in range(len(set)):
-                    for j in range(len(set[i])):
-                        px[i][j] = set[i][j][0]
-                        py[i][j] = set[i][j][1]
-                        pz[i][j] = set[i][j][2]
+                    for i in range(len(set)):
+                        for j in range(len(set[i])):
+                            px[i][j] = set[i][j][0]
+                            py[i][j] = set[i][j][1]
+                            pz[i][j] = set[i][j][2]
 
-                x = s_list @ bezier_matrix @ px @ bezier_matrix @ np.transpose(t_list)
-                y = s_list @ bezier_matrix @ py @ bezier_matrix @ np.transpose(t_list)
-                z = s_list @ bezier_matrix @ pz @ bezier_matrix @ np.transpose(t_list)
-                new_points.append([x,y,z])
-    
+                    x = s_list @ bezier_matrix @ px @ bezier_matrix @ np.transpose(t_list)
+                    y = s_list @ bezier_matrix @ py @ bezier_matrix @ np.transpose(t_list)
+                    z = s_list @ bezier_matrix @ pz @ bezier_matrix @ np.transpose(t_list)
+                    new_points.append([x,y,z])
+
             new_lines.append(new_points)
             new_points = []
 
