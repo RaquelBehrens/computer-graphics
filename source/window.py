@@ -11,7 +11,8 @@ from include_windows import (IncludePoint,
                              IncludeCurve,
                              IncludePoint3D,
                              IncludeObject3D,
-                             IncludeParametricSurface3D)
+                             IncludeParametricSurface3D,
+                             IncludeFdSurface3D)
 from transformation import Transformation
 from normalized_window import NormalizedWindow
 from descritor_obj import DescritorOBJ
@@ -25,7 +26,7 @@ class Window(Frame):
         self.root = Tk()
         self.root.title(APPLICATION_NAME)
         #self.root.iconbitmap()
-        self.root.geometry(f"{WINDOW_HEIGHT}x{WINDOW_WIDTH}")
+        self.root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
         Frame.__init__(self, self.root) # , bg="red")
 
         self.pack(fill='both', expand=True)
@@ -58,13 +59,13 @@ class Window(Frame):
 
         Label(self.frame1, text='Window:', font=('Time', '13')).grid(row=3, column=0, sticky=NW, pady=10)
         self.up = Button(self.frame1, text='Cima', font=('Time', '11'), command=self.move_up)
-        self.up.grid(row=4, column=0, sticky=NW, padx=70)
+        self.up.grid(row=4, column=0, sticky=NW, padx=80)
         self.left = Button(self.frame1, text='Esquerda', font=('Time', '11'), command=self.move_left)
         self.left.grid(row=5, column=0, sticky=NW, padx=5, pady=3)
         self.right = Button(self.frame1, text='Direita', font=('Time', '11'), command=self.move_right)
-        self.right.grid(row=5, column=0, columnspan=5, padx=100, pady=3)
+        self.right.grid(row=5, column=0, columnspan=6, pady=3)
         self.down = Button(self.frame1, text='Baixo', font=('Time', '11'), command=self.move_down)
-        self.down.grid(row=6, column=0, sticky=NW, padx=70)
+        self.down.grid(row=6, column=0, sticky=NW, padx=80)
         
         self.forward = Button(self.frame1, text='Frente', font=('Time', '11'), command=self.move_forward)
         self.forward.grid(row=5, column=0, sticky=NW, padx=(190,0), pady=(3,0))
@@ -108,12 +109,14 @@ class Window(Frame):
         self.polygon.grid(row=14, column=0, sticky=NW, padx=10, pady=3)
         self.curve = Button(self.frame1, text='Criar Curva', font=('Time', '11'), command=self.include_curve)
         self.curve.grid(row=14, column=0, sticky=NW, padx=(162,0), pady=3)
-        self.point3D = Button(self.frame1, text='Criar Ponto 3D', font=('Time', '11'), command=self.include_point3D)
+        self.point3D = Button(self.frame1, text='Criar Ponto 3D', font=('Time', '11'), command=self.include_point_3D)
         self.point3D.grid(row=15, column=0, sticky=NW, padx=10, pady=3)
-        self.object3D = Button(self.frame1, text='Criar Objeto 3D', font=('Time', '11'), command=self.include_object3D)
+        self.object3D = Button(self.frame1, text='Criar Objeto 3D', font=('Time', '11'), command=self.include_object_3D)
         self.object3D.grid(row=15, column=0, sticky=NW, padx=(127,0), pady=3)
-        self.surface3D = Button(self.frame1, text='Criar Superfície Paramétrica Bicúbica 3D', font=('Time', '11'), command=self.include_surface3D)
+        self.surface3D = Button(self.frame1, text='Criar Superfície Paramétrica Bicúbica 3D', font=('Time', '11'), command=self.include_parametric_surface_3D)
         self.surface3D.grid(row=16, column=0, sticky=NW, padx=10, pady=3)
+        self.surface3D = Button(self.frame1, text='Criar Superfície Bicúbica 3D com FD', font=('Time', '11'), command=self.include_fd_surface_3D)
+        self.surface3D.grid(row=17, column=0, sticky=NW, padx=10, pady=3)
         
         Label(self, text='Operações: ',  font=('Time', '13')).grid(row=1, column=0, pady=(10,0), sticky=NW)
         self.delete = Button(self, text='Deletar Objeto', font=('Time', '11'), command=self.delete_object)
@@ -172,14 +175,17 @@ class Window(Frame):
     def include_curve(self):
         IncludeCurve(self.viewport, self.erros, self.display_file, self.table, self.coord_scn)
 
-    def include_point3D(self):
+    def include_point_3D(self):
         IncludePoint3D(self.viewport, self.erros, self.display_file, self.table, self.coord_scn)
 
-    def include_object3D(self):
+    def include_object_3D(self):
         IncludeObject3D(self.viewport, self.erros, self.display_file, self.table, self.coord_scn)
         
-    def include_surface3D(self):
+    def include_parametric_surface_3D(self):
         IncludeParametricSurface3D(self.viewport, self.erros, self.display_file, self.table, self.coord_scn)
+
+    def include_fd_surface_3D(self):
+        IncludeFdSurface3D(self.viewport, self.erros, self.display_file, self.table, self.coord_scn)
 
     def delete_object(self):
         try:

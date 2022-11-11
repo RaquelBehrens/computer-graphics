@@ -4,6 +4,7 @@ from .include_triangle import IncludeTriangle
 from .include_quadrilateral import IncludeQuadrilateral
 from .include_polygon import IncludePolygon
 from .include_curve import IncludeCurve
-from .include_object3D import IncludeObject3D
-from .include_point3D import IncludePoint3D
-from .include_parametricSurface3D import IncludeParametricSurface3D
+from .include_object_3D import IncludeObject3D
+from .include_point_3D import IncludePoint3D
+from .include_parametric_surface_3D import IncludeParametricSurface3D
+from .include_fd_surface_3D import IncludeFdSurface3D
