@@ -2,7 +2,7 @@ import numpy as np
 from tkinter import *
 from tkinter import ttk, messagebox
 
-from objects import (Point, Line, Wireframe, Curve, Point3D, Object3D, Surface3D)
+from objects import (Point, Line, Wireframe, Curve, Point3D, Object3D, ParametricSurface3D)
 from include_windows import (IncludePoint, 
                              IncludeLine, 
                              IncludeTriangle, 
@@ -11,7 +11,7 @@ from include_windows import (IncludePoint,
                              IncludeCurve,
                              IncludePoint3D,
                              IncludeObject3D,
-                             IncludeSurface3D)
+                             IncludeParametricSurface3D)
 from transformation import Transformation
 from normalized_window import NormalizedWindow
 from descritor_obj import DescritorOBJ
@@ -112,7 +112,7 @@ class Window(Frame):
         self.point3D.grid(row=15, column=0, sticky=NW, padx=10, pady=3)
         self.object3D = Button(self.frame1, text='Criar Objeto 3D', font=('Time', '11'), command=self.include_object3D)
         self.object3D.grid(row=15, column=0, sticky=NW, padx=(127,0), pady=3)
-        self.surface3D = Button(self.frame1, text='Criar Superfície 3D', font=('Time', '11'), command=self.include_surface3D)
+        self.surface3D = Button(self.frame1, text='Criar Superfície Paramétrica Bicúbica 3D', font=('Time', '11'), command=self.include_surface3D)
         self.surface3D.grid(row=16, column=0, sticky=NW, padx=10, pady=3)
         
         Label(self, text='Operações: ',  font=('Time', '13')).grid(row=1, column=0, pady=(10,0), sticky=NW)
@@ -179,7 +179,7 @@ class Window(Frame):
         IncludeObject3D(self.viewport, self.erros, self.display_file, self.table, self.coord_scn)
         
     def include_surface3D(self):
-        IncludeSurface3D(self.viewport, self.erros, self.display_file, self.table, self.coord_scn)
+        IncludeParametricSurface3D(self.viewport, self.erros, self.display_file, self.table, self.coord_scn)
 
     def delete_object(self):
         try:
@@ -206,7 +206,7 @@ class Window(Frame):
                     if isinstance(object, Line):
                         self.lines_list.remove(object)
                         self.viewport.delete(selected_item_id)
-                    elif isinstance(object, Wireframe) or isinstance(object, Curve) or isinstance(object, Object3D) or isinstance(object, Surface3D):
+                    elif isinstance(object, Wireframe) or isinstance(object, Curve) or isinstance(object, Object3D) or isinstance(object, ParametricSurface3D):
                         for id in object.list_ids:
                             self.viewport.delete(id)
                         if object.fill_form != None:    
