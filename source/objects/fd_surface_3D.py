@@ -1,5 +1,5 @@
 import numpy as np
-from constants import VIEWPORT_HEIGHT, BEZIER_EPSILON
+from constants import VIEWPORT_HEIGHT
 from .object import Object
 from utils import angle_between
 
@@ -17,8 +17,6 @@ class FdSurface3D(Object):
         self.vectors = []
         self.fill_form = None
 
-        self.epsilon = BEZIER_EPSILON
-        self.bezier_points = []
         self.define_vectors()
 
     def drawn(self, viewport, normalized_window, new_vectors=[]):
@@ -52,13 +50,7 @@ class FdSurface3D(Object):
             self.id = self.list_ids[-1]
 
     def define_vectors(self):
-        self.bezier_points = self.bspline_algorythm(self.points)
-        for i in range(len(self.bezier_points)):
-            for j in range(len(self.bezier_points[i])):
-                if j != len(self.bezier_points[i])-1:
-                    self.vectors.append([self.bezier_points[i][j], self.bezier_points[i][j+1]])
-                else:
-                    self.vectors.append([self.bezier_points[i][j], self.bezier_points[i][0]])
+        self.bspline_algorythm(self.points)
 
     def bspline_algorythm(self, points):
         n_s = 15
@@ -72,8 +64,9 @@ class FdSurface3D(Object):
 
         b_splines_matrix = np.array([[-1/6, 1/2, -1/2, 1/6], [1/2, -1, 1/2, 0], [-1/2, 0, 1/2, 0], [1/6, 2/3, 1/6, 0]])
 
-        new_points = []
         points_set = self.bezier_points_set(points)
+        first_set = []
+        second_set = []
 
         for set in points_set:    
             px = [[None, None, None, None],
@@ -95,6 +88,7 @@ class FdSurface3D(Object):
                     py[i][j] = set[i][j][1]
                     pz[i][j] = set[i][j][2]
 
+            #primeira iteração
             DDx = E_s @ b_splines_matrix @ px @ np.transpose(b_splines_matrix) @ np.transpose(E_t)
             DDy = E_s @ b_splines_matrix @ py @ np.transpose(b_splines_matrix) @ np.transpose(E_t)
             DDz = E_s @ b_splines_matrix @ pz @ np.transpose(b_splines_matrix) @ np.transpose(E_t)
@@ -103,11 +97,10 @@ class FdSurface3D(Object):
                 x, dx, d2x, d3x = DDx
                 y, dy, d2y, d3y = DDy
                 z, dz, d2z, d3z = DDz
-
-                result_points = self.fwd_diff(n_t, x, dx, d2x, d3x, y, dy, d2y, d3y, z, dz, d2z, d3z)
-
-                for point in result_points:
-                    new_points.append(point)
+                
+                #retorna uma lista de pontos que devem ficar interligadas entre si
+                #coloca essa lista no first_set
+                first_set.append(self.fwd_diff(n_t, x, dx, d2x, d3x, y, dy, d2y, d3y, z, dz, d2z, d3z))
 
                 DDx[0] = DDx[1]
                 DDx[1] = DDx[2]
@@ -121,7 +114,7 @@ class FdSurface3D(Object):
                 DDz[1] = DDz[2]
                 DDz[2] = DDz[3]
 
-
+            #segunda iteração
             DDx = E_s @ b_splines_matrix @ px @ np.transpose(b_splines_matrix) @ np.transpose(E_t)
             DDy = E_s @ b_splines_matrix @ py @ np.transpose(b_splines_matrix) @ np.transpose(E_t)
             DDz = E_s @ b_splines_matrix @ pz @ np.transpose(b_splines_matrix) @ np.transpose(E_t)
@@ -135,10 +128,9 @@ class FdSurface3D(Object):
                 y, dy, d2y, d3y = DDy
                 z, dz, d2z, d3z = DDz
 
-                result_points = self.fwd_diff(n_s, x, dx, d2x, d3x, y, dy, d2y, d3y, z, dz, d2z, d3z)
-
-                for point in result_points:
-                    new_points.append(point)
+                #retorna uma lista de pontos que devem ficar interligadas entre si
+                #coloca essa lista no first_set
+                second_set.append(self.fwd_diff(n_s, x, dx, d2x, d3x, y, dy, d2y, d3y, z, dz, d2z, d3z))
 
                 DDx[0] = DDx[1]
                 DDx[1] = DDx[2]
@@ -152,7 +144,13 @@ class FdSurface3D(Object):
                 DDz[1] = DDz[2]
                 DDz[2] = DDz[3]
 
-        return new_points
+            for set in first_set:
+                for i in range(len(set) - 1):
+                    self.vectors.append([set[i], set[i+1]])
+
+            for set in second_set:
+                for i in range(len(set) - 1):
+                    self.vectors.append([set[i], set[i+1]])
 
     def bezier_points_set(self, points):
         for i in range(0, len(points) - 1, 3):
