@@ -23,11 +23,11 @@ class IncludeFdSurface3D(IncludeWindow):
         self.frame4.grid()
         
         Label(self.frame0, text='Nome: ', font=("Times", "11"), height=2).grid(row=0, column=0, padx=(17,0), sticky=NW)
-        self.nome = Entry(self.frame0, width=30, font=("Times", "11"))
+        self.nome = Entry(self.frame0, width=40, font=("Times", "11"))
         self.nome.grid(row=0, column=1, pady=(10,20))
 
-        Label(self.frame1, text='Coordenadas: ', font=("Times", "11")).grid(row=0, column=0, padx=(25,0), sticky=NW)
-        self.points = Entry(self.frame1, width=30, font=("Times", "11"))
+        Label(self.frame1, text='Coordenadas: ', font=("Times", "11")).grid(row=0, column=0, padx=(28,0), sticky=NW)
+        self.points = Entry(self.frame1, width=35, font=("Times", "11"))
         self.points.grid(row=0, column=1, sticky=NW)
         Label(self.frame1, text='Colocar matriz de dimensões 4x4 até 20x20!', font=("Times", "11")).grid(row=1, column=1, pady=(0,20))
         Label(self.frame1, text='(x_11,y_11,z_11),(x_12,y_12,z_12),...;', font=("Times", "11")).grid(row=2, column=1, pady=(0,20))
