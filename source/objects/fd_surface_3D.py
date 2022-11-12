@@ -64,7 +64,7 @@ class FdSurface3D(Object):
 
         b_splines_matrix = np.array([[-1/6, 1/2, -1/2, 1/6], [1/2, -1, 1/2, 0], [-1/2, 0, 1/2, 0], [1/6, 2/3, 1/6, 0]])
 
-        points_set = self.bezier_points_set(points)
+        points_set = self.points_set(points)
         first_set = []
         second_set = []
 
@@ -152,9 +152,15 @@ class FdSurface3D(Object):
                 for i in range(len(set) - 1):
                     self.vectors.append([set[i], set[i+1]])
 
-    def bezier_points_set(self, points):
-        for i in range(0, len(points) - 1, 3):
-            yield points[i : (i + 4)]
+    def points_set(self, points):
+        for i in range(len(points) - 3):
+            for j in range(len(points[i]) - 3):
+                print('bla')
+                yield [[points[i+0][j+0], points[i+0][j+1], points[i+0][j+2], points[i+0][j+3]],
+                       [points[i+1][j+0], points[i+1][j+1], points[i+1][j+2], points[i+1][j+3]],
+                       [points[i+2][j+0], points[i+2][j+1], points[i+2][j+2], points[i+2][j+3]],
+                       [points[i+3][j+0], points[i+3][j+1], points[i+3][j+2], points[i+3][j+3]]               
+                ]
 
     def delta_matrix(self, d):
         d2 = d * d
