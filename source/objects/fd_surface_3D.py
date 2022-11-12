@@ -102,17 +102,17 @@ class FdSurface3D(Object):
                 #coloca essa lista no first_set
                 first_set.append(self.fwd_diff(n_t, x, dx, d2x, d3x, y, dy, d2y, d3y, z, dz, d2z, d3z))
 
-                DDx[0] = DDx[1]
-                DDx[1] = DDx[2]
-                DDx[2] = DDx[3]
+                DDx[0] += DDx[1]
+                DDx[1] += DDx[2]
+                DDx[2] += DDx[3]
 
-                DDy[0] = DDy[1]
-                DDy[1] = DDy[2]
-                DDy[2] = DDy[3]
+                DDy[0] += DDy[1]
+                DDy[1] += DDy[2]
+                DDy[2] += DDy[3]
 
-                DDz[0] = DDz[1]
-                DDz[1] = DDz[2]
-                DDz[2] = DDz[3]
+                DDz[0] += DDz[1]
+                DDz[1] += DDz[2]
+                DDz[2] += DDz[3]
 
             #segunda iteração
             DDx = E_s @ b_splines_matrix @ px @ np.transpose(b_splines_matrix) @ np.transpose(E_t)
@@ -132,17 +132,17 @@ class FdSurface3D(Object):
                 #coloca essa lista no first_set
                 second_set.append(self.fwd_diff(n_s, x, dx, d2x, d3x, y, dy, d2y, d3y, z, dz, d2z, d3z))
 
-                DDx[0] = DDx[1]
-                DDx[1] = DDx[2]
-                DDx[2] = DDx[3]
+                DDx[0] += DDx[1]
+                DDx[1] += DDx[2]
+                DDx[2] += DDx[3]
 
-                DDy[0] = DDy[1]
-                DDy[1] = DDy[2]
-                DDy[2] = DDy[3]
+                DDy[0] += DDy[1]
+                DDy[1] += DDy[2]
+                DDy[2] += DDy[3]
 
-                DDz[0] = DDz[1]
-                DDz[1] = DDz[2]
-                DDz[2] = DDz[3]
+                DDz[0] += DDz[1]
+                DDz[1] += DDz[2]
+                DDz[2] += DDz[3]
 
             for set in first_set:
                 for i in range(len(set) - 1):
