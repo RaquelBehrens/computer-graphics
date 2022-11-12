@@ -1,5 +1,4 @@
 from tkinter import *
-from msilib.schema import Error
 
 from constants import INCLUDE_WINDOW_WIDTH, INCLUDE_WINDOW_HEIGHT
 from .include_window import IncludeWindow
@@ -52,6 +51,9 @@ class IncludeFdSurface3D(IncludeWindow):
         try:
             if self.radio_variable.get() != 0:
                 points = self.convert_to_list(self.points.get())
+                if points == None:
+                    raise ValueError('Entradas inválidas')
+
                 name = self.nome.get()
                 already_used = False
                 for objects in self.display_file:
@@ -112,9 +114,11 @@ class IncludeFdSurface3D(IncludeWindow):
 
         try:
             dimension = len(coords)
+            if dimension < 4 or dimension > 20:
+                raise ValueError('Entradas inválidas')
             for i in range(dimension):
                 if len(coords[i]) != dimension:
-                    raise Error
+                    raise ValueError('Entradas inválidas')
             return coords
         except:
             self.erros['text'] = 'Entradas inválidas'
