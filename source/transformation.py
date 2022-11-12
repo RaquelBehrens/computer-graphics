@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 
-from objects import (Object3D, Point3D, ParametricSurface3D)
+from objects import (Object3D, Point3D, ParametricSurface3D, FdSurface3D)
 
 
 class Transformation():
@@ -39,7 +39,7 @@ class Transformation():
         self.tab_escalation()
         self.tab_rotation()
 
-        if isinstance(self.object, Object3D) or isinstance(self.object, Point3D) or isinstance(self.object, ParametricSurface3D):
+        if isinstance(self.object, Object3D) or isinstance(self.object, Point3D) or isinstance(self.object, ParametricSurface3D) or isinstance(object, FdSurface3D):
             self.around_axis_radio = IntVar()
             self.around_axis_radio.set(0)
 
@@ -77,7 +77,7 @@ class Transformation():
         self.vetor_y_translation = Entry(self.frame_trans2, width=3, font=("Times", "11"))
         self.vetor_y_translation.grid(row=1, column=3)
 
-        if isinstance(self.object, Point3D) or isinstance(self.object, Object3D) or isinstance(self.object, ParametricSurface3D):
+        if isinstance(self.object, Point3D) or isinstance(self.object, Object3D) or isinstance(self.object, ParametricSurface3D) or isinstance(object, FdSurface3D):
             Label(self.frame_trans2, text=' z: ', font=("Times", "11"), height=2).grid(row=1, column=4, sticky=NW)
             self.vetor_z_translation = Entry(self.frame_trans2, width=3, font=("Times", "11"))
             self.vetor_z_translation.grid(row=1, column=5)
@@ -97,7 +97,7 @@ class Transformation():
         self.vetor_y_escalation = Entry(self.frame_esc2, width=3, font=("Times", "11"))
         self.vetor_y_escalation.grid(row=1, column=3)
 
-        if isinstance(self.object, Object3D) or isinstance(self.object, Point3D) or isinstance(self.object, ParametricSurface3D):
+        if isinstance(self.object, Object3D) or isinstance(self.object, Point3D) or isinstance(self.object, ParametricSurface3D) or isinstance(object, FdSurface3D):
             Label(self.frame_esc2, text=' z: ', font=("Times", "11"), height=2).grid(row=1, column=4, sticky=NW)
             self.vetor_z_escalation = Entry(self.frame_esc2, width=3, font=("Times", "11"))
             self.vetor_z_escalation.grid(row=1, column=5)
@@ -190,7 +190,7 @@ class Transformation():
 
     def add_transformation(self):
         try:
-                if isinstance(self.object, Object3D) or isinstance(self.object, Point3D) or isinstance(self.object, ParametricSurface3D):
+                if isinstance(self.object, Object3D) or isinstance(self.object, Point3D) or isinstance(self.object, ParametricSurface3D) or isinstance(object, FdSurface3D):
                     around_axis_radio = self.around_axis_radio.get()
 
                     if around_axis_radio == 0:
@@ -227,7 +227,7 @@ class Transformation():
                             rotation_z = float(self.rotation_z.get())
                             self.table.insert('', 0, values=(5, 'Rotação em torno do ponto', ('x:', rotation_x, ',', 'y:', rotation_y, ',', 'z:', rotation_z, ',', angle, '°,eixo:', around_axis)))
                         elif self.radio_variable.get() == 4:
-                            if isinstance(self.object, Object3D) == False or isinstance(self.object, ParametricSurface3D) == False:
+                            if isinstance(self.object, Object3D) == False or isinstance(self.object, ParametricSurface3D) == False or isinstance(object, FdSurface3D) == False:
                                 raise Error
                             else:
                                 axis = self.convert_to_list(self.axis.get())

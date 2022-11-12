@@ -2,7 +2,7 @@ import numpy as np
 from tkinter import *
 
 from constants import POINT_SIZE, VIEWPORT_HEIGHT, VIEWPORT_WIDTH
-from objects import (Line, Wireframe, Curve, Point3D, Object3D, ParametricSurface3D)
+from objects import (Line, Wireframe, Curve, Point3D, Object3D, ParametricSurface3D, FdSurface3D)
 from utils import adjacents
 from projection import projection, perspective_projection
 
@@ -29,7 +29,7 @@ class NormalizedWindow:
         for i in range(len(new_points)):
             new_points[i] = [None] * 2
 
-        if isinstance(object, Object3D) or isinstance(object, ParametricSurface3D):
+        if isinstance(object, Object3D) or isinstance(object, ParametricSurface3D) or isinstance(object, FdSurface3D):
             new_vectors = []
             for vector in object.vectors:
                 if object.projection == 1:

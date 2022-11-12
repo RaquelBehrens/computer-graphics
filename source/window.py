@@ -2,7 +2,7 @@ import numpy as np
 from tkinter import *
 from tkinter import ttk, messagebox
 
-from objects import (Point, Line, Wireframe, Curve, Point3D, Object3D, ParametricSurface3D)
+from objects import (Point, Line, Wireframe, Curve, Point3D, Object3D, ParametricSurface3D, FdSurface3D)
 from include_windows import (IncludePoint, 
                              IncludeLine, 
                              IncludeTriangle, 
@@ -212,7 +212,7 @@ class Window(Frame):
                     if isinstance(object, Line):
                         self.lines_list.remove(object)
                         self.viewport.delete(selected_item_id)
-                    elif isinstance(object, Wireframe) or isinstance(object, Curve) or isinstance(object, Object3D) or isinstance(object, ParametricSurface3D):
+                    elif isinstance(object, Wireframe) or isinstance(object, Curve) or isinstance(object, Object3D) or isinstance(object, ParametricSurface3D) or isinstance(object, FdSurface3D):
                         for id in object.list_ids:
                             self.viewport.delete(id)
                         if object.fill_form != None:    
