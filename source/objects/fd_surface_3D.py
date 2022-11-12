@@ -94,9 +94,9 @@ class FdSurface3D(Object):
             DDz = E_s @ b_splines_matrix @ pz @ np.transpose(b_splines_matrix) @ np.transpose(E_t)
             
             for i in range(n_s):
-                x, dx, d2x, d3x = DDx
-                y, dy, d2y, d3y = DDy
-                z, dz, d2z, d3z = DDz
+                x, dx, d2x, d3x = DDx[0]
+                y, dy, d2y, d3y = DDy[0]
+                z, dz, d2z, d3z = DDz[0]
                 
                 #retorna uma lista de pontos que devem ficar interligadas entre si
                 #coloca essa lista no first_set
@@ -124,9 +124,9 @@ class FdSurface3D(Object):
             DDz = np.transpose(DDz)
             
             for i in range(n_t):
-                x, dx, d2x, d3x = DDx
-                y, dy, d2y, d3y = DDy
-                z, dz, d2z, d3z = DDz
+                x, dx, d2x, d3x = DDx[0]
+                y, dy, d2y, d3y = DDy[0]
+                z, dz, d2z, d3z = DDz[0]
 
                 #retorna uma lista de pontos que devem ficar interligadas entre si
                 #coloca essa lista no first_set
