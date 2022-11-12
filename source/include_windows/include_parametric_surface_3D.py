@@ -1,5 +1,4 @@
 from tkinter import *
-from msilib.schema import Error
 
 from constants import INCLUDE_WINDOW_WIDTH, INCLUDE_WINDOW_HEIGHT
 from .include_window import IncludeWindow
@@ -98,12 +97,12 @@ class IncludeParametricSurface3D(IncludeWindow):
                         for j in range(0, len(aux_coords), 3):
                             final_list.append([aux_coords[j], aux_coords[j+1], aux_coords[j+2]]) 
                     else:
-                        raise Error 
+                        raise ValueError 
 
                     coords.append(final_list)  
                     
                     if len(final_list) % 4 != 0:
-                        raise Error
+                        raise ValueError
 
                     aux_coords = []
                     final_list = []

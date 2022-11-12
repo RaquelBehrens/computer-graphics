@@ -1,4 +1,3 @@
-from msilib.schema import Error
 from tkinter import *
 
 from constants import INCLUDE_WINDOW_WIDTH, INCLUDE_WINDOW_HEIGHT
@@ -140,4 +139,4 @@ class IncludeObject3D(IncludeWindow):
             for j in range(len(vectors[i])):
                 if vectors[i][j] not in points:
                     self.erros['text'] = 'Ponto do vetor não está na lista de pontos'
-                    raise Error
+                    raise ValueError

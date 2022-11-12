@@ -1,4 +1,3 @@
-from msilib.schema import Error
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
@@ -195,7 +194,7 @@ class Transformation():
 
                     if around_axis_radio == 0:
                         messagebox.showerror('Erro', 'Selecione um eixo de referência')
-                        raise Error
+                        raise ValueError
                     elif around_axis_radio == 1:
                         around_axis = 'x'
                     elif around_axis_radio == 2:
@@ -228,7 +227,7 @@ class Transformation():
                             self.table.insert('', 0, values=(5, 'Rotação em torno do ponto', ('x:', rotation_x, ',', 'y:', rotation_y, ',', 'z:', rotation_z, ',', angle, '°,eixo:', around_axis)))
                         elif self.radio_variable.get() == 4:
                             if isinstance(self.object, Object3D) == False or isinstance(self.object, ParametricSurface3D) == False or isinstance(object, FdSurface3D) == False:
-                                raise Error
+                                raise ValueError
                             else:
                                 axis = self.convert_to_list(self.axis.get())
                                 self.table.insert('', 0, values=(6, 'Rotação em torno do eixo', ('x1:', axis[0][0], ',y1:', axis[0][1], ',z1', axis[0][2], ',x2:', axis[1][0], ',y2:', axis[1][1], ',z2:', axis[1][2], ',angle:', angle, '°')))
@@ -252,7 +251,7 @@ class Transformation():
                             rotation_y = float(self.rotation_y.get())
                             self.table.insert('', 0, values=(5, 'Rotação em torno do ponto', ('x:', rotation_x, ',', 'y:', rotation_y, ',', angle, '°')))
                         elif self.radio_variable.get() == 4:
-                            raise Error
+                            raise ValueError
 
         except ValueError:
             messagebox.showerror('Erro', 'Entradas inválidas')
