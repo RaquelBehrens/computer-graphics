@@ -155,7 +155,6 @@ class FdSurface3D(Object):
     def points_set(self, points):
         for i in range(len(points) - 3):
             for j in range(len(points[i]) - 3):
-                print('bla')
                 yield [[points[i+0][j+0], points[i+0][j+1], points[i+0][j+2], points[i+0][j+3]],
                        [points[i+1][j+0], points[i+1][j+1], points[i+1][j+2], points[i+1][j+3]],
                        [points[i+2][j+0], points[i+2][j+1], points[i+2][j+2], points[i+2][j+3]],
