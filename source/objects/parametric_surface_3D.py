@@ -104,7 +104,7 @@ class ParametricSurface3D(Object):
         return new_lines
 
     def bezier_points_set(self, points):
-        for i in range(0, len(points) - 1, 3):
+        for i in range(0, len(points) - 1, 4):
             yield points[i : (i + 4)]
 
     def calculate_matrix_operation(self, axis, angle):
