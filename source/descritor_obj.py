@@ -1,5 +1,5 @@
 from tkinter import messagebox
-from objects import (Point, Line, Wireframe, Curve, Point3D, Object3D)
+from objects import (Point, Line, Wireframe, Curve, Point3D, Object3D, ParametricSurface3D, FdSurface3D)
 from utils import hex_to_rgb
 from tkinter import simpledialog
 
@@ -47,8 +47,17 @@ class DescritorOBJ():
                 for point in points:
                     if point not in self.list_of_points.values():
                         self.list_of_points[str(counter)] = point
-                        self.list_of_vertexes.append(f"v {point[0]} {point[1]} {point[1]}\n")
+                        self.list_of_vertexes.append(f"v {point[0]} {point[1]} {point[2]}\n")
                         counter += 1
+                self.add_color_to_sample(object)
+            elif isinstance(object, ParametricSurface3D) or isinstance(object, FdSurface3D):
+                obj_points = object.get_points()
+                for points in obj_points:
+                    for point in points:
+                        if point not in self.list_of_points.values():
+                            self.list_of_points[str(counter)] = point
+                            self.list_of_vertexes.append(f"v {point[0]} {point[1]} {point[2]}\n")
+                            counter += 1
                 self.add_color_to_sample(object)
             else:
                 points = object.get_points()
@@ -133,9 +142,20 @@ class DescritorOBJ():
                         for i in range(len(vertices_atuais)):
                             for j in range(len(vertices_atuais[i])):
                                 vertices_atuais[i][j] = float(vertices_atuais[i][j])
-                        
                         objetos.append(['poligono', objeto_atual, cor_atual, vertices_atuais])
 
+                    elif line_words_list[0] == 'curv':
+                        vertices_atuais = []
+                        for i in range(1, len(line_words_list), 1):
+                            vertices_atuais.append(v_dict.get(int(line_words_list[i])))
+                        objetos.append(['curva', objeto_atual, cor_atual, vertices_atuais])
+
+                    elif line_words_list[0] == 'surf':
+                        vertices_atuais = []
+                        for i in range(1, len(line_words_list), 1):
+                            vertices_atuais.append(v_dict.get(int(line_words_list[i])))
+                        objetos.append(['superficie', objeto_atual, cor_atual, vertices_atuais])
+                    
                     elif line_words_list[0] == 'g':
                         objeto_atual = line_words_list[1]
             
