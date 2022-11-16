@@ -525,7 +525,7 @@ class Window(Frame):
                     for i in range(len(vertice)):
                         vertice[i] = float(vertice[i])
 
-                    if not (tipo=='poligono'):
+                    if not (tipo=='poligono' or tipo=='superficie') and len(vertice) > 2:
                         vertice.pop()
 
                 if tipo == 'ponto':
@@ -542,6 +542,12 @@ class Window(Frame):
                             else:
                                 objeto = Line(nome, [vertices[i], vertices[i+1]], cor)
                             lista_objetos.append(objeto) 
+                if tipo == 'curva':
+                    new_vertices = []
+                    for i in range(len(vertices)):
+                        new_vertices.append(vertices[i])
+                    objeto = Curve(nome, new_vertices, cor)
+                    lista_objetos.append(objeto)
                 if tipo == 'poligono':
                     if nome not in poligonos_adicionados.keys():
                         arestas = []
@@ -556,6 +562,26 @@ class Window(Frame):
                             arestas.append([vertices[i], vertices[i+1]])
                         poligonos_adicionados[nome].points = poligonos_adicionados[nome].points + vertices
                         poligonos_adicionados[nome].vectors = poligonos_adicionados[nome].vectors + arestas
+                if tipo == 'superficie':
+                    matriz = [None] * (len(vertices) // 4)
+                    new_vertices = []
+                    indice = 0
+
+                    for vertice in vertices:
+                        if len(new_vertices) != 4:
+                            new_vertices.append(vertice)
+                        else:
+                            matriz[indice] = new_vertices
+                            new_vertices = [vertice]
+                            indice += 1
+                    matriz[indice] = new_vertices
+
+                    estilo = messagebox.askquestion(title='Tipo de superfície', message='Deseja utilizar Foward Difference? Se escolher "Não", o programa utilizará Bézier.')
+                    if estilo == 'yes':
+                        objeto = FdSurface3D(nome, matriz, cor, projection=projecao)
+                    else:
+                        objeto = ParametricSurface3D(nome, matriz, cor, projection=projecao)
+                    lista_objetos.append(objeto)
 
             for objeto in lista_objetos:
                 objeto.drawn(self.viewport, self.coord_scn)
