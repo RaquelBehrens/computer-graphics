@@ -404,15 +404,14 @@ class ParametricSurface3D(Object):
         name = f"o {self.name}\n"
         color = f"usemtl {list_of_colors.get(self.color)}\n"
 
-        lines = []
-        for vector in self.vectors:
-            points = []
-            for point in vector:
+        points = []
+        for old_points in self.points:
+            for point in old_points:
                 point_index = list(list_of_points.keys())[list(list_of_points.values()).index(point)]
                 points.append(point_index)
             
-            points = " ".join(map(str,points))
-            points = f"l {points}\n"
-            lines.append(points)
+        points = " ".join(map(str,points))
+        points = f"surf {points}\n"
+        #lines.append(points)
 
-        return name, color, lines
+        return name, color, points
